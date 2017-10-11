@@ -14,6 +14,12 @@ import java.util.TimerTask;
 // Convert Java Map to JSON
 import com.google.gson.Gson;
 
+/**
+ * This class simulates a dummy sensor using HTTP POST.
+ * 
+ * @author Stefan
+ * last-updated: 11 October 2017
+ */
 public class DummySensor {
 
 	public static void main(String[] args) 
