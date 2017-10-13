@@ -8,6 +8,7 @@ import java.net.URL;
 import java.time.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -22,9 +23,11 @@ import com.google.gson.Gson;
  */
 public class DummySensor {
 
+  Random rand = new Random();
+  
   public static void main(String[] args) {
     final DummySensor ds = new DummySensor();
-
+    
     Timer t = new Timer();
 
     // Every 5 seconds, make a POST to the given URL.
@@ -41,10 +44,11 @@ public class DummySensor {
   }
 
   // Generate the dummy payload.
+  // sensorPayload will be between 50 (inclusive) and 99 (inclusive).
   private String generatePayload() {
     Map<String, Object> keyValuePairs = new HashMap<String, Object>();
     keyValuePairs.put("sensorID", 1234);
-    keyValuePairs.put("sensorPayload", 96);
+    keyValuePairs.put("sensorPayload", 50+rand.nextInt(50));
     keyValuePairs.put("UTC", Instant.now().toEpochMilli());
 
     Gson gson = new Gson(); 
