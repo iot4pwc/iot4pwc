@@ -8,64 +8,66 @@ import java.net.URL;
 import java.time.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 // Convert Java Map to JSON
 import com.google.gson.Gson;
 
+/**
+ * This class simulates a dummy sensor using HTTP POST.
+ * 
+ * @author Stefan
+ * last-updated: 11 October 2017
+ */
 public class DummySensor {
 
-	public static void main(String[] args) 
-	{
-		final DummySensor ds = new DummySensor();
-		
-		Timer t = new Timer();
-		
-		// Every 5 seconds, make a POST to the given URL.
-		t.scheduleAtFixedRate(new TimerTask() {
-		    @Override
-		    public void run() 
-		    {
-		    	try
-				{
-					ds.makePOST(ds.generatePayload(), "https://postman-echo.com/post");
-				} catch (IOException e) 
-				{
-					e.printStackTrace();
-				}
-		    }
-		}, 1000,5000);
-		
-		
-	}
+  Random rand = new Random();
+  
+  public static void main(String[] args) {
+    final DummySensor ds = new DummySensor();
+    
+    Timer t = new Timer();
 
-	// Generate the dummy payload.
-	private String generatePayload()
-	{
-		Map<String, Object> keyValuePairs = new HashMap<String, Object>();
-		keyValuePairs.put("sensorID", 1234);
-		keyValuePairs.put("sensorPayload", 96);
-		keyValuePairs.put("UTC", Instant.now().toEpochMilli());
-		
-		Gson gson = new Gson(); 
+    // Every 5 seconds, make a POST to the given URL.
+    t.scheduleAtFixedRate(new TimerTask() {
+      @Override
+      public void run() {
+        try {
+          ds.makePOST(ds.generatePayload(), "https://postman-echo.com/post");
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+    }, 1000,5000);	
+  }
 
-		return gson.toJson(keyValuePairs); 
-	}
-	
-	// Make a POST request with given requestBody and URL.
-	private void makePOST(String requestBody, String URL) throws IOException
-	{
-		URL url = new URL(URL);
-		HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
-		httpCon.setDoOutput(true);
-		httpCon.setRequestMethod("POST");
-		OutputStreamWriter out = new OutputStreamWriter(
-				httpCon.getOutputStream());
-		System.out.println("POST " + URL + " " + requestBody);
-		out.write(requestBody);
-		System.out.println(httpCon.getResponseCode() + " " + httpCon.getResponseMessage());
-		out.close();
-	}
-	
+  // Generate the dummy payload.
+  // sensorPayload will be between 50 (inclusive) and 99 (inclusive).
+  private String generatePayload() {
+    Map<String, Object> keyValuePairs = new HashMap<String, Object>();
+    keyValuePairs.put("sensorID", 1234);
+    keyValuePairs.put("sensorPayload", 50+rand.nextInt(50));
+    keyValuePairs.put("UTC", Instant.now().toEpochMilli());
+
+    Gson gson = new Gson(); 
+
+    return gson.toJson(keyValuePairs); 
+  }
+
+  // Make a POST request with given requestBody and URL.
+  private void makePOST(String requestBody, String URL) throws IOException {
+    URL url = new URL(URL);
+    HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+    httpCon.setDoOutput(true);
+    httpCon.setRequestMethod("POST");
+    OutputStreamWriter out = new OutputStreamWriter(
+        httpCon.getOutputStream());
+    System.out.println("POST " + URL + " " + requestBody);
+    out.write(requestBody);
+    System.out.println(httpCon.getResponseCode() + " " + httpCon.getResponseMessage());
+    out.close();
+  }
+
 }
