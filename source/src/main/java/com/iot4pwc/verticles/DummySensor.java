@@ -26,7 +26,7 @@ public class DummySensor extends AbstractVerticle {
     timerID = vertx.setPeriodic(500, id -> {
       String payload = generateData();
       eb.publish(ConstLib.PARSER_ADDRESS, payload);
-      System.out.println(payload);
+      System.out.println(String.format("Sent: %s", payload));
     });
   }
 
