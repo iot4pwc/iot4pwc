@@ -24,6 +24,7 @@ public class Main {
       .setClustered(true)
       .setEventBusOptions(new EventBusOptions()
         .setClustered(true)
+        .setPort(ConstLib.CLUSTER_EVENT_BUS_PORT)
         .setHost(System.getenv("HOST")))
       .setClusterManager(new HazelcastClusterManager());
 
