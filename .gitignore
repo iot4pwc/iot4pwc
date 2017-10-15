@@ -1,2 +1,13 @@
 source/src/main/resources/cluster.xml
 source/target/classes/cluster.xml
+scripts/vertx
+source/vertx
+source/target
+dummy_sensor/target
+dummy_sensor/.project
+source/.project
+source/.settings/org.eclipse.jdt.core.prefs
+source/.settings/org.eclipse.m2e.core.prefs
+source/src/.DS_Store
+
+source/src/main/.DS_Store

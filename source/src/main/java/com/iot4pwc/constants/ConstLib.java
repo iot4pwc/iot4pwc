@@ -14,4 +14,6 @@ public class ConstLib {
 
   public static final String SERVICE_PLATFORM_OPTION = "-sp";
   public static final String DATA_GENERATOR_OPTION = "-dg";
+  
+  public static final String CONNECTION_STRING = "jdbc:mysql://stefantestdb1.caqii6amhgcq.us-east-1.rds.amazonaws.com/all_logs";
 }

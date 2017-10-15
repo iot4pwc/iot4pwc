@@ -3,6 +3,7 @@ package com.iot4pwc.verticles;
 import com.iot4pwc.constants.ConstLib;
 import com.mysql.jdbc.Statement;
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.WorkerExecutor;
 import io.vertx.core.eventbus.EventBus;
 
 // Required imports.
@@ -20,26 +21,35 @@ import java.time.Instant;
  */
 public class DataService extends AbstractVerticle{
 
-  // All of these to be provided by Tarun.
-  // Will move to ConstLib.java later.
-  final static String CONNECTION_STRING = "jdbc:mysql://stefantestdb1.caqii6amhgcq.us-east-1.rds.amazonaws.com/all_logs";
-  final static String USER_NAME = "stefantestuser";
-  final static String USER_PW = "stefan123";
-
-  final Connection connection = getConnection();
+//  // We want this to block because it is in the startup only.
+  Connection connection;
   
   public void start() {
     EventBus eb = vertx.eventBus();
 
-
-    eb.consumer(ConstLib.DATA_SERVICE_ADDRESS, message -> {
-      // structuredData is a JSON string
-      String structuredData = (String)message.body();
+    // Do all insertions to DB via a WorkerExecutor so to not block.
+    WorkerExecutor executor = vertx.createSharedWorkerExecutor("my-worker-pool");
+    
+    // Execute this in the background.
+    executor.executeBlocking(future -> {
       
-      System.out.println(String.format(this.getClass().getName()+": Received: %s", message.body()));
+      // We want this to block because it is in the startup only.
+      Connection connection = getConnection();
       
-      insertLog(connection, structuredData);
-    });
+      // Consume from EventBus
+      eb.consumer(ConstLib.DATA_SERVICE_ADDRESS, message -> {
+        String structuredData = (String)message.body();
+        boolean result = insertLog(connection, structuredData); 
+        System.out.println(DataService.class.getName()+": Insertion success: " + result);
+        this.context.put("result", result);
+      });
+      
+      // Future is complete, we can safely return to the main thread.
+      future.complete();
+      
+      // Nothing to do with the response for now.
+    }, res -> {
+    });       
   }
 
   public void stop() {
@@ -105,6 +115,9 @@ public class DataService extends AbstractVerticle{
   private static Connection getConnection(){
 
     Connection connection = null;
+    
+    String DB_USER_NAME = System.getenv("DB_USER_NAME");
+    String DB_USER_PW = System.getenv("DB_USER_PW");
 
     try {
       Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -118,7 +131,7 @@ public class DataService extends AbstractVerticle{
 
     try { 
       System.out.println(DataService.class.getName()+": Connecting to a selected database...");
-      connection =  DriverManager.getConnection(CONNECTION_STRING, USER_NAME, USER_PW);
+      connection =  DriverManager.getConnection(ConstLib.CONNECTION_STRING, DB_USER_NAME, DB_USER_PW);
       System.out.println(DataService.class.getName()+": Connected database successfully...");
       return connection;
     } catch (SQLException ex) {
