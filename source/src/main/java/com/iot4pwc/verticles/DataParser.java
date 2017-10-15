@@ -1,6 +1,6 @@
 package com.iot4pwc.verticles;
 
-import com.iot4pwc.constants.AddressName;
+import com.iot4pwc.constants.ConstLib;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.EventBus;
 
@@ -13,7 +13,7 @@ public class DataParser extends AbstractVerticle {
   public void start() {
     EventBus eb = vertx.eventBus();
 
-    eb.consumer(AddressName.PARSER_ADDRESS, message -> {
+    eb.consumer(ConstLib.PARSER_ADDRESS, message -> {
       // data is a JSON string
       String data = (String)message.body();
       /**
@@ -23,8 +23,9 @@ public class DataParser extends AbstractVerticle {
        */
       String structuredData = "";
 
-      eb.publish(AddressName.DATA_SERVICE_ADDRESS, structuredData);
-      eb.publish(AddressName.PUBLISHER_ADDRESS, structuredData);
+      eb.publish(ConstLib.DATA_SERVICE_ADDRESS, structuredData);
+      eb.publish(ConstLib.PUBLISHER_ADDRESS, structuredData);
+      System.out.println(data);
     });
   }
 
