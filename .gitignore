@@ -1,2 +1,6 @@
 source/src/main/resources/cluster.xml
 source/target
+source/.DS_Store
+source/.vertx
+source/.idea
+source/source.iml
