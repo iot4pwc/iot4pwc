@@ -31,7 +31,7 @@ public class DataService extends AbstractVerticle{
     WorkerExecutor executor = vertx.createSharedWorkerExecutor("my-worker-pool");
     
     // Execute this in the background.
-    executor.executeBlocking(future -> {
+    executor.executeBlocking (future -> {
       
       // We want this to block because it is in the startup only.
       Connection connection = getConnection();
@@ -106,10 +106,7 @@ public class DataService extends AbstractVerticle{
       e.printStackTrace();
     }
 
-    return null;
-
-
-
+    return null; 
   }
 
   private static Connection getConnection(){
