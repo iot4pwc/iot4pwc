@@ -1,7 +1,0 @@
-/target/
-source/target/
-dummy_sensor/target
-dummy_sensor/.project
-source/.project
-source/.settings/org.eclipse.jdt.core.prefs
-source/.settings/org.eclipse.m2e.core.prefs
