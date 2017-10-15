@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /Users/sjhermanek/Documents/GitHub/iot4pwc/source/src/main/java/com/iot4pwc/constants/ConstLib.java
 /Users/sjhermanek/Documents/GitHub/iot4pwc/source/src/main/java/com/iot4pwc/verticles/DataParser.java
 /Users/sjhermanek/Documents/GitHub/iot4pwc/source/src/main/java/com/iot4pwc/verticles/DummySensor.java
@@ -8,13 +7,3 @@
 /Users/sjhermanek/Documents/GitHub/iot4pwc/source/src/main/java/com/iot4pwc/verticles/DataService.java
 /Users/sjhermanek/Documents/GitHub/iot4pwc/source/src/main/java/com/iot4pwc/verticles/DataPoller.java
 /Users/sjhermanek/Documents/GitHub/iot4pwc/source/src/main/java/com/iot4pwc/verticles/DataService_POJO.java
-=======
-/Users/Reddiel/pwc/iot4pwc/source/src/main/java/com/iot4pwc/verticles/DataService.java
-/Users/Reddiel/pwc/iot4pwc/source/src/main/java/com/iot4pwc/verticles/DataPoller.java
-/Users/Reddiel/pwc/iot4pwc/source/src/main/java/com/iot4pwc/verticles/DataPublisher.java
-/Users/Reddiel/pwc/iot4pwc/source/src/main/java/com/iot4pwc/verticles/DataParser.java
-/Users/Reddiel/pwc/iot4pwc/source/src/main/java/com/iot4pwc/constants/ConstLib.java
-/Users/Reddiel/pwc/iot4pwc/source/src/main/java/com/iot4pwc/verticles/DummySensor.java
-/Users/Reddiel/pwc/iot4pwc/source/src/main/java/Main.java
-/Users/Reddiel/pwc/iot4pwc/source/src/main/java/com/iot4pwc/verticles/AppAuthenticator.java
->>>>>>> IOT-50
