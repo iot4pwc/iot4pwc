@@ -18,7 +18,6 @@ public class DataService_POJO {
   final static String USER_NAME = "stefantestuser";
   final static String USER_PW = "stefan123";
 
-  @SuppressWarnings("deprecation")
   public static void main (String[] args) {
 
     Connection connection = null;
@@ -103,13 +102,10 @@ public class DataService_POJO {
     try {
       Class.forName("com.mysql.jdbc.Driver").newInstance();
     } catch (ClassNotFoundException e1) {
-      // TODO Auto-generated catch block
       e1.printStackTrace();
     } catch (InstantiationException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     } catch (IllegalAccessException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
 
@@ -127,7 +123,7 @@ public class DataService_POJO {
   }
 
   public static void closeConnection (Connection connection) {
-    if(connection!=null)
+    if(connection!=null) {
       try {
         connection.close();
       } catch (SQLException e) {
@@ -135,6 +131,7 @@ public class DataService_POJO {
       } finally {
         connection = null;
       }
-    System.out.println("Closed connection!");
+      System.out.println("Closed connection!");
+    }
   }
 }
