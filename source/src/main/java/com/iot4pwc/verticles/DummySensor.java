@@ -3,11 +3,7 @@ package com.iot4pwc.verticles;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
-<<<<<<< HEAD
 import com.iot4pwc.constants.ConstLib;
-=======
-import com.iot4pwc.constants.AddressName;
->>>>>>> d94fd3ecb1fa00a5f8cda841f5f87d6f5d0f1c92
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -29,11 +25,7 @@ public class DummySensor extends AbstractVerticle {
     EventBus eb = vertx.eventBus();
     timerID = vertx.setPeriodic(500, id -> {
       String payload = generateData();
-<<<<<<< HEAD
       eb.publish(ConstLib.PARSER_ADDRESS, payload);
-=======
-      eb.publish(AddressName.PARSER_ADDRESS, payload);
->>>>>>> d94fd3ecb1fa00a5f8cda841f5f87d6f5d0f1c92
       System.out.println(payload);
     });
   }

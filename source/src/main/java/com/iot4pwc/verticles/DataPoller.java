@@ -5,5 +5,4 @@ package com.iot4pwc.verticles;
  * it is either a poller or the DataParser can be the listener
  */
 public class DataPoller {
-
 }

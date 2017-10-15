@@ -1,17 +1,8 @@
-<<<<<<< HEAD
 com/iot4pwc/verticles/DataService.class
 Main.class
 com/iot4pwc/constants/ConstLib.class
 com/iot4pwc/verticles/DataParser.class
 com/iot4pwc/verticles/AppAuthenticator.class
-=======
-com/iot4pwc/constants/VerticleNumbers.class
-com/iot4pwc/verticles/DataService.class
-Main.class
-com/iot4pwc/verticles/DataParser.class
-com/iot4pwc/verticles/AppAuthenticator.class
-com/iot4pwc/constants/AddressName.class
->>>>>>> d94fd3ecb1fa00a5f8cda841f5f87d6f5d0f1c92
 com/iot4pwc/verticles/DummySensor.class
 com/iot4pwc/verticles/DataPublisher.class
 com/iot4pwc/verticles/DataPoller.class
