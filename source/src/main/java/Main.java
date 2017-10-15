@@ -32,7 +32,13 @@ public class Main {
     } else {
       String option = args[0];
 
-      VertxOptions vertxOptions = new VertxOptions();
+      VertxOptions vertxOptions = new VertxOptions()
+        .setClustered(true)
+        .setEventBusOptions(new EventBusOptions()
+          .setClustered(true)
+          .setPort(ConstLib.CLUSTER_EVENT_BUS_PORT)
+          .setHost(System.getenv("HOST")))
+        .setClusterManager(new HazelcastClusterManager());
 
       Vertx.clusteredVertx(vertxOptions, vertxAsyncResult -> {
         if (vertxAsyncResult.succeeded()) {
