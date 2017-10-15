@@ -1,7 +1,7 @@
 #!/bin/bash
 
 sudo apt-get update
-sudo apt-get install -y default-jre default-jdk maven
+sudo apt-get install -y default-jre default-jdk maven mosquitto
 sudo chmod 777 /etc/environment
 HOST=$(ip route get 8.8.8.8 | awk '{print $NF; exit}')
 sudo echo "HOST=\"$HOST\"" >> /etc/environment
