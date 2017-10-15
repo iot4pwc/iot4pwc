@@ -7,7 +7,7 @@ public class ConstLib {
 
   public static final int CLUSTER_EVENT_BUS_PORT = 37288;
 
-  public static final int DUMMY_SENSOR_NUMBER = 10;
+  public static final int DUMMY_SENSOR_NUMBER = 1;
   public static final int DATA_PARSER_NUMBER = 1;
   public static final int DATA_PUBLISHER_NUMBER = 1;
   public static final int DATA_SERVICE_NUMBER = 1;
