@@ -16,7 +16,7 @@ public class DataParser extends AbstractVerticle {
     eb.consumer(ConstLib.PARSER_ADDRESS, message -> {
       // data is a JSON string
       String data = (String)message.body();
-      System.out.println(String.format("Received: %s", data));
+      System.out.println(String.format(this.getClass().getName() + " Received: %s", data));
       /**
        * implement business logic here.
        * reconstruct data to proper format for publishing and persisting.
