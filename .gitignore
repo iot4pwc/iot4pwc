@@ -14,3 +14,9 @@ source/.idea/
 source/.idea
 source/.settings/
 source/source.iml
+other/.classpath
+other/.gitignore
+other/.project
+other/.settings
+other/bin
+other/target
