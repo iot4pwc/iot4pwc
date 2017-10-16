@@ -12,4 +12,8 @@ tar -zxf vert.x-3.4.2-full.tar.gz
 rm *.gz
 export PATH=~/vertx/bin:$PATH
 export HOST
+DB_USER_NAME="stefantestuser"
+export DB_USER_NAME
+DB_USER_PW="stefan123"
+export DB_USER_PW
 sudo ufw allow 37288

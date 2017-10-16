@@ -22,7 +22,7 @@ public class DataParser extends AbstractVerticle {
        * reconstruct data to proper format for publishing and persisting.
        * suppose the result is a JSON string named structuredData.
        */
-      String structuredData = "";
+      String structuredData = data;
 
       eb.publish(ConstLib.DATA_SERVICE_ADDRESS, structuredData);
       eb.publish(ConstLib.PUBLISHER_ADDRESS, structuredData);
