@@ -5,7 +5,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import com.iot4pwc.constants.ConstLib;
 import com.mysql.jdbc.Statement;
 import io.vertx.core.AbstractVerticle;
@@ -21,7 +23,7 @@ public class DataPublisher extends AbstractVerticle{
 
   Connection connection;
 
-  Map<Integer, String> sensorTopicMapping = new HashMap<Integer, String>(); 
+  Map<Integer, Set<String>> sensorTopicMapping = new HashMap<Integer, Set<String>>(); 
 
   public void start() {
     EventBus eb = vertx.eventBus();
@@ -46,27 +48,34 @@ public class DataPublisher extends AbstractVerticle{
 
         JsonObject jsonObject = new JsonObject(structuredData);
         int sensorID = jsonObject.getInteger("sensorID");
-        String topic ;
+        Set<String> sensorTopics;
 
         if (sensorTopicMapping.containsKey(Integer.valueOf(sensorID))) {
-          topic = sensorTopicMapping.get(Integer.valueOf(sensorID));
+          sensorTopics = sensorTopicMapping.get(Integer.valueOf(sensorID));
         } else {
           // Refresh map with just one record (for optimized DB performance, yo!)
           getOneSensorMapping(connection, sensorID, sensorTopicMapping);
 
           // Set sensible default
-          topic = sensorTopicMapping.getOrDefault(Integer.valueOf(sensorID), "NO_TOPIC");
+          if (sensorTopicMapping.containsKey(Integer.valueOf(sensorID))) {
+            sensorTopics = sensorTopicMapping.get(Integer.valueOf(sensorID));
+          } else {
+            sensorTopics = new HashSet<String>();
+            sensorTopics.add("NO_TOPIC");
+          }
         }
+        
+        // Loop over all topics, and publish one for each.
+        for (String topic : sensorTopics) {
+          
+          // Add topic to the JSON being forwarded to MQTT
+          jsonObject.put("topic", topic);
 
-        // Add topic to the JSON being forwarded to MQTT
-        jsonObject.put("topic", topic);
+          // Sysout
+          System.out.println(this.getClass().getName()+": Sending to MQTT - " + jsonObject.toString());
 
-        // Sysout
-        System.out.println(this.getClass().getName()+": Sending to MQTT - " + jsonObject.toString());
-
-        //@TODO Write to MQTT the newly updated JSON object.
-
-
+          //@TODO Write to MQTT the newly updated JSON object.
+        }
       });
 
       // Future is complete, we can safely return to the main thread.
@@ -128,8 +137,8 @@ public class DataPublisher extends AbstractVerticle{
     }
   }
 
-  private static Map<Integer, String> getSensorTopicMapping(Connection connection) {
-    Map<Integer, String> tempMap = new HashMap<Integer, String>();
+  private static Map<Integer, Set<String>> getSensorTopicMapping(Connection connection) {
+    Map<Integer, Set<String>> tempMap = new HashMap<Integer, Set<String>>();
 
     Statement statement;
     try {
@@ -139,7 +148,10 @@ public class DataPublisher extends AbstractVerticle{
 
       // Loop over result set and update map
       while (resultSet.next()) {
-        tempMap.put(resultSet.getInt("sensorid"), resultSet.getString("topic"));
+        int aSensor = resultSet.getInt("sensorid");
+        Set<String> tempSet = tempMap.getOrDefault(Integer.valueOf(aSensor), new HashSet<String>());
+        tempSet.add(resultSet.getString("topic"));
+        tempMap.put(aSensor, tempSet);
       }
     } catch (SQLException e) {
       e.printStackTrace();
@@ -148,7 +160,7 @@ public class DataPublisher extends AbstractVerticle{
     return tempMap;
   }
 
-  private static void getOneSensorMapping(Connection connection, int sensorID, Map<Integer, String> existingMapping) {
+  private static void getOneSensorMapping(Connection connection, int sensorID, Map<Integer, Set<String>> existingMapping) {
     Statement statement;
     try {
       // Execute a SQL query.
@@ -156,10 +168,15 @@ public class DataPublisher extends AbstractVerticle{
       String sqlQueryString = "SELECT * FROM sensor_topic_mapping WHERE sensorid = " + sensorID; 
       ResultSet resultSet = statement.executeQuery(sqlQueryString);
 
+      Set<String> tempSet = new HashSet<String>();
+      
       // Loop over result set and update map
       while (resultSet.next()) {
-        existingMapping.put(resultSet.getInt("sensorid"), resultSet.getString("topic"));
+        tempSet.add(resultSet.getString("topic"));
       }
+      
+      existingMapping.put(sensorID, tempSet);
+      
     } catch (SQLException e) {
       e.printStackTrace();
     }
