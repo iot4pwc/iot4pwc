@@ -18,8 +18,11 @@ other/.classpath
 other/.gitignore
 other/.project
 other/.settings
-other/bin
-other/target
+other/bin/
+other/target/
 source/bin
 .classpath
 .project
+source/bin/.gitignore
+source/bin/.project
+source/bin/
