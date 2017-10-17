@@ -15,3 +15,15 @@ source/src/main/.DS_Store
 source/.idea
 source/.settings
 source/source.iml
+other/.classpath
+other/.gitignore
+other/.project
+other/.settings
+other/bin/
+other/target/
+source/bin
+.classpath
+.project
+source/bin/.gitignore
+source/bin/.project
+source/bin/
