@@ -21,3 +21,5 @@ other/.settings
 other/bin
 other/target
 source/bin
+.classpath
+.project

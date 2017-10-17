@@ -145,7 +145,6 @@ public class MidtermClient {
     payloads.put("sensorID", sensorNumber);
     payloads.put("payload", payload);
     payloads.put("time", Instant.now().toEpochMilli());
-    payloads.put("topic", "temperature");
     JsonObject jsonObject = new JsonObject(payloads);
     return jsonObject.encode();
   }

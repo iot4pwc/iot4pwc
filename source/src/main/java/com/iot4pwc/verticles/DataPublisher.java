@@ -35,9 +35,10 @@ public class DataPublisher extends AbstractVerticle{
       // We want this to block because it is in the startup only.
       Connection connection = getConnection();
 
+      // Get the map of sensors to topic.
       sensorTopicMapping = getSensorTopicMapping(connection);
 
-      System.out.println(sensorTopicMapping.toString());
+      // System.out.println(sensorTopicMapping.toString());
 
       // Consume from EventBus
       eb.consumer(ConstLib.DATA_SERVICE_ADDRESS, message -> {
@@ -72,22 +73,21 @@ public class DataPublisher extends AbstractVerticle{
       future.complete();
 
       // Nothing to do with the response for now.
-    }, res -> {
-    });   
+    }, res -> {}); // NOTE: I need to have an empty handler. Function won't work with just one param.
 
   }
 
   public void stop() {
-    /**
-     * clear up, feel free to delete this method if you think it's unnecessary
-     */
+    closeConnection(connection);
   }
 
   // @TODO: This can be modular. Please create a ticket for this in 2.0
   private static Connection getConnection(){
 
+    // Get a fresh connection
     Connection connection = null;
 
+    // Get System environment variables.
     String DB_USER_NAME = System.getenv("DB_USER_NAME");
     String DB_USER_PW = System.getenv("DB_USER_PW");
 
