@@ -1,3 +1,12 @@
+DROP DATABASE service_platform;
+CREATE DATABASE service_platform;
+USE service_platform;
+
+DROP USER 'iot4pwc'@'localhost';
+FLUSH PRIVILEGES;
+CREATE USER 'iot4pwc'@'localhost' IDENTIFIED BY 'Heinz123!';
+GRANT ALL PRIVILEGES ON service_platform.* TO 'iot4pwc'@'localhost';
+
 DROP TABLE sensor_topic_map;
 DROP TABLE sensor_history;
 DROP TABLE sensor;
@@ -17,7 +26,7 @@ CREATE TABLE sensor_topic_map(
   sensor_id INT(10),
   topic VARCHAR(40),
   CONSTRAINT sensor_topic_map_pk PRIMARY KEY(sensor_id, topic),
-  CONSTRAINT sensor_topic_map_fk FOREIGN KEY sensor_id REFERENCES sensor(sensor_id)
+  CONSTRAINT sensor_topic_map_fk FOREIGN KEY (sensor_id) REFERENCES sensor(sensor_id)
 );
 
 CREATE TABLE sensor_history (
@@ -26,4 +35,4 @@ CREATE TABLE sensor_history (
   recorded_time TIMESTAMP,
   value_content VARCHAR(200),
   CONSTRAINT sensor_history_pk PRIMARY KEY(record_id)
-)
+);
