@@ -21,9 +21,9 @@ import io.vertx.core.json.JsonObject;
  */
 public class DataPublisher extends AbstractVerticle{
 
-  Connection connection;
+  private Connection connection;
 
-  Map<Integer, Set<String>> sensorTopicMapping = new HashMap<Integer, Set<String>>(); 
+  private static Map<Integer, Set<String>> sensorTopicMapping = new HashMap<Integer, Set<String>>(); 
 
   public void start() {
     EventBus eb = vertx.eventBus();
@@ -35,7 +35,7 @@ public class DataPublisher extends AbstractVerticle{
     executor.executeBlocking (future -> {
 
       // We want this to block because it is in the startup only.
-      Connection connection = getConnection();
+      connection = getConnection();
 
       // Get the map of sensors to topic.
       sensorTopicMapping = getSensorTopicMapping(connection);
@@ -50,15 +50,15 @@ public class DataPublisher extends AbstractVerticle{
         int sensorID = jsonObject.getInteger("sensorID");
         Set<String> sensorTopics;
 
-        if (sensorTopicMapping.containsKey(Integer.valueOf(sensorID))) {
-          sensorTopics = sensorTopicMapping.get(Integer.valueOf(sensorID));
+        if (sensorTopicMapping.containsKey(sensorID)) {
+          sensorTopics = sensorTopicMapping.get(sensorID);
         } else {
           // Refresh map with just one record (for optimized DB performance, yo!)
           getOneSensorMapping(connection, sensorID, sensorTopicMapping);
 
           // Set sensible default
-          if (sensorTopicMapping.containsKey(Integer.valueOf(sensorID))) {
-            sensorTopics = sensorTopicMapping.get(Integer.valueOf(sensorID));
+          if (sensorTopicMapping.containsKey(sensorID)) {
+            sensorTopics = sensorTopicMapping.get(sensorID);
           } else {
             sensorTopics = new HashSet<String>();
             sensorTopics.add("NO_TOPIC");
@@ -69,7 +69,8 @@ public class DataPublisher extends AbstractVerticle{
         for (String topic : sensorTopics) {
           
           // Add topic to the JSON being forwarded to MQTT
-          jsonObject.put("topic", topic);
+          //We should not send the topic as a payload - just use it to send to correct destination.
+          //jsonObject.put("topic", topic);
 
           // Sysout
           System.out.println(this.getClass().getName()+": Sending to MQTT - " + jsonObject.toString());
@@ -149,7 +150,7 @@ public class DataPublisher extends AbstractVerticle{
       // Loop over result set and update map
       while (resultSet.next()) {
         int aSensor = resultSet.getInt("sensorid");
-        Set<String> tempSet = tempMap.getOrDefault(Integer.valueOf(aSensor), new HashSet<String>());
+        Set<String> tempSet = tempMap.getOrDefault(aSensor, new HashSet<String>());
         tempSet.add(resultSet.getString("topic"));
         tempMap.put(aSensor, tempSet);
       }
