@@ -150,7 +150,7 @@ public class DataPublisher extends AbstractVerticle{
       // Loop over result set and update map
       while (resultSet.next()) {
         int aSensor = resultSet.getInt("sensorid");
-        Set<String> tempSet = tempMap.getOrDefault(Integer.valueOf(aSensor), new HashSet<String>());
+        Set<String> tempSet = tempMap.getOrDefault(aSensor, new HashSet<String>());
         tempSet.add(resultSet.getString("topic"));
         tempMap.put(aSensor, tempSet);
       }
