@@ -1,7 +1,7 @@
 package com.iot4pwc.verticles;
 
+import com.iot4pwc.components.tables.SensorHistory;
 import com.iot4pwc.constants.ConstLib;
-import com.iot4pwc.components.tables.SensorHistoryTable;
 import com.mysql.jdbc.Statement;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.WorkerExecutor;
@@ -53,9 +53,9 @@ public class DataService extends AbstractVerticle {
       String insertLogQuery = String
         .format(
           "INSERT INTO sensor_history (sensor_id, value_content, recorded_time) VALUES (%1, %2, %3)",
-          jsonPayload.getInteger(SensorHistoryTable.sensorId),
-          jsonPayload.getString(SensorHistoryTable.value),
-          jsonPayload.getString(SensorHistoryTable.time)
+          jsonPayload.getInteger(SensorHistory.sensor_id),
+          jsonPayload.getString(SensorHistory.value_content),
+          jsonPayload.getString(SensorHistory.recorded_time)
         );
 
       statement.execute(insertLogQuery);

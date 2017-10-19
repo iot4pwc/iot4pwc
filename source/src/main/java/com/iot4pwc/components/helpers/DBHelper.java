@@ -1,6 +1,6 @@
 package com.iot4pwc.components.helpers;
 
-import com.iot4pwc.components.tables.DBTable;
+import com.iot4pwc.components.tables.QueryTable;
 import com.iot4pwc.constants.ConstLib;
 import com.iot4pwc.verticles.DataService;
 import com.mysql.jdbc.Statement;
@@ -21,13 +21,13 @@ public class DBHelper {
     connection = getConnection();
   }
 
-  public boolean insert(JsonObject recordObject, DBTable table) {
+  public boolean insert(JsonObject recordObject, QueryTable table) {
     try {
       Statement statement = (Statement) connection.createStatement();
 
       List<String> fields = table.getFields();
 
-      String query = getQueryString(fields, table.tableName, recordObject);
+      String query = getQueryString(fields, table.getTableName(), recordObject);
 
       statement.execute(query);
 
@@ -39,7 +39,7 @@ public class DBHelper {
     return false;
   }
 
-  public List<JsonObject> select(String query, DBTable table) {
+  public List<JsonObject> select(String query, QueryTable table) {
     Statement statement;
     try {
       statement = (Statement) connection.createStatement();
@@ -113,30 +113,7 @@ public class DBHelper {
 
     return query;
   }
-  
-  
-  public List<JsonObject> select(String query, DBTable table) {
-	    Statement statement;
-	    try {
-	      statement = (Statement) connection.createStatement();
-	      ResultSet rs = statement.executeQuery(query);
-	      LinkedList<JsonObject> records = new LinkedList<>();
-	      while (rs.next()) {
-	        JsonObject record = new JsonObject();
-	        for (String field: table.getFields()) {
-	          record.put(field, rs.getString(field));
-	        }
-	        records.add(record);
-	        rs.next();
-	      }
 
-	      return records;
-	    } catch (SQLException e) {
-	      e.printStackTrace();
-	    }
-
-	    return null;
-	  }
   private String concatWithCommas(Collection<String> words) {
     StringBuilder wordList = new StringBuilder();
     for (String word : words) {
