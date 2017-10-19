@@ -9,6 +9,7 @@ import io.vertx.core.json.JsonObject;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -82,7 +83,30 @@ public class DBHelper {
 
     return query;
   }
+  
+  
+  public List<JsonObject> select(String query, DBTable table) {
+	    Statement statement;
+	    try {
+	      statement = (Statement) connection.createStatement();
+	      ResultSet rs = statement.executeQuery(query);
+	      LinkedList<JsonObject> records = new LinkedList<>();
+	      while (rs.next()) {
+	        JsonObject record = new JsonObject();
+	        for (String field: table.getFields()) {
+	          record.put(field, rs.getString(field));
+	        }
+	        records.add(record);
+	        rs.next();
+	      }
 
+	      return records;
+	    } catch (SQLException e) {
+	      e.printStackTrace();
+	    }
+
+	    return null;
+	  }
   private String concatWithCommas(Collection<String> words) {
     StringBuilder wordList = new StringBuilder();
     for (String word : words) {
