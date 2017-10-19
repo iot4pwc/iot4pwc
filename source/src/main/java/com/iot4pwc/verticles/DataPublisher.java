@@ -12,6 +12,7 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import com.iot4pwc.constants.ConstLib;
 import com.mysql.jdbc.Statement;
@@ -46,7 +47,7 @@ public class DataPublisher extends AbstractVerticle{
       try {
         mqttClient = getMqttClient(ConstLib.MQTT_BROKER_STRING, this.getClass().getName());
       } catch (Exception e) {
-        System.out.println(this.getClass().getName()+": Unable to get MQTT Client");
+        System.out.println(this.getClass().getName() + ": Unable to get MQTT Client");
         e.printStackTrace();
       }
 
@@ -60,46 +61,16 @@ public class DataPublisher extends AbstractVerticle{
         String structuredData = (String)message.body();
 
         JsonObject jsonObject = new JsonObject(structuredData);
-        int sensorID = jsonObject.getInteger("sensorID");
-        Set<String> sensorTopics = null;
+        Set<String> sensorTopics = getTopicSet(jsonObject, connection);
 
-        if (sensorTopicMapping.containsKey(sensorID)) {
-          sensorTopics = sensorTopicMapping.get(sensorID);
-        } else {
-          // Refresh map with just one record (for optimized DB performance, yo!)
-          getOneSensorMapping(connection, sensorID, sensorTopicMapping);
-
-          // Set sensible default
-          if (sensorTopicMapping.containsKey(sensorID)) {
-            sensorTopics = sensorTopicMapping.get(sensorID);
-          } 
-        }
-
-        if (sensorTopics != null && mqttClient != null)
-        {
+        if (sensorTopics != null && mqttClient != null) {
           // Loop over all topics, and publish one for each.
-          for (String topic : sensorTopics) {
-
-            // Sysout 
-            System.out.println(this.getClass().getName()+": Sending to MQTT - " + jsonObject.toString());
- 
-            try {
-              System.out.println(this.getClass().getName()+"Publishing message: "+jsonObject.toString());
-              MqttMessage mqttMessage = new MqttMessage(jsonObject.toString().getBytes());
-              mqttMessage.setQos(ConstLib.MQTT_QUALITY_OF_SERVICE);
-              mqttClient.publish(topic, mqttMessage);
-              System.out.println(this.getClass().getName()+"Published");
-            } catch(MqttException me) {
-              System.out.println("reason "+me.getReasonCode());
-              System.out.println("msg "+me.getMessage());
-              System.out.println("loc "+me.getLocalizedMessage());
-              System.out.println("cause "+me.getCause());
-              System.out.println("excep "+me);
-              me.printStackTrace();
-            }
+          for (String topic : sensorTopics) { 
+            publishToMqtt(mqttClient, topic, jsonObject.toString(), ConstLib.MQTT_QUALITY_OF_SERVICE);
           }
         }
-      });
+      }
+          );
 
       // Future is complete, we can safely return to the main thread.
       future.complete();
@@ -111,7 +82,7 @@ public class DataPublisher extends AbstractVerticle{
 
   public void stop() {
     closeConnection(connection);
-    
+
     try {
       closeMqttClient(mqttClient);
     } catch (Exception e){
@@ -140,14 +111,14 @@ public class DataPublisher extends AbstractVerticle{
     }
 
     try { 
-      System.out.println(DataPublisher.class.getName()+": Connecting to a selected database...");
+      System.out.println(DataPublisher.class.getName() + ": Connecting to a selected database...");
       connection =  DriverManager.getConnection(ConstLib.CONNECTION_STRING, DB_USER_NAME, DB_USER_PW);
-      System.out.println(DataPublisher.class.getName()+": Connected database successfully...");
+      System.out.println(DataPublisher.class.getName() + ": Connected database successfully...");
       return connection;
     } catch (SQLException ex) {
-      System.out.println(DataPublisher.class.getName()+": SQLException: " + ex.getMessage());
-      System.out.println(DataPublisher.class.getName()+": SQLState: " + ex.getSQLState());
-      System.out.println(DataPublisher.class.getName()+": VendorError: " + ex.getErrorCode());
+      System.out.println(DataPublisher.class.getName() + ": SQLException: " + ex.getMessage());
+      System.out.println(DataPublisher.class.getName() + ": SQLState: " + ex.getSQLState());
+      System.out.println(DataPublisher.class.getName() + ": VendorError: " + ex.getErrorCode());
       return null;
     }
   }
@@ -170,7 +141,7 @@ public class DataPublisher extends AbstractVerticle{
     return tempClient;
   }
 
-  // @TODO: This can be modular. Please create a ticket for this in 2.0
+  // TODO make a nicer clean-up.
   private static void closeConnection (Connection connection) {
     if(connection!=null) {
       try {
@@ -180,14 +151,16 @@ public class DataPublisher extends AbstractVerticle{
       } finally {
         connection = null;
       }
-      System.out.println(DataService.class.getName()+": Closed connection!");
+      System.out.println(DataService.class.getName() + ": Closed connection!");
     }
   }
 
+  // TODO -- I don't know if it will be one line later on. 
+  // I suggest we keep it modular, in case we want to do more cleanup upon closing MqttClient later on. 
   private static void closeMqttClient(MqttClient mqttClient) throws MqttException {
     mqttClient.close();
   }
-  
+
   private static Map<Integer, Set<String>> getSensorTopicMapping(Connection connection) {
     Map<Integer, Set<String>> tempMap = new HashMap<Integer, Set<String>>();
 
@@ -233,4 +206,43 @@ public class DataPublisher extends AbstractVerticle{
     }
   }
 
+  private static void publishToMqtt(MqttClient mqttClient, String topic, String message, int qualityOfService) {
+    MqttMessage mqttMessage = new MqttMessage(message.getBytes());
+    mqttMessage.setQos(qualityOfService);
+    try {
+      mqttClient.publish(topic, mqttMessage);
+      System.out.println(DataPublisher.class.getName() + ": Published message: " + message);
+    } catch (MqttPersistenceException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (MqttException me) {
+      // TODO Auto-generated catch block
+      System.out.println("reason " + me.getReasonCode());
+      System.out.println("msg " + me.getMessage());
+      System.out.println("loc " + me.getLocalizedMessage());
+      System.out.println("cause " + me.getCause());
+      System.out.println("excep " + me);
+    }
+  }
+
+  private static Set<String> getTopicSet(JsonObject jsonPayload, Connection connection) {
+    int sensorID = jsonPayload.getInteger("sensorID");
+    Set<String> sensorTopics = null;
+
+    if (sensorTopicMapping.containsKey(sensorID)) {
+      sensorTopics = sensorTopicMapping.get(sensorID);
+    } else {
+      // Refresh map with just one record (for optimized DB performance, yo!)
+      getOneSensorMapping(connection, sensorID, sensorTopicMapping);
+
+      // Set sensible default
+      if (sensorTopicMapping.containsKey(sensorID)) {
+        sensorTopics = sensorTopicMapping.get(sensorID);
+      } 
+    }
+    
+    return sensorTopics;
+  }
+  
+  
 } // end class
