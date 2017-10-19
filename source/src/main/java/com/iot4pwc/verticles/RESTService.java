@@ -82,7 +82,6 @@ public class RESTService extends AbstractVerticle {
 
 	private void getInstalledSensor(RoutingContext routingContext){
 		System.out.println(RESTService.class.getName()+" : GET " + routingContext.request().uri());
-
 	}
 
 	private void getLocInfo(RoutingContext routingContext){
