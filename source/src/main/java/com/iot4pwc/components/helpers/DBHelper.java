@@ -1,7 +1,6 @@
-package com.iot4pwc.components;
+package com.iot4pwc.components.helpers;
 
 import com.iot4pwc.components.tables.DBTable;
-import com.iot4pwc.components.tables.SensorHistoryTable;
 import com.iot4pwc.constants.ConstLib;
 import com.iot4pwc.verticles.DataService;
 import com.mysql.jdbc.Statement;
@@ -9,6 +8,7 @@ import io.vertx.core.json.JsonObject;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -31,8 +31,6 @@ public class DBHelper {
 
       statement.execute(query);
 
-      System.out.println(DataService.class.getName()+": Inserted records into the table...");
-
       return true;
 
     } catch (SQLException e) {
@@ -41,28 +39,61 @@ public class DBHelper {
     return false;
   }
 
-  private Connection getConnection() {
-    Connection connection = null;
-
-    String userName = System.getenv("DB_USER_NAME");
-    String password = System.getenv("DB_USER_PW");
-
+  public List<JsonObject> select(String query, DBTable table) {
+    Statement statement;
     try {
-      Class.forName("com.mysql.jdbc.Driver").newInstance();
+      statement = (Statement) connection.createStatement();
+      ResultSet rs = statement.executeQuery(query);
+      LinkedList<JsonObject> records = new LinkedList<>();
+      while (rs.next()) {
+        JsonObject record = new JsonObject();
+        for (String field: table.getFields()) {
+          record.put(field, rs.getString(field));
+        }
+        records.add(record);
+        rs.next();
+      }
+
+      return records;
     } catch (Exception e) {
       e.printStackTrace();
     }
 
-    try {
-      System.out.println(DataService.class.getName()+": Connecting to a selected database...");
-      connection =  DriverManager.getConnection(ConstLib.CONNECTION_STRING, userName, password);
-      System.out.println(DataService.class.getName()+": Connected database successfully...");
-    } catch (SQLException ex) {
-      System.out.println(DataService.class.getName()+": SQLException: " + ex.getMessage());
-      System.out.println(DataService.class.getName()+": SQLState: " + ex.getSQLState());
-      System.out.println(DataService.class.getName()+": VendorError: " + ex.getErrorCode());
-    } finally {
+    return null;
+  }
+
+  private Connection getConnection() {
+    if (connection == null) {
+      String userName = System.getenv("DB_USER_NAME");
+      String password = System.getenv("DB_USER_PW");
+
+      try {
+        Class.forName("com.mysql.jdbc.Driver").newInstance();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+
+      try {
+        connection =  DriverManager.getConnection(ConstLib.CONNECTION_STRING, userName, password);
+        System.out.println(DataService.class.getName()+": Connected database successfully...");
+      } catch (Exception e) {
+        e.printStackTrace();
+      } finally {
+        return connection;
+      }
+    } else {
       return connection;
+    }
+  }
+
+  private void closeConnection() {
+    if(connection!= null) {
+      try {
+        connection.close();
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+      System.out.println(DataService.class.getName()+": Closed connection!");
     }
   }
 

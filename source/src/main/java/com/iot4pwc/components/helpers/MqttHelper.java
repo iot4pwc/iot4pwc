@@ -1,12 +1,10 @@
-package com.iot4pwc.components;
+package com.iot4pwc.components.helpers;
 
 import java.util.Set;
 
 import com.iot4pwc.verticles.DataPublisher;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
+import org.eclipse.paho.client.mqttv3.*;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 public class MqttHelper {
 
@@ -32,7 +30,15 @@ public class MqttHelper {
       System.out.println("loc " + me.getLocalizedMessage());
       System.out.println("cause " + me.getCause());
       System.out.println("excep " + me);
+      me.printStackTrace();
     }
   }
-  
+
+  public static MqttClient getMqttClient(String broker, String clientId) throws MqttException {
+    MqttClient client = new MqttClient (broker, clientId);
+    MqttConnectOptions connOpts = new MqttConnectOptions();
+    connOpts.setCleanSession(true);
+    client.connect(connOpts);
+    return client;
+  }
 }

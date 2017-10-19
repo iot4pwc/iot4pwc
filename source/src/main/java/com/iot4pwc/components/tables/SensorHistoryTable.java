@@ -10,9 +10,9 @@ public class SensorHistoryTable extends DBTable {
   public LinkedList<String> fields;
 
   public String tableName = "sensor_history";
-  public final String sensorId = "sensor_id";
-  public final String value  = "value_content";
-  public final String time = "recorded_time";
+  public static final String sensorId = "sensor_id";
+  public static final String value  = "value_content";
+  public static final String time = "recorded_time";
 
   private SensorHistoryTable() {
     // DO NOT add fields you're not going to insert
