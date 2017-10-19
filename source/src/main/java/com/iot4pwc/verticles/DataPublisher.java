@@ -62,12 +62,13 @@ public class DataPublisher extends AbstractVerticle{
 
         JsonObject jsonObject = new JsonObject(structuredData);
         Set<String> sensorTopics = getTopicSet(jsonObject, connection);
+        
 
         if (sensorTopics != null && mqttClient != null) {
           // Loop over all topics, and publish one for each.
           for (String topic : sensorTopics) { 
             // TODO: Make mqttClient recover. Filed a bug for this (IOT-92)
-            publishToMqtt(mqttClient, topic, jsonObject.toString(), ConstLib.MQTT_QUALITY_OF_SERVICE);
+            MqttHelper.publish(mqttClient, sensorTopics, structuredData, ConstLib.MQTT_QUALITY_OF_SERVICE);
           }
         }
       }
@@ -207,24 +208,6 @@ public class DataPublisher extends AbstractVerticle{
     }
   }
 
-  private static void publishToMqtt(MqttClient mqttClient, String topic, String message, int qualityOfService) {
-    MqttMessage mqttMessage = new MqttMessage(message.getBytes());
-    mqttMessage.setQos(qualityOfService);
-    try {
-      mqttClient.publish(topic, mqttMessage);
-      System.out.println(DataPublisher.class.getName() + ": Published message: " + message);
-    } catch (MqttPersistenceException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (MqttException me) {
-      // TODO Auto-generated catch block
-      System.out.println("reason " + me.getReasonCode());
-      System.out.println("msg " + me.getMessage());
-      System.out.println("loc " + me.getLocalizedMessage());
-      System.out.println("cause " + me.getCause());
-      System.out.println("excep " + me);
-    }
-  }
 
   private static Set<String> getTopicSet(JsonObject jsonPayload, Connection connection) {
     int sensorID = jsonPayload.getInteger("sensorID");
