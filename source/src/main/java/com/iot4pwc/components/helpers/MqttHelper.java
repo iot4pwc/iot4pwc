@@ -9,8 +9,8 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Set;
 
+import com.iot4pwc.components.publisheRequests.PublishRequestHandler;
 import com.iot4pwc.constants.ConstLib;
-import com.iot4pwc.verticles.DataPublisher;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.eclipse.paho.client.mqttv3.*;
 
@@ -20,45 +20,39 @@ import javax.net.ssl.TrustManagerFactory;
 
 public class MqttHelper {
   MqttClient client;
+  boolean isTLSEnabled;
 
-  public MqttHelper(boolean TLSEnabled) {
-    client = TLSEnabled ? getMqttTLSClient() : getMqttClient();
+  public MqttHelper(boolean isTLSEnabled) {
+    this.isTLSEnabled = isTLSEnabled;
+    client = this.isTLSEnabled ? getMqttTLSClient() : getMqttClient();
   }
 
-  public static void publish(MqttClient client, Set<String> topicList, String message, int qualityOfService) {
-    for (String topic : topicList) {
-      MqttHelper.publishToMqtt(client, topic, message, qualityOfService);
+  public void publish(List<PublishRequestHandler> publishRequests) {
+    for (PublishRequestHandler request: publishRequests) {
+      request.handlePublish(this);
     }
   }
 
-  public static void publish(MqttClient client, List<PublishRequest> publishRequests) {
-    for (PublishRequest request: publishRequests) {
-      // this is more open to change
-      request.handlePublish(client);
+  public void subscribe(Set<String> topics) {
+    for (String topic : topics) {
+      try {
+        client = getAliveClient();
+        client.subscribe(topic);
+      } catch (MqttException me) {
+        me.printStackTrace();
+      }
     }
   }
 
-  public static void publishToMqtt(MqttClient client, String topic, String message, int qualityOfService) {
-    MqttMessage mqttMessage = new MqttMessage(message.getBytes());
-    mqttMessage.setQos(qualityOfService);
+  public void closeConnection() {
     try {
-      client.publish(topic, mqttMessage);
-      System.out.println(DataPublisher.class.getName() + ": Published message: " + message);
-    } catch (MqttPersistenceException e) {
-      // TODO Auto-generated catch block
+      client.disconnect();
+    } catch (Exception e) {
       e.printStackTrace();
-    } catch (MqttException me) {
-      // TODO Auto-generated catch block
-      System.out.println("reason " + me.getReasonCode());
-      System.out.println("msg " + me.getMessage());
-      System.out.println("loc " + me.getLocalizedMessage());
-      System.out.println("cause " + me.getCause());
-      System.out.println("excep " + me);
-      me.printStackTrace();
     }
   }
 
-  public static MqttClient getMqttClient() {
+  private MqttClient getMqttClient() {
     MqttClient client = null;
     try {
       String broker = ConstLib.MQTT_BROKER_STRING;
@@ -74,7 +68,7 @@ public class MqttHelper {
     }
   }
 
-  public static MqttClient getMqttTLSClient() {
+  private MqttClient getMqttTLSClient() {
     MqttClient client = null;
     try {
       String broker = ConstLib.MQTT_BROKER_TLS_STRING;
@@ -82,7 +76,7 @@ public class MqttHelper {
       client = new MqttClient (broker, clientID);
       MqttConnectOptions connOpts = new MqttConnectOptions();
       connOpts.setCleanSession(true);
-      connOpts.setSocketFactory(MqttHelper.getSocketFactory(ConstLib.MQTT_CA_FILE));
+      connOpts.setSocketFactory(getSocketFactory(ConstLib.MQTT_CA_FILE));
       client.connect(connOpts);
     } catch (Exception e) {
       e.printStackTrace();
@@ -91,10 +85,16 @@ public class MqttHelper {
     }
   }
 
-  public static SSLSocketFactory getSocketFactory(final String caCrtFile) throws Exception {
+  public MqttClient getAliveClient() {
+    if (!client.isConnected()) {
+      client = this.isTLSEnabled ? getMqttTLSClient() : getMqttClient();
+    }
+    return client;
+  }
+
+  private SSLSocketFactory getSocketFactory(final String caCrtFile) throws Exception {
     Security.addProvider(new BouncyCastleProvider());
 
-    // load CA certificate
     X509Certificate caCert = null;
 
     FileInputStream fis = new FileInputStream(caCrtFile);
@@ -111,33 +111,9 @@ public class MqttHelper {
     TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
     tmf.init(caKs);
 
-    // finally, create SSL socket factory
     SSLContext context = SSLContext.getInstance(ConstLib.MQTT_TLS_VERSION);
     context.init(null, tmf.getTrustManagers(), null);
 
     return context.getSocketFactory();
-  }
-}
-
-class PublishRequest {
-  private String topic;
-  private String message;
-  private int qos;
-
-  public PublishRequest(String topic, String message, int qos) {
-    this.topic = topic;
-    this.message = message;
-    this.qos = qos;
-  }
-
-  // TODO: check if client is alive
-  public void handlePublish(MqttClient client) {
-    MqttMessage mqttMessage = new MqttMessage(message.getBytes());
-    mqttMessage.setQos(qos);
-    try {
-      client.publish(topic, mqttMessage);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 }

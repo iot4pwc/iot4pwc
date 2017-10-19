@@ -4,11 +4,10 @@ import java.util.*;
 
 import com.iot4pwc.components.helpers.DBHelper;
 import com.iot4pwc.components.helpers.MqttHelper;
+import com.iot4pwc.components.publisheRequests.PublishRequest;
+import com.iot4pwc.components.publisheRequests.PublishRequestHandler;
 import com.iot4pwc.components.tables.SensorTopic;
 import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import com.iot4pwc.constants.ConstLib;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.WorkerExecutor;
@@ -21,6 +20,7 @@ import io.vertx.core.json.JsonObject;
  */
 public class DataPublisher extends AbstractVerticle {
   private DBHelper dbHelper;
+  private MqttHelper mqttHelper;
   private MqttClient mqttClient = null;
   private static Map<Integer, Set<String>> sensorTopicMapping = new HashMap<>();
 
@@ -30,13 +30,7 @@ public class DataPublisher extends AbstractVerticle {
     WorkerExecutor executor = vertx.createSharedWorkerExecutor(ConstLib.DATA_PUBLISHER_WORKER_POOL);
     executor.executeBlocking (future -> {
       dbHelper = new DBHelper();
-
-      try {
-        mqttClient = getMqttClient(ConstLib.MQTT_BROKER_STRING, this.getClass().getName());
-      } catch (Exception e) {
-        System.out.println(this.getClass().getName() + ": Unable to get MQTT TLSMQTTClient");
-        e.printStackTrace();
-      }
+      mqttHelper = new MqttHelper(ConstLib.MQTT_TLS_ENABLED);
 
       sensorTopicMapping = getSensorTopicMapping();
 
@@ -45,50 +39,32 @@ public class DataPublisher extends AbstractVerticle {
 
         JsonObject structuredDataJSON = new JsonObject(structuredData);
         Set<String> sensorTopics = getTopicSet(structuredDataJSON);
-        
 
-        if (sensorTopics != null && mqttClient != null) {
-          // Loop over all topics, and publish one for each.
-          for (String topic : sensorTopics) { 
-            // TODO: Make mqttClient recover. Filed a bug for this (IOT-92)
-            MqttHelper.publish(mqttClient, sensorTopics, structuredData, ConstLib.MQTT_QUALITY_OF_SERVICE);
+        List<PublishRequestHandler> publishRequests = new LinkedList<>();
+        if (sensorTopics != null && mqttHelper != null) {
+          for (String topic : sensorTopics) {
+            PublishRequest request = new PublishRequest(
+              topic,
+              structuredData,
+              ConstLib.MQTT_QUALITY_OF_SERVICE
+            );
+
+            publishRequests.add(request);
           }
-        }
-      }
-          );
 
-      // Future is complete, we can safely return to the main thread.
+          mqttHelper.publish(publishRequests);
+        }
+      });
+
       future.complete();
 
-      // TODO: consider more functionality
+      // TODO: add response
     }, res -> {});
   }
 
   public void stop() {
     dbHelper.closeConnection();
-  }
-
-  private static MqttClient getMqttClient(String broker, String clientId) throws MqttException {
-    // Not sure what to do with this persistence Setting, leaving default for now
-    MemoryPersistence persistence = new MemoryPersistence();
-
-    // Create the MqttClient object
-    MqttClient tempClient = new MqttClient (broker, clientId, persistence);
-
-    // Prepare for connection. Not sure what to do with this setting, leaving default for now
-    MqttConnectOptions connOpts = new MqttConnectOptions();
-    connOpts.setCleanSession(true);
-
-    // Connect
-    tempClient.connect(connOpts);
-
-    // Return the connected TLSMQTTClient
-    return tempClient;
-  }
-
-  // I suggest we keep it modular, in case we want to do more cleanup upon closing MqttClient later on.
-  private void closeMqttClient(MqttClient mqttClient) throws MqttException {
-    mqttClient.close();
+    mqttHelper.closeConnection();
   }
 
   private Map<Integer, Set<String>> getSensorTopicMapping() {

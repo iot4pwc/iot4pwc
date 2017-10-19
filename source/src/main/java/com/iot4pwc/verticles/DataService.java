@@ -4,23 +4,15 @@ import com.iot4pwc.components.helpers.DBHelper;
 import com.iot4pwc.components.tables.QueryTable;
 import com.iot4pwc.components.tables.SensorHistory;
 import com.iot4pwc.constants.ConstLib;
-import com.mysql.jdbc.Statement;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.WorkerExecutor;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-
 /**
  * This is a data service that persists the data to the database
  */
 public class DataService extends AbstractVerticle {
-  private Connection connection;
   private DBHelper dbHelper;
   
   
@@ -38,7 +30,13 @@ public class DataService extends AbstractVerticle {
         
         // Prepare document to be inserted (JSON) and targetTable.
         JsonObject structuredDataJSON = new JsonObject((String)message.body());
-        QueryTable targetTable = new QueryTable(SensorHistory.tableName, SensorHistory.record_id, SensorHistory.recorded_time, SensorHistory.sensor_id, SensorHistory.value_content); 
+        QueryTable targetTable = new QueryTable(
+          SensorHistory.tableName,
+          SensorHistory.record_id,
+          SensorHistory.recorded_time,
+          SensorHistory.sensor_id,
+          SensorHistory.value_content
+        );
         
         // Print success/failure of insertion
         boolean result = dbHelper.insert(structuredDataJSON, targetTable); 

@@ -17,12 +17,12 @@ public class ConstLib {
 
   public static final String SERVICE_PLATFORM_OPTION = "-sp";
   public static final String DATA_GENERATOR_OPTION = "-dg";
+  
+  public static final String CONNECTION_STRING = "jdbc:mysql://18.221.182.91/service_platform";
 
   public static final String MQTT_HOST = "localhost";
   public static final int MQTT_PORT = 8883;
-  
-  public static final String CONNECTION_STRING = "jdbc:mysql://18.221.182.91/service_platform";
-  
+  public static final boolean MQTT_TLS_ENABLED = false;
   public static final String MQTT_BROKER_STRING = "tcp://ec2-18-221-127-99.us-east-2.compute.amazonaws.com:1883";
   public static final String MQTT_BROKER_TLS_STRING = "tcp://ec2-18-221-127-99.us-east-2.compute.amazonaws.com:1883";
   public static final String MQTT_CA_FILE = "/home/ubuntu/ca.crt";
