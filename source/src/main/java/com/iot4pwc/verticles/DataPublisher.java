@@ -8,12 +8,18 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import com.iot4pwc.constants.ConstLib;
 import com.mysql.jdbc.Statement;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.WorkerExecutor;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
+
 
 /**
  * This is a publisher that subscribes to an event published by DataParser and pass the
@@ -22,6 +28,8 @@ import io.vertx.core.json.JsonObject;
 public class DataPublisher extends AbstractVerticle{
 
   private Connection connection;
+  private MqttClient mqttClient = null;
+  private int qualityOfService = 2;
 
   private static Map<Integer, Set<String>> sensorTopicMapping = new HashMap<Integer, Set<String>>(); 
 
@@ -37,6 +45,13 @@ public class DataPublisher extends AbstractVerticle{
       // We want this to block because it is in the startup only.
       connection = getConnection();
 
+      try {
+        mqttClient = getMqttClient(ConstLib.MQTT_BROKER_STRING, this.getClass().getName());
+      } catch (Exception e) {
+        System.out.println(this.getClass().getName()+": Unable to get MQTT Client");
+        e.printStackTrace();
+      }
+
       // Get the map of sensors to topic.
       sensorTopicMapping = getSensorTopicMapping(connection);
 
@@ -48,7 +63,7 @@ public class DataPublisher extends AbstractVerticle{
 
         JsonObject jsonObject = new JsonObject(structuredData);
         int sensorID = jsonObject.getInteger("sensorID");
-        Set<String> sensorTopics;
+        Set<String> sensorTopics = null;
 
         if (sensorTopicMapping.containsKey(sensorID)) {
           sensorTopics = sensorTopicMapping.get(sensorID);
@@ -59,23 +74,32 @@ public class DataPublisher extends AbstractVerticle{
           // Set sensible default
           if (sensorTopicMapping.containsKey(sensorID)) {
             sensorTopics = sensorTopicMapping.get(sensorID);
-          } else {
-            sensorTopics = new HashSet<String>();
-            sensorTopics.add("NO_TOPIC");
-          }
+          } 
         }
-        
-        // Loop over all topics, and publish one for each.
-        for (String topic : sensorTopics) {
-          
-          // Add topic to the JSON being forwarded to MQTT
-          //We should not send the topic as a payload - just use it to send to correct destination.
-          //jsonObject.put("topic", topic);
 
-          // Sysout
-          System.out.println(this.getClass().getName()+": Sending to MQTT - " + jsonObject.toString());
+        if (sensorTopics != null && mqttClient != null)
+        {
+          // Loop over all topics, and publish one for each.
+          for (String topic : sensorTopics) {
 
-          //@TODO Write to MQTT the newly updated JSON object.
+            // Sysout 
+            System.out.println(this.getClass().getName()+": Sending to MQTT - " + jsonObject.toString());
+ 
+            try {
+              System.out.println(this.getClass().getName()+"Publishing message: "+jsonObject.toString());
+              MqttMessage mqttMessage = new MqttMessage(jsonObject.toString().getBytes());
+              mqttMessage.setQos(ConstLib.MQTT_QUALITY_OF_SERVICE);
+              mqttClient.publish(topic, mqttMessage);
+              System.out.println(this.getClass().getName()+"Published");
+            } catch(MqttException me) {
+              System.out.println("reason "+me.getReasonCode());
+              System.out.println("msg "+me.getMessage());
+              System.out.println("loc "+me.getLocalizedMessage());
+              System.out.println("cause "+me.getCause());
+              System.out.println("excep "+me);
+              me.printStackTrace();
+            }
+          }
         }
       });
 
@@ -89,10 +113,16 @@ public class DataPublisher extends AbstractVerticle{
 
   public void stop() {
     closeConnection(connection);
+    
+    try {
+      closeMqttClient(mqttClient);
+    } catch (Exception e){
+      e.printStackTrace();
+    }
   }
 
   // @TODO: This can be modular. Please create a ticket for this in 2.0
-  private static Connection getConnection(){
+  private static Connection getConnection() {
 
     // Get a fresh connection
     Connection connection = null;
@@ -112,16 +142,34 @@ public class DataPublisher extends AbstractVerticle{
     }
 
     try { 
-      System.out.println(DataService.class.getName()+": Connecting to a selected database...");
+      System.out.println(DataPublisher.class.getName()+": Connecting to a selected database...");
       connection =  DriverManager.getConnection(ConstLib.CONNECTION_STRING, DB_USER_NAME, DB_USER_PW);
-      System.out.println(DataService.class.getName()+": Connected database successfully...");
+      System.out.println(DataPublisher.class.getName()+": Connected database successfully...");
       return connection;
     } catch (SQLException ex) {
-      System.out.println(DataService.class.getName()+": SQLException: " + ex.getMessage());
-      System.out.println(DataService.class.getName()+": SQLState: " + ex.getSQLState());
-      System.out.println(DataService.class.getName()+": VendorError: " + ex.getErrorCode());
+      System.out.println(DataPublisher.class.getName()+": SQLException: " + ex.getMessage());
+      System.out.println(DataPublisher.class.getName()+": SQLState: " + ex.getSQLState());
+      System.out.println(DataPublisher.class.getName()+": VendorError: " + ex.getErrorCode());
       return null;
     }
+  }
+
+  private static MqttClient getMqttClient(String broker, String clientId) throws MqttException {
+    // Not sure what to do with this persistence Setting, leaving default for now
+    MemoryPersistence persistence = new MemoryPersistence();
+
+    // Create the MqttClient object
+    MqttClient tempClient = new MqttClient (broker, clientId, persistence);
+
+    // Prepare for connection. Not sure what to do with this setting, leaving default for now
+    MqttConnectOptions connOpts = new MqttConnectOptions();
+    connOpts.setCleanSession(true);
+
+    // Connect
+    tempClient.connect(connOpts);
+
+    // Return the connected Client
+    return tempClient;
   }
 
   // @TODO: This can be modular. Please create a ticket for this in 2.0
@@ -138,6 +186,10 @@ public class DataPublisher extends AbstractVerticle{
     }
   }
 
+  private static void closeMqttClient(MqttClient mqttClient) throws MqttException {
+    mqttClient.close();
+  }
+  
   private static Map<Integer, Set<String>> getSensorTopicMapping(Connection connection) {
     Map<Integer, Set<String>> tempMap = new HashMap<Integer, Set<String>>();
 
@@ -145,11 +197,11 @@ public class DataPublisher extends AbstractVerticle{
     try {
       // Execute a SQL query.
       statement = (Statement) connection.createStatement();
-      ResultSet resultSet = statement.executeQuery("SELECT * FROM sensor_topic_mapping");
+      ResultSet resultSet = statement.executeQuery("SELECT * FROM sensor_topic_map");
 
       // Loop over result set and update map
       while (resultSet.next()) {
-        int aSensor = resultSet.getInt("sensorid");
+        int aSensor = resultSet.getInt("sensor_id");
         Set<String> tempSet = tempMap.getOrDefault(aSensor, new HashSet<String>());
         tempSet.add(resultSet.getString("topic"));
         tempMap.put(aSensor, tempSet);
@@ -166,18 +218,18 @@ public class DataPublisher extends AbstractVerticle{
     try {
       // Execute a SQL query.
       statement = (Statement) connection.createStatement();
-      String sqlQueryString = "SELECT * FROM sensor_topic_mapping WHERE sensorid = " + sensorID; 
+      String sqlQueryString = "SELECT * FROM sensor_topic_map WHERE sensor_id = " + sensorID; 
       ResultSet resultSet = statement.executeQuery(sqlQueryString);
 
       Set<String> tempSet = new HashSet<String>();
-      
+
       // Loop over result set and update map
       while (resultSet.next()) {
         tempSet.add(resultSet.getString("topic"));
       }
-      
+
       existingMapping.put(sensorID, tempSet);
-      
+
     } catch (SQLException e) {
       e.printStackTrace();
     }

@@ -5,7 +5,7 @@ import com.mysql.jdbc.Statement;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.WorkerExecutor;
 import io.vertx.core.eventbus.EventBus;
-
+import io.vertx.core.json.JsonObject;
 // Required imports.
 import java.sql.Connection;
 import java.sql.Date;
@@ -39,7 +39,8 @@ public class DataService extends AbstractVerticle{
       // Consume from EventBus
       eb.consumer(ConstLib.DATA_SERVICE_ADDRESS, message -> {
         String structuredData = (String)message.body();
-        boolean result = insertLog(connection, structuredData); 
+        JsonObject jsonObject = new JsonObject(structuredData);
+        boolean result = insertLog(connection, jsonObject); 
         System.out.println(DataService.class.getName()+": Insertion success: " + result);
         this.context.put("result", result);
       });
@@ -60,15 +61,16 @@ public class DataService extends AbstractVerticle{
   }
 
 
-  private static boolean insertLog(Connection connection, String logString) {
+  // @Wang Yan: Recommend renaming this class to insertRecord
+  private static boolean insertLog(Connection connection, JsonObject jsonPayload) {
     try {
       Statement statement = (Statement) connection.createStatement();
 
       Timestamp stamp = new Timestamp(System.currentTimeMillis());
       Date date = new Date(stamp.getTime());
 
-      String sqlInsert = "INSERT INTO logs " +
-          "VALUES ( \'" + logString + "\' , \'" + date.toString() + "\')";
+      String sqlInsert = "INSERT INTO sensor_history (sensor_id, value_content) " +
+          "VALUES ( \'" + jsonPayload.getInteger("sensorID") + "\' , \'" + jsonPayload.toString() + "\')";
 
       statement.execute(sqlInsert);
 

@@ -14,7 +14,7 @@ INSERT INTO sensor (sensor_id, sensor_type, sensor_desc, model_no, installed_on,
 VALUES (5, 'Temperature', 'Measures temperature and humidity', 'THM186', '2016-7-04', '2020-8-15', 'Main lobby');
 
 INSERT INTO sensor (sensor_id, sensor_type, sensor_desc, model_no, installed_on, expiration_date, install_loc)
-VALUES (6, 'Motion', 'Measures noise', 'NHDG582', '2016-7-04', '2020-8-15', 'Main enterence');
+VALUES (6, 'Motion', 'Measures noise', 'NHDG582', '2016-7-04', '2020-8-15', 'Main entrance');
 
 INSERT INTO sensor_topic_map (sensor_id, topic)
 VALUES (1, '/noise/gates-conf-room');
