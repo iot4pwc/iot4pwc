@@ -27,8 +27,8 @@ public class Main {
       vertx.deployVerticle("com.iot4pwc.verticles.DataParser", deploymentOptions);
       deploymentOptions = new DeploymentOptions().setInstances(ConstLib.DATA_PUBLISHER_NUMBER);
       vertx.deployVerticle("com.iot4pwc.verticles.DataPublisher", deploymentOptions);
-//      deploymentOptions = new DeploymentOptions().setInstances(ConstLib.DATA_SERVICE_NUMBER);
-//      vertx.deployVerticle("com.iot4pwc.verticles.DataService", deploymentOptions);
+      deploymentOptions = new DeploymentOptions().setInstances(ConstLib.DATA_SERVICE_NUMBER);
+      vertx.deployVerticle("com.iot4pwc.verticles.DataService", deploymentOptions);
     } else {
       String option = args[0];
 

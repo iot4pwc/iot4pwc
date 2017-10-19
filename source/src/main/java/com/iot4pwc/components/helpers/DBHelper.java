@@ -15,7 +15,9 @@ public class DBHelper {
   private Connection connection;
 
   public DBHelper() {
-    connection = getConnection();
+    System.out.println("Creating a connection.");
+    this.connection = getConnection();
+    System.out.println("Created the connection, now returning");
   }
 
   public boolean insert(JsonObject recordObject, QueryTable table) {
@@ -23,10 +25,17 @@ public class DBHelper {
       Statement statement = (Statement) connection.createStatement();
 
       List<String> fields = table.getFields();
+      List<String> values = new LinkedList<>();
 
+      
       String query = getQueryString(fields, table.getTableName(), recordObject);
 
-      statement.execute(query);
+      PreparedStatement preparedStatement = connection.prepareStatement(query);
+      
+      finalizePreparedStatement(preparedStatement, fields, recordObject);
+      
+//      preparedStatement.setTimestamp(1, new java.sql.Timestamp(recordObject.getLong("recorded_time")));
+      preparedStatement.execute();
 
       return true;
 
@@ -78,6 +87,7 @@ public class DBHelper {
       try {
         connection =  DriverManager.getConnection(ConstLib.CONNECTION_STRING, userName, password);
         System.out.println(DataService.class.getName()+": Connected database successfully...");
+        return connection;
       } catch (Exception e) {
         e.printStackTrace();
       } finally {
@@ -99,21 +109,31 @@ public class DBHelper {
     }
   }
 
-  private String getQueryString(List<String> fields, String tableName, JsonObject recordObject) {
-    List<String> values = new LinkedList<>();
+  private String getQueryString(List<String> fields,  String tableName, JsonObject recordObject) {
+    List<String> values = new LinkedList<String>();
     for (String field: fields) {
-      values.add(recordObject.getString(field));
+      // Changed this (10/19) to reflect that not all fields are castable to String by default
+      if (field.contains("recorded_time")) {
+        values.add("?");
+      } else {
+        values.add(recordObject.getValue(field).toString()+"");
+      }
     }
 
-    String query = String
-      .format(
-        "INSERT INTO %1 (%2) VALUES (%3)",
-        tableName,
-        concatWithCommas(fields),
-        concatWithCommas(values)
-      );
+    String query = "INSERT INTO " + tableName + " ( " + concatWithCommas(fields) + " ) VALUES ( " +  concatWithCommas(values) + " )"; 
 
     return query;
+  }
+
+  // Method to run over the finalized queryString, which is already stored in the preparedStatement.
+  // Replace any ? with timestamps.
+  // TODO Make better in 2.0
+  private void finalizePreparedStatement(PreparedStatement preparedStatement, List<String> fields, JsonObject recordObject) throws SQLException {
+    for (int i = 1; i <= fields.size(); i++) {
+      if (fields.get(i-1).contains("recorded_time")) {
+        preparedStatement.setTimestamp(i, new java.sql.Timestamp(recordObject.getLong("recorded_time")));
+      }
+    }
   }
 
   private String concatWithCommas(Collection<String> words) {

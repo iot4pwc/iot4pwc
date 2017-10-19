@@ -18,21 +18,23 @@ public class DataService extends AbstractVerticle {
   
   public void start() {
     EventBus eb = vertx.eventBus();
-
+    
     WorkerExecutor executor = vertx.createSharedWorkerExecutor(ConstLib.DATA_SERVICE_WORKER_POOL);
     executor.executeBlocking (future -> {
 
       // Start the dbHelper
-      dbHelper = new DBHelper();      
+       dbHelper = new DBHelper();     
+      
+      System.out.println("Got the DB helper."); 
       
       // Receive a single message.
       eb.consumer(ConstLib.DATA_SERVICE_ADDRESS, message -> {
-        
+                
         // Prepare document to be inserted (JSON) and targetTable.
         JsonObject structuredDataJSON = new JsonObject((String)message.body());
         QueryTable targetTable = new QueryTable(
           SensorHistory.tableName,
-          SensorHistory.record_id,
+//          SensorHistory.record_id,
           SensorHistory.recorded_time,
           SensorHistory.sensor_id,
           SensorHistory.value_content
