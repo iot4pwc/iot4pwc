@@ -12,17 +12,8 @@
             <groupId>org.eclipse.paho</groupId>
             <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
             <version>1.2.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15</artifactId>
-            <version>1.46</version>
-        </dependency>
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpkix-jdk15on</artifactId>
-            <version>1.50</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/midterm_demo_app/resources/lib/org.eclipse.paho.client.mqttv3-1.2.0.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
@@ -45,7 +36,6 @@
             <version>5.1.39</version>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -68,16 +58,6 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
@@ -88,6 +68,25 @@
                             </transformers>
                             <artifactSet />
                             <outputFile>${project.build.directory}/${project.artifactId}-${project.version}-fat.jar</outputFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.googlecode.addjars-maven-plugin</groupId>
+                <artifactId>addjars-maven-plugin</artifactId>
+                <version>1.0.5</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>add-jars</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/src/main/resources/lib</directory>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>
