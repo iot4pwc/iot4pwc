@@ -6,10 +6,7 @@ import com.iot4pwc.verticles.DataService;
 import com.mysql.jdbc.Statement;
 import io.vertx.core.json.JsonObject;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,15 +36,20 @@ public class DBHelper {
     return false;
   }
 
-  public List<JsonObject> select(String query, QueryTable table) {
+  public List<JsonObject> select(String query) {
     Statement statement;
     try {
+      LinkedList<JsonObject> records = new LinkedList<>();
+
       statement = (Statement) connection.createStatement();
       ResultSet rs = statement.executeQuery(query);
-      LinkedList<JsonObject> records = new LinkedList<>();
+      ResultSetMetaData rsMetaData = rs.getMetaData();
+      int columnCount = rsMetaData.getColumnCount();
+
       while (rs.next()) {
         JsonObject record = new JsonObject();
-        for (String field: table.getFields()) {
+        for (int i = 1; i <= columnCount; i++ ) {
+          String field = rsMetaData.getColumnName(i);
           record.put(field, rs.getString(field));
         }
         records.add(record);
@@ -86,7 +88,7 @@ public class DBHelper {
     return connection;
   }
 
-  private void closeConnection() {
+  public void closeConnection() {
     if(connection!= null) {
       try {
         connection.close();

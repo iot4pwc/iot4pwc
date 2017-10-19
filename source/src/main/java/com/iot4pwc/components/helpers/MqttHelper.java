@@ -19,6 +19,12 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 public class MqttHelper {
+  MqttClient client;
+
+  public MqttHelper(boolean TLSEnabled) {
+    client = TLSEnabled ? getMqttTLSClient() : getMqttClient();
+  }
+
   public static void publish(MqttClient client, Set<String> topicList, String message, int qualityOfService) {
     for (String topic : topicList) {
       MqttHelper.publishToMqtt(client, topic, message, qualityOfService);
@@ -124,6 +130,7 @@ class PublishRequest {
     this.qos = qos;
   }
 
+  // TODO: check if client is alive
   public void handlePublish(MqttClient client) {
     MqttMessage mqttMessage = new MqttMessage(message.getBytes());
     mqttMessage.setQos(qos);
