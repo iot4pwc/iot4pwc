@@ -19,37 +19,37 @@ import java.time.Instant;
 /**
  * This is a data service that persists the data to the database
  */
-public class DataService extends AbstractVerticle{
+public class DataService extends AbstractVerticle {
 
-//  // We want this to block because it is in the startup only.
+  //  // We want this to block because it is in the startup only.
   Connection connection;
-  
+
   public void start() {
     EventBus eb = vertx.eventBus();
 
     // Do all insertions to DB via a WorkerExecutor so to not block.
     WorkerExecutor executor = vertx.createSharedWorkerExecutor("my-worker-pool");
-    
+
     // Execute this in the background.
     executor.executeBlocking (future -> {
-      
+
       // We want this to block because it is in the startup only.
       Connection connection = getConnection();
-      
+
       // Consume from EventBus
       eb.consumer(ConstLib.DATA_SERVICE_ADDRESS, message -> {
         String structuredData = (String)message.body();
-        boolean result = insertLog(connection, structuredData); 
+        boolean result = insertLog(connection, structuredData);
         System.out.println(DataService.class.getName()+": Insertion success: " + result);
         this.context.put("result", result);
       });
-      
+
       // Future is complete, we can safely return to the main thread.
       future.complete();
-      
+
       // Nothing to do with the response for now.
     }, res -> {
-    });       
+    });
   }
 
   public void stop() {
@@ -68,7 +68,7 @@ public class DataService extends AbstractVerticle{
       Date date = new Date(stamp.getTime());
 
       String sqlInsert = "INSERT INTO logs " +
-          "VALUES ( \'" + logString + "\' , \'" + date.toString() + "\')";
+        "VALUES ( \'" + logString + "\' , \'" + date.toString() + "\')";
 
       statement.execute(sqlInsert);
 
@@ -106,13 +106,13 @@ public class DataService extends AbstractVerticle{
       e.printStackTrace();
     }
 
-    return null; 
+    return null;
   }
 
   private static Connection getConnection(){
 
     Connection connection = null;
-    
+
     String DB_USER_NAME = System.getenv("DB_USER_NAME");
     String DB_USER_PW = System.getenv("DB_USER_PW");
 
@@ -126,7 +126,7 @@ public class DataService extends AbstractVerticle{
       e.printStackTrace();
     }
 
-    try { 
+    try {
       System.out.println(DataService.class.getName()+": Connecting to a selected database...");
       connection =  DriverManager.getConnection(ConstLib.CONNECTION_STRING, DB_USER_NAME, DB_USER_PW);
       System.out.println(DataService.class.getName()+": Connected database successfully...");

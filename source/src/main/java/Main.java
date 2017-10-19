@@ -7,6 +7,7 @@ import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
 
 /**
  * The main class for the program. Run: mvn package to get A fat jar.
+ * mvn install:install-file -Dfile=./org.eclipse.paho.client.mqttv3-1.2.0.jar -DgroupId=org.eclipse.paho -DartifactId=org.eclipse.paho.client.mqttv3 -Dversion=1.2.0 -Dpackaging=jar -DlocalRepositoryPath=./src/main/resources/repo
  * In terminal, run: java -jar servicePlatform-1.0-SNAPSHOT-fat.jar [options] to run the program. Please
  * note that every time a new vertx will be created.
  *

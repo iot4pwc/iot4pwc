@@ -7,9 +7,10 @@ FLUSH PRIVILEGES;
 CREATE USER 'iot4pwc'@'localhost' IDENTIFIED BY 'Heinz123!';
 GRANT ALL PRIVILEGES ON service_platform.* TO 'iot4pwc'@'localhost';
 
-DROP TABLE sensor_topic_map;
-DROP TABLE sensor_history;
-DROP TABLE sensor;
+# for some reason dropping the tables will introduce error even with -f option
+-- DROP TABLE sensor_topic_map;
+-- DROP TABLE sensor_history;
+-- DROP TABLE sensor;
 
 CREATE TABLE sensor (
   sensor_id INT(10) AUTO_INCREMENT,

@@ -8,7 +8,7 @@ import io.vertx.core.eventbus.EventBus;
  * This is a publisher that subscribes to an event published by DataParser and pass the
  * data to the MQTT under certain topic.
  */
-public class DataPublisher extends AbstractVerticle{
+public class DataPublisher extends AbstractVerticle {
   public void start() {
     EventBus eb = vertx.eventBus();
 

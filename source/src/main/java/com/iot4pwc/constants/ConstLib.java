@@ -14,6 +14,9 @@ public class ConstLib {
 
   public static final String SERVICE_PLATFORM_OPTION = "-sp";
   public static final String DATA_GENERATOR_OPTION = "-dg";
-  
-  public static final String CONNECTION_STRING = "jdbc:mysql://stefantestdb1.caqii6amhgcq.us-east-1.rds.amazonaws.com/all_logs";
+  public static final String CONNECTION_STRING = "jdbc:mysql://ec2-18-221-182-91.us-east-2.compute.amazonaws.com";
+
+  public static final String MQTT_HOST = "localhost";
+  public static final int MQTT_PORT = 8883;
+
 }

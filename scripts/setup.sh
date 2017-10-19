@@ -1,7 +1,7 @@
 #!/bin/bash
 
 sudo apt-get update
-sudo apt-get install -y default-jre default-jdk maven mosquitto
+sudo apt-get install -y default-jre default-jdk maven mosquitto mosquitto-clients
 sudo chmod 777 /etc/environment
 sudo echo "JAVA_HOME=\"/usr/lib/jvm/java-8-openjdk-amd64/jre\"" >> /etc/environment
 source /etc/environment
