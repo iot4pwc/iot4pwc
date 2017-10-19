@@ -6,6 +6,5 @@ public abstract class DBTable {
   public String tableName;
 
   abstract public void setFields(String... fields);
-  abstract public DBTable getInstance();
   abstract public List<String> getFields();
 }

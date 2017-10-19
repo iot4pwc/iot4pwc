@@ -6,7 +6,7 @@ import java.util.LinkedList;
  * Model for sensor_history table
  */
 public class SensorHistoryTable extends DBTable {
-  private SensorHistoryTable __tableInstance;
+  private static SensorHistoryTable __tableInstance;
   public LinkedList<String> fields;
 
   public String tableName = "sensor_history";
@@ -29,7 +29,7 @@ public class SensorHistoryTable extends DBTable {
     }
   }
 
-  public SensorHistoryTable getInstance() {
+  public static SensorHistoryTable getInstance() {
     if (__tableInstance != null) {
       return __tableInstance;
     } else {
