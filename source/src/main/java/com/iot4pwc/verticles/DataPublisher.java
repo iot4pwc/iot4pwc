@@ -29,8 +29,6 @@ public class DataPublisher extends AbstractVerticle{
 
   private Connection connection;
   private MqttClient mqttClient = null;
-  private int qualityOfService = 2;
-
   private static Map<Integer, Set<String>> sensorTopicMapping = new HashMap<Integer, Set<String>>(); 
 
   public void start() {
