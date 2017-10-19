@@ -81,9 +81,9 @@ public class DBHelper {
       } finally {
         return connection;
       }
-    } else {
-      return connection;
     }
+
+    return connection;
   }
 
   private void closeConnection() {

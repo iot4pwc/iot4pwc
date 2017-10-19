@@ -32,11 +32,8 @@ public class TLSMQTTClient {
       MqttClient sampleClient = new MqttClient(broker, clientId, persistence);
       MqttConnectOptions connOpts = new MqttConnectOptions();
       connOpts.setCleanSession(true);
-      System.out.println("Connecting to broker: "+broker);
       connOpts.setSocketFactory(TLSMQTTClient.getSocketFactory(cafile));
       sampleClient.connect(connOpts);
-      System.out.println("Connected");
-      System.out.println("Publishing message: "+content);
       MqttMessage message = new MqttMessage(content.getBytes());
       message.setQos(qos);
       sampleClient.publish(topic, message);

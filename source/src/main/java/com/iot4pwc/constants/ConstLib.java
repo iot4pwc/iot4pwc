@@ -23,5 +23,9 @@ public class ConstLib {
   public static final String CONNECTION_STRING = "jdbc:mysql://18.221.182.91/service_platform";
   
   public static final String MQTT_BROKER_STRING = "tcp://ec2-18-221-127-99.us-east-2.compute.amazonaws.com:1883";
+  public static final String MQTT_BROKER_TLS_STRING = "tcp://ec2-18-221-127-99.us-east-2.compute.amazonaws.com:1883";
+  public static final String MQTT_CA_FILE = "/home/ubuntu/ca.crt";
+  public static final String MQTT_TLS_VERSION = "TLSv1.2";
+  public static final String MQTT_CLIENT_ID = "Heihei";
   public static final int MQTT_QUALITY_OF_SERVICE = 2;
 }
