@@ -5,6 +5,8 @@ public class ConstLib {
   public static final String PUBLISHER_ADDRESS = "iot4pwc.data.publisher";
   public static final String DATA_SERVICE_ADDRESS = "iot4pwc.data.dataService";
 
+  public static final String DATA_SERVICE_WORKER_POOL = "data service pool";
+
   public static final int CLUSTER_EVENT_BUS_PORT = 37288;
 
   public static final int DUMMY_SENSOR_NUMBER = 1;

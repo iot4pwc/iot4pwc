@@ -8,11 +8,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import com.iot4pwc.components.MqttHelper;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import com.iot4pwc.constants.ConstLib;
 import com.mysql.jdbc.Statement;
@@ -47,7 +47,7 @@ public class DataPublisher extends AbstractVerticle {
       try {
         mqttClient = getMqttClient(ConstLib.MQTT_BROKER_STRING, this.getClass().getName());
       } catch (Exception e) {
-        System.out.println(this.getClass().getName() + ": Unable to get MQTT Client");
+        System.out.println(this.getClass().getName() + ": Unable to get MQTT TLSMQTTClient");
         e.printStackTrace();
       }
 
@@ -139,7 +139,7 @@ public class DataPublisher extends AbstractVerticle {
     // Connect
     tempClient.connect(connOpts);
 
-    // Return the connected Client
+    // Return the connected TLSMQTTClient
     return tempClient;
   }
 

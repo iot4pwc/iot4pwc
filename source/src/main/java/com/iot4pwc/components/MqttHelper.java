@@ -1,7 +1,8 @@
-package com.iot4pwc.verticles;
+package com.iot4pwc.components;
 
-import java.util.List;
 import java.util.Set;
+
+import com.iot4pwc.verticles.DataPublisher;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;

@@ -1,78 +1,64 @@
 package com.iot4pwc.verticles;
 
 import com.iot4pwc.constants.ConstLib;
+import com.iot4pwc.components.tables.SensorHistoryTable;
 import com.mysql.jdbc.Statement;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.WorkerExecutor;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
-// Required imports.
+
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.Instant;
-
 
 /**
  * This is a data service that persists the data to the database
  */
 public class DataService extends AbstractVerticle {
-
-  //  // We want this to block because it is in the startup only.
-  Connection connection;
+  private Connection connection;
 
   public void start() {
     EventBus eb = vertx.eventBus();
 
-    // Do all insertions to DB via a WorkerExecutor so to not block.
-    WorkerExecutor executor = vertx.createSharedWorkerExecutor("my-worker-pool");
-
-    // Execute this in the background.
+    WorkerExecutor executor = vertx.createSharedWorkerExecutor(ConstLib.DATA_SERVICE_WORKER_POOL);
     executor.executeBlocking (future -> {
 
-      // We want this to block because it is in the startup only.
       Connection connection = getConnection();
 
-      // Consume from EventBus
       eb.consumer(ConstLib.DATA_SERVICE_ADDRESS, message -> {
         String structuredData = (String)message.body();
-        JsonObject jsonObject = new JsonObject(structuredData);
-        boolean result = insertLog(connection, jsonObject); 
+        JsonObject structuredDataJSON = new JsonObject(structuredData);
+        boolean result = insertLog(connection, structuredDataJSON);
         System.out.println(DataService.class.getName()+": Insertion success: " + result);
+        // TODO: remove this is not useful
         this.context.put("result", result);
       });
 
-      // Future is complete, we can safely return to the main thread.
       future.complete();
-
-      // Nothing to do with the response for now.
     }, res -> {
+      // TODO: add response
     });
   }
 
   public void stop() {
-    /**
-     * clear up, feel free to delete this method if you think it's unnecessary
-     */
     closeConnection(connection);
   }
 
-
-  // @Wang Yan: Recommend renaming this class to insertRecord
   private static boolean insertLog(Connection connection, JsonObject jsonPayload) {
     try {
       Statement statement = (Statement) connection.createStatement();
 
-      Timestamp stamp = new Timestamp(System.currentTimeMillis());
-      Date date = new Date(stamp.getTime());
+      String insertLogQuery = String
+        .format(
+          "INSERT INTO sensor_history (sensor_id, value_content, recorded_time) VALUES (%1, %2, %3)",
+          jsonPayload.getInteger(SensorHistoryTable.sensorId),
+          jsonPayload.getString(SensorHistoryTable.value),
+          jsonPayload.getString(SensorHistoryTable.time)
+        );
 
-      String sqlInsert = "INSERT INTO sensor_history (sensor_id, value_content) " +
-          "VALUES ( \'" + jsonPayload.getInteger("sensorID") + "\' , \'" + jsonPayload.toString() + "\')";
-
-      statement.execute(sqlInsert);
+      statement.execute(insertLogQuery);
 
       System.out.println(DataService.class.getName()+": Inserted records into the table...");
 

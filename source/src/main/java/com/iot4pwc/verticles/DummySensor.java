@@ -36,9 +36,9 @@ public class DummySensor extends AbstractVerticle {
 
   private String generateData() {
     Map<String, Object> payloads = new HashMap<>();
-    payloads.put("sensorID", BASE_ID + random.nextInt(10));
-    payloads.put("payload", BASE_PAYLOAD + random.nextInt(50));
-    payloads.put("time", Instant.now().toEpochMilli());
+    payloads.put("sensor_id", BASE_ID + random.nextInt(10));
+    payloads.put("value_content", BASE_PAYLOAD + random.nextInt(50));
+    payloads.put("recorded_time", Instant.now().toEpochMilli());
     JsonObject jsonObject = new JsonObject(payloads);
     return jsonObject.encode();
   }

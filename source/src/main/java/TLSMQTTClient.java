@@ -16,7 +16,7 @@ import javax.net.ssl.TrustManagerFactory;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-public class Client {
+public class TLSMQTTClient {
 
   public static void main(String[] args) {
 
@@ -33,7 +33,7 @@ public class Client {
       MqttConnectOptions connOpts = new MqttConnectOptions();
       connOpts.setCleanSession(true);
       System.out.println("Connecting to broker: "+broker);
-      connOpts.setSocketFactory(Client.getSocketFactory(cafile));
+      connOpts.setSocketFactory(TLSMQTTClient.getSocketFactory(cafile));
       sampleClient.connect(connOpts);
       System.out.println("Connected");
       System.out.println("Publishing message: "+content);
