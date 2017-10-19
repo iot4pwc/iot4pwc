@@ -2,7 +2,7 @@ package com.iot4pwc.verticles;
 
 import java.util.List;
 
-import com.iot4pwc.components.DBHelper;
+import com.iot4pwc.components.helpers.DBHelper;
 import com.iot4pwc.components.tables.DBTable;
 import com.iot4pwc.components.tables.SensorHistoryTable;
 import com.iot4pwc.constants.ConstLib;
@@ -22,7 +22,6 @@ public class RESTService extends AbstractVerticle {
 	private final Logger logger = LoggerFactory.getLogger(RESTService.class);
 	@Override
 	public void start(){
-		//EventBus eb = vertx.eventBus();
 		Router router = Router.router(vertx);
 		System.out.println(RESTService.class.getName()+" : Initializing RESTful service running on port 8080");
 		/**
@@ -54,21 +53,9 @@ public class RESTService extends AbstractVerticle {
 			.setStatusCode(400)
 			.end();
 		}else if(end == null){
-			query = "select * from sensor_history where recorded_time > " + start + "and sensor_id in (select distinct sensor_id from sensor_topic_map where topic = "+ topic + ");";
-	        /* Invoke using the event bus. */
-	        /*vertx.eventBus().send(ConstLib.,
-	                HelloWorldOperations.SAY_HELLO_WORLD.toString(), response -> {
-
-	            if (response.succeeded()) {
-	                 Send the result from HelloWorldService to the http connection. 
-	                httpRequest.response().end(response.result().body().toString());
-	            } else {
-	                logger.error("Can't send message to hello service", response.cause());
-	                httpRequest.response().setStatusCode(500).end(response.cause().getMessage());
-	            }
-	        });*/
+			query = "select * from sensor_history where topic = "+ topic + ");";
 			DBHelper db = new DBHelper();
-			DBTable history = new SensorHistoryTable().getInstance();
+			DBTable history = SensorHistoryTable.getInstance();
 			List<JsonObject> result = db.select(query, history);
 			StringBuilder sb = new StringBuilder();
 			if(result != null){
@@ -80,11 +67,17 @@ public class RESTService extends AbstractVerticle {
 			.putHeader("content-type", "application/json; charset=utf-8")
 			.setStatusCode(200)
 			.end(sb.toString());
+		}else{
+			routingContext.response()
+			.putHeader("content-type", "application/json; charset=utf-8")
+			.setStatusCode(200)
+			.end("not supported rightnow");
 		}
 	}
 	
 	private void getInstalledSensor(RoutingContext routingContext){
 		System.out.println(RESTService.class.getName()+" : GET " + routingContext.request().uri());
+		
 	}
 	
 	private void getLocInfo(RoutingContext routingContext){
@@ -108,6 +101,5 @@ public class RESTService extends AbstractVerticle {
 		.putHeader("content-type", "application/json; charset=utf-8")
 		.setStatusCode(200)
 		.end();
-		
 	}
 }
