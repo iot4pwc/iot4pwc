@@ -66,6 +66,7 @@ public class DataPublisher extends AbstractVerticle{
         if (sensorTopics != null && mqttClient != null) {
           // Loop over all topics, and publish one for each.
           for (String topic : sensorTopics) { 
+            // TODO: Make mqttClient recover. Filed a bug for this (IOT-92)
             publishToMqtt(mqttClient, topic, jsonObject.toString(), ConstLib.MQTT_QUALITY_OF_SERVICE);
           }
         }
