@@ -1,3 +1,4 @@
+.idea
 source/src/main/resources/cluster.xml
 .DS_Store
 .vertx
