@@ -16,8 +16,11 @@ public class DataService extends AbstractVerticle {
 
   public void start() {
     EventBus eb = vertx.eventBus();
-    
-    WorkerExecutor executor = vertx.createSharedWorkerExecutor(ConstLib.DATA_SERVICE_WORKER_POOL);
+
+    WorkerExecutor executor = vertx.createSharedWorkerExecutor(
+      ConstLib.DATA_SERVICE_WORKER_POOL,
+      ConstLib.DATA_SERVICE_WORKER_POOL_SIZE
+    );
     executor.executeBlocking (future -> {
       dbHelper = new DBHelper();
 

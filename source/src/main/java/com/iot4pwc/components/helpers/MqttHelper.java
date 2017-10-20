@@ -21,10 +21,11 @@ import javax.net.ssl.TrustManagerFactory;
 public class MqttHelper {
   MqttClient client;
   boolean isTLSEnabled;
+  static int clientSuffix = 0;
 
   public MqttHelper(boolean isTLSEnabled) {
     this.isTLSEnabled = isTLSEnabled;
-    client = this.isTLSEnabled ? getMqttTLSClient() : getMqttClient();
+    client = getAliveClient();
   }
 
   public void publish(List<PublishRequestHandler> publishRequests) {
@@ -52,12 +53,12 @@ public class MqttHelper {
     }
   }
 
+  // need a mechanism to create clientID
   private MqttClient getMqttClient() {
     MqttClient client = null;
     try {
       String broker = ConstLib.MQTT_BROKER_STRING;
-      String clientID = ConstLib.MQTT_CLIENT_ID;
-      client = new MqttClient (broker, clientID);
+      client = new MqttClient (broker, ConstLib.MQTT_CLIENT_ID + Integer.toString(clientSuffix++));
       MqttConnectOptions connOpts = new MqttConnectOptions();
       connOpts.setCleanSession(true);
       client.connect(connOpts);
@@ -72,8 +73,7 @@ public class MqttHelper {
     MqttClient client = null;
     try {
       String broker = ConstLib.MQTT_BROKER_TLS_STRING;
-      String clientID = ConstLib.MQTT_CLIENT_ID;
-      client = new MqttClient (broker, clientID);
+      client = new MqttClient (broker, ConstLib.MQTT_CLIENT_ID + Integer.toString(clientSuffix++));
       MqttConnectOptions connOpts = new MqttConnectOptions();
       connOpts.setCleanSession(true);
       connOpts.setSocketFactory(getSocketFactory(ConstLib.MQTT_CA_FILE));
@@ -86,7 +86,7 @@ public class MqttHelper {
   }
 
   public MqttClient getAliveClient() {
-    if (!client.isConnected()) {
+    if (client == null || !client.isConnected()) {
       client = this.isTLSEnabled ? getMqttTLSClient() : getMqttClient();
     }
     return client;

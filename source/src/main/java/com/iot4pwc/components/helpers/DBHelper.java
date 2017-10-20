@@ -99,7 +99,7 @@ public class DBHelper {
       }
 
       try {
-        connection =  DriverManager.getConnection(ConstLib.CONNECTION_STRING, userName, password);
+        connection =  DriverManager.getConnection(ConstLib.MYSQL_CONNECTION_STRING, userName, password);
         return connection;
       } catch (Exception e) {
         e.printStackTrace();

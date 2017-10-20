@@ -22,8 +22,8 @@ public class DataParser extends AbstractVerticle {
        */
       String structuredData = data;
 
-      eb.publish(ConstLib.DATA_SERVICE_ADDRESS, structuredData);
-      eb.publish(ConstLib.PUBLISHER_ADDRESS, structuredData);
+      eb.send(ConstLib.DATA_SERVICE_ADDRESS, structuredData);
+      eb.send(ConstLib.PUBLISHER_ADDRESS, structuredData);
     });
   }
 

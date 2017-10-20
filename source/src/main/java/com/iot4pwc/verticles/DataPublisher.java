@@ -25,7 +25,10 @@ public class DataPublisher extends AbstractVerticle {
   public void start() {
     EventBus eb = vertx.eventBus();
 
-    WorkerExecutor executor = vertx.createSharedWorkerExecutor(ConstLib.DATA_PUBLISHER_WORKER_POOL);
+    WorkerExecutor executor = vertx.createSharedWorkerExecutor(
+      ConstLib.DATA_PUBLISHER_WORKER_POOL,
+      ConstLib.DATA_PUBLISHER_WORKER_POOL_SIZE
+    );
     executor.executeBlocking (future -> {
       dbHelper = new DBHelper();
       mqttHelper = new MqttHelper(ConstLib.MQTT_TLS_ENABLED);
@@ -69,7 +72,6 @@ public class DataPublisher extends AbstractVerticle {
 
     List<JsonObject> records = dbHelper.select(query);
 
-    System.out.println(records.size());
     for (JsonObject record: records) {
       int sensorId = Integer.parseInt(record.getString(SensorTopic.sensor_id));
       String topic = record.getString(SensorTopic.topic);

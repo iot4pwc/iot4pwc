@@ -7,6 +7,7 @@ FLUSH PRIVILEGES;
 CREATE USER 'iot4pwc'@'localhost' IDENTIFIED BY 'Heinz123!';
 GRANT ALL PRIVILEGES ON service_platform.* TO 'iot4pwc'@'localhost';
 
+SET GLOBAL max_connections = 5000;
 # for some reason dropping the tables will introduce error even with -f option
 -- DROP TABLE sensor_topic_map;
 -- DROP TABLE sensor_history;
