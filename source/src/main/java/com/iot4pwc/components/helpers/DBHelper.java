@@ -1,6 +1,6 @@
 package com.iot4pwc.components.helpers;
 
-import com.iot4pwc.components.tables.QueryTable;
+import com.iot4pwc.components.tables.Queriable;
 import com.iot4pwc.constants.ConstLib;
 import com.iot4pwc.verticles.DataService;
 import com.mysql.jdbc.Statement;
@@ -10,6 +10,7 @@ import java.sql.*;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class DBHelper {
   private Connection connection;
@@ -20,29 +21,42 @@ public class DBHelper {
     System.out.println("Created the connection, now returning");
   }
 
-  public boolean insert(JsonObject recordObject, QueryTable table) {
+  public boolean insert(JsonObject recordObject, Queriable table) {
     try {
-      Statement statement = (Statement) connection.createStatement();
-
-      List<String> fields = table.getFields();
-      List<String> values = new LinkedList<>();
-
-      
-      String query = getQueryString(fields, table.getTableName(), recordObject);
-
-      PreparedStatement preparedStatement = connection.prepareStatement(query);
-      
-      finalizePreparedStatement(preparedStatement, fields, recordObject);
-      
-//      preparedStatement.setTimestamp(1, new java.sql.Timestamp(recordObject.getLong("recorded_time")));
-      preparedStatement.execute();
-
+      PreparedStatement pstmt = getInsertStatement(table, recordObject);
+      pstmt.execute();
       return true;
 
     } catch (SQLException e) {
       e.printStackTrace();
     }
     return false;
+  }
+
+  private PreparedStatement getInsertStatement(
+    Queriable table,
+    JsonObject recordObject
+  ) throws SQLException {
+    List<String> attributeNames = new LinkedList<>();
+    String attrSection = "";
+    String valueSection = "";
+
+    for (Map.Entry<String, Object> entry: recordObject) {
+      attributeNames.add(entry.getKey());
+      attrSection += entry.getKey() + ",";
+      valueSection += "?,";
+    }
+
+    String query = String.format(
+      "INSERT INTO %1 (%2) VALUES (%3)",
+      table.getTableName(),
+      attrSection,
+      valueSection
+    );
+
+    PreparedStatement preparedStatement = connection.prepareStatement(query);
+    table.getInsertPstmt(preparedStatement, recordObject, attributeNames);
+    return preparedStatement;
   }
 
   public List<JsonObject> select(String query) {
@@ -107,40 +121,5 @@ public class DBHelper {
       }
       System.out.println(DataService.class.getName()+": Closed connection!");
     }
-  }
-
-  private String getQueryString(List<String> fields,  String tableName, JsonObject recordObject) {
-    List<String> values = new LinkedList<String>();
-    for (String field: fields) {
-      // Changed this (10/19) to reflect that not all fields are castable to String by default
-      if (field.contains("recorded_time")) {
-        values.add("?");
-      } else {
-        values.add(recordObject.getValue(field).toString()+"");
-      }
-    }
-
-    String query = "INSERT INTO " + tableName + " ( " + concatWithCommas(fields) + " ) VALUES ( " +  concatWithCommas(values) + " )"; 
-
-    return query;
-  }
-
-  // Method to run over the finalized queryString, which is already stored in the preparedStatement.
-  // Replace any ? with timestamps.
-  // TODO Make better in 2.0
-  private void finalizePreparedStatement(PreparedStatement preparedStatement, List<String> fields, JsonObject recordObject) throws SQLException {
-    for (int i = 1; i <= fields.size(); i++) {
-      if (fields.get(i-1).contains("recorded_time")) {
-        preparedStatement.setTimestamp(i, new java.sql.Timestamp(recordObject.getLong("recorded_time")));
-      }
-    }
-  }
-
-  private String concatWithCommas(Collection<String> words) {
-    StringBuilder wordList = new StringBuilder();
-    for (String word : words) {
-      wordList.append(word + ",");
-    }
-    return new String(wordList.deleteCharAt(wordList.length() - 1));
   }
 }

@@ -1,7 +1,6 @@
 package com.iot4pwc.verticles;
 
 import com.iot4pwc.components.helpers.DBHelper;
-import com.iot4pwc.components.tables.QueryTable;
 import com.iot4pwc.components.tables.SensorHistory;
 import com.iot4pwc.constants.ConstLib;
 import io.vertx.core.AbstractVerticle;
@@ -32,16 +31,9 @@ public class DataService extends AbstractVerticle {
                 
         // Prepare document to be inserted (JSON) and targetTable.
         JsonObject structuredDataJSON = new JsonObject((String)message.body());
-        QueryTable targetTable = new QueryTable(
-          SensorHistory.tableName,
-//          SensorHistory.record_id,
-          SensorHistory.recorded_time,
-          SensorHistory.sensor_id,
-          SensorHistory.value_content
-        );
         
         // Print success/failure of insertion
-        boolean result = dbHelper.insert(structuredDataJSON, targetTable); 
+        boolean result = dbHelper.insert(structuredDataJSON, SensorHistory.getInstance());
         
         // TODO Use log4j
         System.out.println(DataService.class.getName()+": Insertion success: " + result);
