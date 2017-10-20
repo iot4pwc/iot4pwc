@@ -1,13 +1,8 @@
 package com.iot4pwc.verticles;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.util.Date;
 import com.iot4pwc.constants.ConstLib;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.EventBus;
-import io.vertx.core.json.JsonObject;
 
 /**
  * This is a parser that will subscribe to an event published by DataPoller/DataListener.
@@ -19,9 +14,7 @@ public class DataParser extends AbstractVerticle {
     EventBus eb = vertx.eventBus();
 
     eb.consumer(ConstLib.PARSER_ADDRESS, message -> {
-      // data is a JSON string
       String data = (String)message.body();
-      System.out.println(String.format(this.getClass().getName() + " Received: %s", data));
       /**
        * implement business logic here.
        * reconstruct data to proper format for publishing and persisting.
@@ -30,9 +23,7 @@ public class DataParser extends AbstractVerticle {
       String structuredData = data;
 
       eb.publish(ConstLib.DATA_SERVICE_ADDRESS, structuredData);
-      
-      System.out.println("Published successfully to the Data Service.");
-      // eb.publish(ConstLib.PUBLISHER_ADDRESS, structuredData);
+      eb.publish(ConstLib.PUBLISHER_ADDRESS, structuredData);
     });
   }
 

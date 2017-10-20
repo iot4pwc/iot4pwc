@@ -23,10 +23,9 @@ public class DummySensor extends AbstractVerticle {
     random = new Random();
 
     EventBus eb = vertx.eventBus();
-    timerID = vertx.setPeriodic(500, id -> {
+    timerID = vertx.setPeriodic(100, id -> {
       String payload = generateData();
       eb.publish(ConstLib.PARSER_ADDRESS, payload);
-      System.out.println(String.format("Sent: %s", payload));
     });
   }
 
@@ -36,8 +35,8 @@ public class DummySensor extends AbstractVerticle {
 
   private String generateData() {
     Map<String, Object> payloads = new HashMap<>();
-    payloads.put("sensor_id", BASE_ID + random.nextInt(10));
-    payloads.put("value_content", BASE_PAYLOAD + random.nextInt(50));
+    payloads.put("sensor_id", BASE_ID + random.nextInt(6));
+    payloads.put("value_content", Integer.toString(BASE_PAYLOAD + random.nextInt(50)));
     payloads.put("recorded_time", Instant.now().toEpochMilli());
     JsonObject jsonObject = new JsonObject(payloads);
     return jsonObject.encode();

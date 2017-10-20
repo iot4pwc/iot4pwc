@@ -7,7 +7,6 @@ import com.mysql.jdbc.Statement;
 import io.vertx.core.json.JsonObject;
 
 import java.sql.*;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -16,9 +15,7 @@ public class DBHelper {
   private Connection connection;
 
   public DBHelper() {
-    System.out.println("Creating a connection.");
     this.connection = getConnection();
-    System.out.println("Created the connection, now returning");
   }
 
   public boolean insert(JsonObject recordObject, Queriable table) {
@@ -38,24 +35,28 @@ public class DBHelper {
     JsonObject recordObject
   ) throws SQLException {
     List<String> attributeNames = new LinkedList<>();
-    String attrSection = "";
-    String valueSection = "";
+    StringBuilder attrSection = new StringBuilder();
+    StringBuilder valueSection = new StringBuilder();
 
     for (Map.Entry<String, Object> entry: recordObject) {
-      attributeNames.add(entry.getKey());
-      attrSection += entry.getKey() + ",";
-      valueSection += "?,";
+      String attributeName = entry.getKey();
+      attributeNames.add(attributeName);
+      attrSection.append(attributeName + ",");
+      valueSection.append("?,");
     }
 
+    attrSection.deleteCharAt(attrSection.length() - 1);
+    valueSection.deleteCharAt(valueSection.length() - 1);
+
     String query = String.format(
-      "INSERT INTO %1 (%2) VALUES (%3)",
+      "INSERT INTO %s (%s) VALUES (%s)",
       table.getTableName(),
-      attrSection,
-      valueSection
+      attrSection.toString(),
+      valueSection.toString()
     );
 
     PreparedStatement preparedStatement = connection.prepareStatement(query);
-    table.getInsertPstmt(preparedStatement, recordObject, attributeNames);
+    table.configureInsertPstmt(preparedStatement, recordObject, attributeNames);
     return preparedStatement;
   }
 
@@ -76,7 +77,6 @@ public class DBHelper {
           record.put(field, rs.getString(field));
         }
         records.add(record);
-        rs.next();
       }
 
       return records;
@@ -100,7 +100,6 @@ public class DBHelper {
 
       try {
         connection =  DriverManager.getConnection(ConstLib.CONNECTION_STRING, userName, password);
-        System.out.println(DataService.class.getName()+": Connected database successfully...");
         return connection;
       } catch (Exception e) {
         e.printStackTrace();

@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
-public class SensorHistory implements Queriable {
+public class SensorHistory extends Queriable {
   public static final String tableName = "sensor_history";
   public static final String sensor_id = "sensor_id";
   public static final String recorded_time = "recorded_time";
@@ -22,7 +22,7 @@ public class SensorHistory implements Queriable {
     }
   }
 
-  public void getInsertPstmt(
+  public void configureInsertPstmt(
     PreparedStatement pstmt,
     JsonObject recordObject,
     List<String> attributeNames

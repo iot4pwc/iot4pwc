@@ -14,6 +14,7 @@ public class ConstLib {
   public static final int DATA_PARSER_NUMBER = 1;
   public static final int DATA_PUBLISHER_NUMBER = 1;
   public static final int DATA_SERVICE_NUMBER = 1;
+  public static final int RESTFUL_DB_SERVICE_NUMBER = 1;
 
   public static final String SERVICE_PLATFORM_OPTION = "-sp";
   public static final String DATA_GENERATOR_OPTION = "-dg";
@@ -27,6 +28,6 @@ public class ConstLib {
   public static final String MQTT_BROKER_TLS_STRING = "tcp://ec2-18-221-127-99.us-east-2.compute.amazonaws.com:1883";
   public static final String MQTT_CA_FILE = "/home/ubuntu/ca.crt";
   public static final String MQTT_TLS_VERSION = "TLSv1.2";
-  public static final String MQTT_CLIENT_ID = "Heihei";
+  public static final String MQTT_CLIENT_ID = "iot4pwc";
   public static final int MQTT_QUALITY_OF_SERVICE = 2;
 }

@@ -4,12 +4,12 @@ import com.iot4pwc.components.helpers.MqttHelper;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-public class PublishRequest implements PublishRequestHandler {
+public class MosquittoPublishRequest implements PublishRequestHandler {
   private String topic;
   private String message;
   private int qos;
 
-  public PublishRequest(String topic, String message, int qos) {
+  public MosquittoPublishRequest(String topic, String message, int qos) {
     this.topic = topic;
     this.message = message;
     this.qos = qos;

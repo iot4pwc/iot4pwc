@@ -2,15 +2,25 @@ package com.iot4pwc.components.tables;
 
 import io.vertx.core.json.JsonObject;
 
-import java.sql.PreparedStatement;
+import java.sql.*;
 import java.util.List;
 
-public class SensorTopic implements Queriable {
+public class SensorTopic extends Queriable {
   public static final String tableName = "sensor_topic_map";
   public static final String sensor_id = "sensor_id";
   public static final String topic = "topic";
 
-  public void getInsertPstmt(
+  private static SensorTopic tableInstance;
+
+  public static SensorTopic getInstance() {
+    if (tableInstance == null) {
+      return new SensorTopic();
+    } else {
+      return tableInstance;
+    }
+  }
+
+  public void configureInsertPstmt(
     PreparedStatement pstmt,
     JsonObject recordObject,
     List<String> attributeNames

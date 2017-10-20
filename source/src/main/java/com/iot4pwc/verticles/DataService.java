@@ -13,30 +13,17 @@ import io.vertx.core.json.JsonObject;
  */
 public class DataService extends AbstractVerticle {
   private DBHelper dbHelper;
-  
-  
+
   public void start() {
     EventBus eb = vertx.eventBus();
     
     WorkerExecutor executor = vertx.createSharedWorkerExecutor(ConstLib.DATA_SERVICE_WORKER_POOL);
     executor.executeBlocking (future -> {
+      dbHelper = new DBHelper();
 
-      // Start the dbHelper
-       dbHelper = new DBHelper();     
-      
-      System.out.println("Got the DB helper."); 
-      
-      // Receive a single message.
       eb.consumer(ConstLib.DATA_SERVICE_ADDRESS, message -> {
-                
-        // Prepare document to be inserted (JSON) and targetTable.
         JsonObject structuredDataJSON = new JsonObject((String)message.body());
-        
-        // Print success/failure of insertion
-        boolean result = dbHelper.insert(structuredDataJSON, SensorHistory.getInstance());
-        
-        // TODO Use log4j
-        System.out.println(DataService.class.getName()+": Insertion success: " + result);
+        dbHelper.insert(structuredDataJSON, SensorHistory.getInstance());
       });
       future.complete();
     }, res -> {

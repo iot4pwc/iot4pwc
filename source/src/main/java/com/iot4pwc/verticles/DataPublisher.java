@@ -4,10 +4,9 @@ import java.util.*;
 
 import com.iot4pwc.components.helpers.DBHelper;
 import com.iot4pwc.components.helpers.MqttHelper;
-import com.iot4pwc.components.publisheRequests.PublishRequest;
+import com.iot4pwc.components.publisheRequests.MosquittoPublishRequest;
 import com.iot4pwc.components.publisheRequests.PublishRequestHandler;
 import com.iot4pwc.components.tables.SensorTopic;
-import org.eclipse.paho.client.mqttv3.MqttClient;
 import com.iot4pwc.constants.ConstLib;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.WorkerExecutor;
@@ -21,7 +20,6 @@ import io.vertx.core.json.JsonObject;
 public class DataPublisher extends AbstractVerticle {
   private DBHelper dbHelper;
   private MqttHelper mqttHelper;
-  private MqttClient mqttClient = null;
   private static Map<Integer, Set<String>> sensorTopicMapping = new HashMap<>();
 
   public void start() {
@@ -31,10 +29,9 @@ public class DataPublisher extends AbstractVerticle {
     executor.executeBlocking (future -> {
       dbHelper = new DBHelper();
       mqttHelper = new MqttHelper(ConstLib.MQTT_TLS_ENABLED);
-
       sensorTopicMapping = getSensorTopicMapping();
 
-      eb.consumer(ConstLib.DATA_SERVICE_ADDRESS, message -> {
+      eb.consumer(ConstLib.PUBLISHER_ADDRESS, message -> {
         String structuredData = (String)message.body();
 
         JsonObject structuredDataJSON = new JsonObject(structuredData);
@@ -43,7 +40,7 @@ public class DataPublisher extends AbstractVerticle {
         List<PublishRequestHandler> publishRequests = new LinkedList<>();
         if (sensorTopics != null && mqttHelper != null) {
           for (String topic : sensorTopics) {
-            PublishRequest request = new PublishRequest(
+            MosquittoPublishRequest request = new MosquittoPublishRequest(
               topic,
               structuredData,
               ConstLib.MQTT_QUALITY_OF_SERVICE
@@ -51,7 +48,6 @@ public class DataPublisher extends AbstractVerticle {
 
             publishRequests.add(request);
           }
-
           mqttHelper.publish(publishRequests);
         }
       });
@@ -73,20 +69,20 @@ public class DataPublisher extends AbstractVerticle {
 
     List<JsonObject> records = dbHelper.select(query);
 
+    System.out.println(records.size());
     for (JsonObject record: records) {
-      int sensorId = record.getInteger(SensorTopic.sensor_id);
+      int sensorId = Integer.parseInt(record.getString(SensorTopic.sensor_id));
       String topic = record.getString(SensorTopic.topic);
       Set<String> topicSet = sensorTopicMap.getOrDefault(sensorId, new HashSet<>());
       topicSet.add(topic);
       sensorTopicMap.put(sensorId, topicSet);
     }
-
     return sensorTopicMap;
   }
 
   private void getOneSensorMapping(int sensorId, Map<Integer, Set<String>> existingMapping) {
     try {
-      String query = String.format("SELECT * FROM sensor_topic_map WHERE sensor_id = %1", sensorId);
+      String query = String.format("SELECT * FROM sensor_topic_map WHERE sensor_id = %d", sensorId);
       List<JsonObject> records = dbHelper.select(query);
       Set<String> sensorTopics = new HashSet<>();
 

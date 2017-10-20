@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.iot4pwc.components.helpers.DBHelper;
-import com.iot4pwc.constants.ConstLib;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.json.JsonObject;
@@ -12,13 +11,11 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 
-public class RESTService extends AbstractVerticle {
-	private static final String DB_USER = "iot4pwc";
-	private static final String DB_PWD = "Heinz123!";
+public class RESTfulDBService extends AbstractVerticle {
 	@Override
 	public void start(){
 		Router router = Router.router(vertx);
-		System.out.println(RESTService.class.getName()+" : Initializing RESTful service running on port 8080");
+		System.out.println(RESTfulDBService.class.getName()+" : Initializing RESTful service running on port 8080");
 		/**
 		 * GET /data?topic=topic&start=starttime&end=endtime  -- topic related data
 		 * GET /data/getInstalledSensor                       		  -- all sensor installed
@@ -31,12 +28,12 @@ public class RESTService extends AbstractVerticle {
 		router.get("/data/getLocation").handler(this::getLocInfo);
 		router.post("/actuate").handler(this::actuationCommand);
 
-		vertx.createHttpServer().requestHandler(router::accept).listen(80);
-		System.out.println(RESTService.class.getName()+" : RESTful service running on port 8080");
+		vertx.createHttpServer().requestHandler(router::accept).listen(8080);
+		System.out.println(RESTfulDBService.class.getName()+" : RESTful service running on port 8080");
 	}
 
 	private void getSensorHistory(RoutingContext routingContext) {
-		System.out.println(RESTService.class.getName()+" : GET " + routingContext.request().uri());
+		System.out.println(RESTfulDBService.class.getName()+" : GET " + routingContext.request().uri());
 		String topic = routingContext.request().getParam("topic");
 		String start = routingContext.request().getParam("start");
 		String end = routingContext.request().getParam("end");
@@ -49,6 +46,7 @@ public class RESTService extends AbstractVerticle {
 				.putHeader("content-type", "application/json; charset=utf-8")
 				.setStatusCode(400)
 				.end();
+			return;
 		}else if(end == null){
 			query = "select * from sensor_history where recorded_time > UNIX_TIMESTAMP(STR_TO_DATE('" + start + "', '%Y-%M-%d')) and sensor_id in (select distinct sensor_id from sensor_topic_map where topic = '"+ topic + "');";
 			System.out.println(query);
@@ -70,7 +68,7 @@ public class RESTService extends AbstractVerticle {
 	}
 
 	private void getInstalledSensor(RoutingContext routingContext){
-		System.out.println(RESTService.class.getName()+" : GET " + routingContext.request().uri());
+		System.out.println(RESTfulDBService.class.getName()+" : GET " + routingContext.request().uri());
 		DBHelper db = new DBHelper();
 		List<JsonObject> result = db.select("select * from sensor");
 		StringBuilder sb = new StringBuilder();
@@ -86,7 +84,7 @@ public class RESTService extends AbstractVerticle {
 	}
 
 	private void getLocInfo(RoutingContext routingContext){
-		System.out.println(RESTService.class.getName()+" : GET " + routingContext.request().uri());
+		System.out.println(RESTfulDBService.class.getName()+" : GET " + routingContext.request().uri());
 		String location = routingContext.request().getParam("location");
 		DBHelper db = new DBHelper();
 		List<JsonObject> result = db.select("select * from sensor where install_loc like '%" + location + "%';");
@@ -103,7 +101,7 @@ public class RESTService extends AbstractVerticle {
 	}
 
 	private void actuationCommand(RoutingContext routingContext){
-		System.out.println(RESTService.class.getName()+" : POST " + routingContext.request().uri());
+		System.out.println(RESTfulDBService.class.getName()+" : POST " + routingContext.request().uri());
 		JsonObject body = routingContext.getBodyAsJson();
 		if(body.isEmpty() || !body.containsKey("sensorid") || !body.containsKey("action")){
 			routingContext.response()
@@ -114,7 +112,7 @@ public class RESTService extends AbstractVerticle {
 
 		String sensorid = body.getString("sensorid");
 		String action = body.getString("action");
-		System.out.println(RESTService.class.getName()+" : Action request ["+ action + "] on #" + sensorid + " processed");
+		System.out.println(RESTfulDBService.class.getName()+" : Action request ["+ action + "] on #" + sensorid + " processed");
 		routingContext.response()
 			.putHeader("content-type", "application/json; charset=utf-8")
 			.setStatusCode(200)
