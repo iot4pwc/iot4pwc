@@ -25,7 +25,7 @@ public class ConstLib {
   public static final int MQTT_PORT = 8883;
   public static final boolean MQTT_TLS_ENABLED = false;
   public static final String MQTT_BROKER_STRING = "tcp://ec2-18-221-127-99.us-east-2.compute.amazonaws.com:1883";
-  public static final String MQTT_BROKER_TLS_STRING = "tcp://ec2-18-221-127-99.us-east-2.compute.amazonaws.com:1883";
+  public static final String MQTT_BROKER_TLS_STRING = "ssl://ec2-18-221-127-99.us-east-2.compute.amazonaws.com:8883";
   public static final String MQTT_CA_FILE = "/home/ubuntu/ca.crt";
   public static final String MQTT_TLS_VERSION = "TLSv1.2";
   public static final String MQTT_CLIENT_ID = "iot4pwc";
