@@ -12,6 +12,10 @@ SET GLOBAL max_connections = 5000;
 -- DROP TABLE sensor_topic_map;
 -- DROP TABLE sensor_history;
 -- DROP TABLE sensor;
+-- DROP TABLE app_action_map;
+-- DROP TABLE actuator_action_map;
+-- DROP TABLE actuator;
+-- DROP TABLE application;
 
 CREATE TABLE sensor (
   sensor_id INT(10) AUTO_INCREMENT,
@@ -37,4 +41,40 @@ CREATE TABLE sensor_history (
   recorded_time TIMESTAMP,
   value_content VARCHAR(200),
   CONSTRAINT sensor_history_pk PRIMARY KEY(record_id)
+);
+
+CREATE TABLE application (
+	app_id INT(10) AUTO_INCREMENT,
+	app_name VARCHAR(40),
+	app_desc VARCHAR(80),
+	app_owner VARCHAR(40),
+	CONSTRAINT application_pk PRIMARY KEY(app_id)
+);
+
+CREATE TABLE actuator (
+  act_id INT(10) AUTO_INCREMENT,
+  act_type VARCHAR(20),
+  act_desc VARCHAR(80),
+  model_no VARCHAR(40),
+  installed_on DATE,
+  expiration_date DATE,
+  install_loc VARCHAR(40),
+  CONSTRAINT actuator_pk PRIMARY KEY(act_id)
+);
+
+CREATE TABLE actuator_action_map (
+	record_id INT(10) AUTO_INCREMENT,
+	act_id INT(10),
+	action_code VARCHAR(20),
+	action_desc VARCHAR(80),
+	CONSTRAINT actuator_action_map_pk PRIMARY KEY(record_id),
+	CONSTRAINT actuator_action_map_fk FOREIGN KEY (act_id) REFERENCES actuator(act_id)
+);
+
+CREATE TABLE app_action_map (
+	app_id INT(10),
+	record_id INT(10),
+	CONSTRAINT app_action_map_pk PRIMARY KEY(app_id, act_id),
+	CONSTRAINT app_action_map_fk_1 FOREIGN KEY (record_id) REFERENCES actuator_action_map(record_id),
+	CONSTRAINT app_action_map_fk_2 FOREIGN KEY (app_id) REFERENCES application(app_id)
 );
