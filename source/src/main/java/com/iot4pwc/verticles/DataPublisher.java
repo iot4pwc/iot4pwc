@@ -18,7 +18,6 @@ import io.vertx.core.json.JsonObject;
  * data to the MQTT under certain topic.
  */
 public class DataPublisher extends AbstractVerticle {
-  private DBHelper dbHelper;
   private MqttHelper mqttHelper;
   private static Map<Integer, Set<String>> sensorTopicMapping = new HashMap<>();
 
@@ -30,10 +29,10 @@ public class DataPublisher extends AbstractVerticle {
       ConstLib.DATA_PUBLISHER_WORKER_POOL_SIZE
     );
     executor.executeBlocking (future -> {
-      dbHelper = new DBHelper();
       mqttHelper = new MqttHelper(ConstLib.MQTT_TLS_ENABLED);
       sensorTopicMapping = getSensorTopicMapping();
-
+      future.complete();
+    }, res ->
       eb.consumer(ConstLib.PUBLISHER_ADDRESS, message -> {
         String structuredData = (String)message.body();
 
@@ -53,16 +52,11 @@ public class DataPublisher extends AbstractVerticle {
           }
           mqttHelper.publish(publishRequests);
         }
-      });
-
-      future.complete();
-
-      // TODO: add response
-    }, res -> {});
+      })
+    );
   }
 
   public void stop() {
-    dbHelper.closeConnection();
     mqttHelper.closeConnection();
   }
 
@@ -70,7 +64,7 @@ public class DataPublisher extends AbstractVerticle {
     Map<Integer, Set<String>> sensorTopicMap = new HashMap<>();
     String query = "SELECT * FROM sensor_topic_map";
 
-    List<JsonObject> records = dbHelper.select(query);
+    List<JsonObject> records = DBHelper.getInstance().select(query);
 
     for (JsonObject record: records) {
       int sensorId = Integer.parseInt(record.getString(SensorTopic.sensor_id));
@@ -85,7 +79,7 @@ public class DataPublisher extends AbstractVerticle {
   private void getOneSensorMapping(int sensorId, Map<Integer, Set<String>> existingMapping) {
     try {
       String query = String.format("SELECT * FROM sensor_topic_map WHERE sensor_id = %d", sensorId);
-      List<JsonObject> records = dbHelper.select(query);
+      List<JsonObject> records = DBHelper.getInstance().select(query);
       Set<String> sensorTopics = new HashSet<>();
 
       for (JsonObject record: records) {

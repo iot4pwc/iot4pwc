@@ -26,10 +26,4 @@ public class DataParser extends AbstractVerticle {
       eb.send(ConstLib.PUBLISHER_ADDRESS, structuredData);
     });
   }
-
-  public void stop() {
-    /**
-     * clear up, feel free to delete this method if you think it's unnecessary
-     */
-  }
 }
