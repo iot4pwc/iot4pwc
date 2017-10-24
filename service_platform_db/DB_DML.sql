@@ -74,7 +74,7 @@ CREATE TABLE actuator_action_map (
 CREATE TABLE app_action_map (
 	app_id INT(10),
 	record_id INT(10),
-	CONSTRAINT app_action_map_pk PRIMARY KEY(app_id, act_id),
+	CONSTRAINT app_action_map_pk PRIMARY KEY(app_id, record_id),
 	CONSTRAINT app_action_map_fk_1 FOREIGN KEY (record_id) REFERENCES actuator_action_map(record_id),
 	CONSTRAINT app_action_map_fk_2 FOREIGN KEY (app_id) REFERENCES application(app_id)
 );
