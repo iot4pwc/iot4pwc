@@ -4,6 +4,7 @@ public class ConstLib {
   public static final String PARSER_ADDRESS = "iot4pwc.data.parser";
   public static final String PUBLISHER_ADDRESS = "iot4pwc.data.publisher";
   public static final String DATA_SERVICE_ADDRESS = "iot4pwc.data.dataService";
+  public static final String APP_AUTHENTICATOR_ADDRESS = "iot4pwc.data.dataService";
 
   public static final String DATA_SERVICE_WORKER_POOL = "data service pool";
   public static final String DATA_PUBLISHER_WORKER_POOL = "data publisher pool";
@@ -33,5 +34,6 @@ public class ConstLib {
   public static final String MQTT_CLIENT_ID = "iot4pwc";
   public static final int MQTT_QUALITY_OF_SERVICE = 2;
 
-
+  public static final String PAYLOAD_FIELD_APP_ID = "app_id";
+  public static final String PAYLOAD_FIELD_ACTION_ID = "action_id";
 }
