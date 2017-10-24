@@ -10,8 +10,8 @@ tar -zxf vert.x-3.4.2-full.tar.gz
 export PATH=~/vertx/bin:$PATH
 HOST=$(ip route get 8.8.8.8 | awk '{print $NF; exit}')
 export HOST
-DB_USER_NAME="iot4pwc"
+DB_USER_NAME='iot4pwc'
 export DB_USER_NAME
-DB_USER_PW="Heinz123!"
+DB_USER_PW='Heinz123!'
 export DB_USER_PW
 sudo ufw allow 37288

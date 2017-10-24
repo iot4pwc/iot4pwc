@@ -6,13 +6,15 @@ public class ConstLib {
   public static final String DATA_SERVICE_ADDRESS = "iot4pwc.data.dataService";
 
   public static final String DATA_SERVICE_WORKER_POOL = "data service pool";
+  public static final String RESTFUL_DB_SERVICE_POOL = "restful service pool";
   public static final String DATA_PUBLISHER_WORKER_POOL = "data publisher pool";
   public static final int DATA_SERVICE_WORKER_POOL_SIZE = 40;
   public static final int DATA_PUBLISHER_WORKER_POOL_SIZE = 40;
+  public static final int RESTFUL_DB_SERVICE_POOL_SIZE = 40;
 
   public static final int CLUSTER_EVENT_BUS_PORT = 37288;
 
-  public static final int DUMMY_SENSOR_NUMBER = 20;
+  public static final int DUMMY_SENSOR_NUMBER = 1;
   public static final int DATA_PARSER_NUMBER = 20;
   public static final int DATA_PUBLISHER_NUMBER = 20;
   public static final int DATA_SERVICE_NUMBER = 20;

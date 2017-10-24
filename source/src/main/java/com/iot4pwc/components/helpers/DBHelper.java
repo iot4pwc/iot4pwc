@@ -2,7 +2,6 @@ package com.iot4pwc.components.helpers;
 
 import com.iot4pwc.components.tables.Queriable;
 import com.iot4pwc.constants.ConstLib;
-import com.iot4pwc.verticles.DataService;
 import com.mysql.jdbc.Statement;
 import io.vertx.core.json.JsonObject;
 
@@ -118,7 +117,7 @@ public class DBHelper {
       } catch (SQLException e) {
         e.printStackTrace();
       }
-      System.out.println(DataService.class.getName()+": Closed connection!");
+//      System.out.println(DataService.class.getName()+": Closed connection!");
     }
   }
 }
