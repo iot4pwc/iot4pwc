@@ -44,11 +44,11 @@ CREATE TABLE sensor_history (
 );
 
 CREATE TABLE application (
-	app_id INT(10) AUTO_INCREMENT,
-	app_name VARCHAR(40),
-	app_desc VARCHAR(80),
-	app_owner VARCHAR(40),
-	CONSTRAINT application_pk PRIMARY KEY(app_id)
+  app_id INT(10) AUTO_INCREMENT,
+  app_name VARCHAR(40),
+  app_desc VARCHAR(80),
+  app_owner VARCHAR(40),
+  CONSTRAINT application_pk PRIMARY KEY(app_id)
 );
 
 CREATE TABLE actuator (
@@ -63,18 +63,18 @@ CREATE TABLE actuator (
 );
 
 CREATE TABLE actuator_action_map (
-	record_id INT(10) AUTO_INCREMENT,
-	act_id INT(10),
-	action_code VARCHAR(20),
-	action_desc VARCHAR(80),
-	CONSTRAINT actuator_action_map_pk PRIMARY KEY(record_id),
-	CONSTRAINT actuator_action_map_fk FOREIGN KEY (act_id) REFERENCES actuator(act_id)
+  record_id INT(10) AUTO_INCREMENT,
+  act_id INT(10),
+  action_code VARCHAR(20),
+  action_desc VARCHAR(80),
+  CONSTRAINT actuator_action_map_pk PRIMARY KEY(record_id),
+  CONSTRAINT actuator_action_map_fk FOREIGN KEY (act_id) REFERENCES actuator(act_id)
 );
 
 CREATE TABLE app_action_map (
-	app_id INT(10),
-	record_id INT(10),
-	CONSTRAINT app_action_map_pk PRIMARY KEY(app_id, record_id),
-	CONSTRAINT app_action_map_fk_1 FOREIGN KEY (record_id) REFERENCES actuator_action_map(record_id),
-	CONSTRAINT app_action_map_fk_2 FOREIGN KEY (app_id) REFERENCES application(app_id)
+  app_id INT(10),
+  record_id INT(10),
+  CONSTRAINT app_action_map_pk PRIMARY KEY(app_id, record_id),
+  CONSTRAINT app_action_map_fk_1 FOREIGN KEY (record_id) REFERENCES actuator_action_map(record_id),
+  CONSTRAINT app_action_map_fk_2 FOREIGN KEY (app_id) REFERENCES application(app_id)
 );
