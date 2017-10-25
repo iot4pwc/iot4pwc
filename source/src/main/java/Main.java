@@ -1,3 +1,4 @@
+import com.iot4pwc.components.helpers.DBHelper;
 import com.iot4pwc.constants.ConstLib;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;

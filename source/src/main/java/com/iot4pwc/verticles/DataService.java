@@ -12,8 +12,6 @@ import io.vertx.core.json.JsonObject;
  * This is a data service that persists the data to the database
  */
 public class DataService extends AbstractVerticle {
-  private DBHelper dbHelper;
-
   public void start() {
     EventBus eb = vertx.eventBus();
 
@@ -21,20 +19,19 @@ public class DataService extends AbstractVerticle {
       ConstLib.DATA_SERVICE_WORKER_POOL,
       ConstLib.DATA_SERVICE_WORKER_POOL_SIZE
     );
-    executor.executeBlocking (future -> {
-      dbHelper = new DBHelper();
 
-      eb.consumer(ConstLib.DATA_SERVICE_ADDRESS, message -> {
-        JsonObject structuredDataJSON = new JsonObject((String)message.body());
-        dbHelper.insert(structuredDataJSON, SensorHistory.getInstance());
+    eb.consumer(ConstLib.DATA_SERVICE_ADDRESS, message -> {
+      JsonObject structuredDataJSON = new JsonObject((String)message.body());
+      executor.executeBlocking (future -> {
+        DBHelper.getInstance().insert(structuredDataJSON, SensorHistory.getInstance());
+        future.complete();
+      }, res -> {
+        // TODO: add response
       });
-      future.complete();
-    }, res -> {
-      // TODO: add response
     });
   }
 
   public void stop() {
-    dbHelper.closeConnection();
+    DBHelper.getInstance().closeDatasource();
   }
 }
