@@ -18,6 +18,7 @@ public class ConstLib {
   public static final int DATA_PUBLISHER_NUMBER = 20;
   public static final int DATA_SERVICE_NUMBER = 20;
   public static final int RESTFUL_DB_SERVICE_NUMBER = 1;
+  public static final int APP_AUTHENICATOR_NUMBER = 1;
 
   public static final String SERVICE_PLATFORM_OPTION = "-sp";
   public static final String DATA_GENERATOR_OPTION = "-dg";

@@ -31,6 +31,8 @@ public class Main {
       vertx.deployVerticle("com.iot4pwc.verticles.DataService", deploymentOptions);
       deploymentOptions = new DeploymentOptions().setInstances(ConstLib.RESTFUL_DB_SERVICE_NUMBER);
       vertx.deployVerticle("com.iot4pwc.verticles.RESTfulDBService", deploymentOptions);
+      deploymentOptions = new DeploymentOptions().setInstances(ConstLib.APP_AUTHENICATOR_NUMBER);
+      vertx.deployVerticle("com.iot4pwc.verticles.AppAuthenticator", deploymentOptions);
     } else {
       String option = args[0];
 

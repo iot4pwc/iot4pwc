@@ -14,6 +14,7 @@ public class AppAuthenticator extends AbstractVerticle {
     
   private DBHelper dbHelper;
   
+  @Override
   public void start() {
     EventBus bus = vertx.eventBus();
     
@@ -31,6 +32,7 @@ public class AppAuthenticator extends AbstractVerticle {
     
   }
   
+  @Override
   public void stop() {
 
   }
