@@ -57,7 +57,7 @@ public class MqttHelper {
   private MqttClient getMqttClient() {
     MqttClient client = null;
     try {
-      String broker = ConstLib.MQTT_BROKER_STRING;
+      String broker = String.format(ConstLib.MQTT_BROKER_STRING, System.getenv("MQTT_URL"));
       client = new MqttClient (broker, ConstLib.MQTT_CLIENT_ID + Integer.toString(clientSuffix++));
       MqttConnectOptions connOpts = new MqttConnectOptions();
       connOpts.setCleanSession(true);
@@ -72,7 +72,7 @@ public class MqttHelper {
   private MqttClient getMqttTLSClient() {
     MqttClient client = null;
     try {
-      String broker = ConstLib.MQTT_BROKER_TLS_STRING;
+      String broker = String.format(ConstLib.MQTT_BROKER_TLS_STRING, System.getenv("MQTT_URL"));
       client = new MqttClient (broker, ConstLib.MQTT_CLIENT_ID + Integer.toString(clientSuffix++));
       MqttConnectOptions connOpts = new MqttConnectOptions();
       connOpts.setCleanSession(true);

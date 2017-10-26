@@ -2,10 +2,10 @@ DROP DATABASE service_platform;
 CREATE DATABASE service_platform;
 USE service_platform;
 
-DROP USER 'iot4pwc'@'localhost';
+DROP USER 'iot4pwc'@'%';
 FLUSH PRIVILEGES;
-CREATE USER 'iot4pwc'@'localhost' IDENTIFIED BY 'Heinz123!';
-GRANT ALL PRIVILEGES ON service_platform.* TO 'iot4pwc'@'localhost';
+CREATE USER 'iot4pwc'@'%' IDENTIFIED BY 'Heinz123!';
+GRANT ALL PRIVILEGES ON service_platform.* TO 'iot4pwc'@'%';
 
 SET GLOBAL max_connections = 5000;
 # for some reason dropping the tables will introduce error even with -f option
@@ -15,7 +15,11 @@ SET GLOBAL max_connections = 5000;
 -- DROP TABLE app_action_map;
 -- DROP TABLE actuator_action_map;
 -- DROP TABLE actuator;
--- DROP TABLE application;
+-- DROP TABLE uuid_meeting_room_url;
+-- DROP TABLE meeting_room_occupancy;
+-- DROP TABLE user;
+-- DROP TABLE meeting_room_info;
+-- DROP TABLE meeting_room_files;
 
 CREATE TABLE sensor (
   sensor_id INT(10) AUTO_INCREMENT,
@@ -77,4 +81,53 @@ CREATE TABLE app_action_map (
   CONSTRAINT app_action_map_pk PRIMARY KEY(app_id, record_id),
   CONSTRAINT app_action_map_fk_1 FOREIGN KEY (record_id) REFERENCES actuator_action_map(record_id),
   CONSTRAINT app_action_map_fk_2 FOREIGN KEY (app_id) REFERENCES application(app_id)
+);
+
+DROP DATABASE information_broadcaster;
+CREATE DATABASE information_broadcaster;
+USE information_broadcaster;
+
+CREATE TABLE IF NOT EXISTS `uuid_meeting_room_url` (
+  `id` int(10) NOT NULL auto_increment,
+  `uuid` varchar(255),
+  `meeting_room` varchar(255),
+  `url` varchar(255),
+  PRIMARY KEY( `id` )
+);
+
+CREATE TABLE IF NOT EXISTS `meeting_room_occupancy` (
+  `id` int(10) NOT NULL auto_increment,
+  `user` varchar(255),
+  `meeting_room` varchar(255),
+  `host_token` varchar(255),
+  PRIMARY KEY( `id` )
+);
+
+CREATE TABLE IF NOT EXISTS `user` (
+  `id` int(10) NOT NULL auto_increment,
+  `user` varchar(255),
+  `key` varchar(255),
+  `value` varchar(255),
+  `type` varchar(255),
+  PRIMARY KEY( `id` )
+);
+
+CREATE TABLE IF NOT EXISTS `meeting_room_info` (
+  `id` int(10) NOT NULL auto_increment,
+  `meeting_room` varchar(255),
+  `key` varchar(255),
+  `value` varchar(255),
+  `type` varchar(255),
+  PRIMARY KEY( `id` )
+);
+
+
+CREATE TABLE IF NOT EXISTS `meeting_room_files` (
+  `id` int(10) NOT NULL auto_increment,
+  `meeting_room` varchar(255),
+  `key` varchar(255),
+  `value` varchar(255),
+  `type` varchar(255),
+  `access_code` varchar(255),
+  PRIMARY KEY( `id` )
 );

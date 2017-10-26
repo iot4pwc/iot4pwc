@@ -2,6 +2,7 @@ package com.iot4pwc.verticles;
 
 import java.util.List;
 import com.iot4pwc.components.helpers.DBHelper;
+import com.iot4pwc.constants.ConstLib;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonArray;
@@ -53,11 +54,11 @@ public class RESTfulDBService extends AbstractVerticle {
     }else if(end == null){
       query = "select * from sensor_history where recorded_time >= STR_TO_DATE('" + start + "', '%Y-%m-%d %H:%i:%S') and sensor_id in (select distinct sensor_id from sensor_topic_map where topic = '"+ topic + "') order by recorded_time desc limit "+ limit +";";
       System.out.println(query);
-      result = DBHelper.getInstance().select(query);
+      result = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select(query);
     }else {
       query = "select * from sensor_history where recorded_time between STR_TO_DATE('" + start + "', '%Y-%m-%d %H:%i:%S') and STR_TO_DATE('" + end + "', '%Y-%m-%d %H:%i:%S') and sensor_id in (select distinct sensor_id from sensor_topic_map where topic = '" + topic + "') order by recorded_time desc limit "+ limit +";";
       System.out.println(query);
-      result = DBHelper.getInstance().select(query);
+      result = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select(query);
     }
     JsonArray arr = new JsonArray(result);
     JsonObject obj = new JsonObject().put("result", arr);
@@ -71,7 +72,7 @@ public class RESTfulDBService extends AbstractVerticle {
     String limitStr = routingContext.request().getParam("limit");
     int limit = limitStr == null ? 100 : Integer.valueOf(limitStr.trim());
 		System.out.println(RESTfulDBService.class.getName()+" : GET " + routingContext.request().uri());
-		List<JsonObject> result = DBHelper.getInstance().select("select * from sensor limit "+ limit + ";");
+		List<JsonObject> result = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select("select * from sensor limit "+ limit + ";");
 		JsonArray arr = new JsonArray(result);
 		JsonObject obj = new JsonObject().put("result", arr);
 		routingContext.response()
@@ -85,7 +86,9 @@ public class RESTfulDBService extends AbstractVerticle {
 		String location = routingContext.request().getParam("location");
     String limitStr = routingContext.request().getParam("limit");
     int limit = limitStr == null ? 100 : Integer.valueOf(limitStr.trim());
-		List<JsonObject> result = DBHelper.getInstance().select("select * from sensor where install_loc like '%" + location + "%' limit "+ limit +";");
+		List<JsonObject> result = DBHelper
+			.getInstance(ConstLib.SERVICE_PLATFORM)
+			.select("select * from sensor where install_loc like '%" + location + "%' limit "+ limit +";");
     JsonArray arr = new JsonArray(result);
     JsonObject obj = new JsonObject().put("result", arr);
     routingContext.response()

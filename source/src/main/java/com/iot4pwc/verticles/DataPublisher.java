@@ -35,7 +35,6 @@ public class DataPublisher extends AbstractVerticle {
     }, res ->
       eb.consumer(ConstLib.PUBLISHER_ADDRESS, message -> {
         String structuredData = (String)message.body();
-
         JsonObject structuredDataJSON = new JsonObject(structuredData);
         Set<String> sensorTopics = getTopicSet(structuredDataJSON);
 
@@ -64,7 +63,7 @@ public class DataPublisher extends AbstractVerticle {
     Map<Integer, Set<String>> sensorTopicMap = new HashMap<>();
     String query = "SELECT * FROM sensor_topic_map";
 
-    List<JsonObject> records = DBHelper.getInstance().select(query);
+    List<JsonObject> records = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select(query);
 
     for (JsonObject record: records) {
       int sensorId = Integer.parseInt(record.getString(SensorTopic.sensor_id));
@@ -79,7 +78,7 @@ public class DataPublisher extends AbstractVerticle {
   private void getOneSensorMapping(int sensorId, Map<Integer, Set<String>> existingMapping) {
     try {
       String query = String.format("SELECT * FROM sensor_topic_map WHERE sensor_id = %d", sensorId);
-      List<JsonObject> records = DBHelper.getInstance().select(query);
+      List<JsonObject> records = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select(query);
       Set<String> sensorTopics = new HashSet<>();
 
       for (JsonObject record: records) {

@@ -23,7 +23,7 @@ public class DataService extends AbstractVerticle {
     eb.consumer(ConstLib.DATA_SERVICE_ADDRESS, message -> {
       JsonObject structuredDataJSON = new JsonObject((String)message.body());
       executor.executeBlocking (future -> {
-        DBHelper.getInstance().insert(structuredDataJSON, SensorHistory.getInstance());
+        DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).insert(structuredDataJSON, SensorHistory.getInstance());
         future.complete();
       }, res -> {
         // TODO: add response
@@ -32,6 +32,6 @@ public class DataService extends AbstractVerticle {
   }
 
   public void stop() {
-    DBHelper.getInstance().closeDatasource();
+    DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).closeDatasource();
   }
 }

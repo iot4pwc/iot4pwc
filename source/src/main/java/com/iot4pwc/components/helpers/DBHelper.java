@@ -16,10 +16,10 @@ public class DBHelper {
   private static DBHelper instance;
   private HikariDataSource ds;
 
-  private DBHelper() {
+  private DBHelper(String mySQLConnectionString) {
     HikariConfig config = new HikariConfig();
     config.setPoolName(ConstLib.HIKARI_POOL_NAME);
-    config.setJdbcUrl(ConstLib.MYSQL_CONNECTION_STRING);
+    config.setJdbcUrl(mySQLConnectionString);
     config.setUsername(System.getenv("DB_USER_NAME"));
     config.setPassword(System.getenv("DB_USER_PW"));
     config.setMaximumPoolSize(ConstLib.HIKARI_MAX_POOL_SIZE);
@@ -31,9 +31,14 @@ public class DBHelper {
     ds = new HikariDataSource(config);
   }
 
-  public static DBHelper getInstance() {
+  public static DBHelper getInstance(String databaseName) {
+    String MySQLConnectionString = String.format(
+      ConstLib.MYSQL_CONNECTION_STRING,
+      System.getenv("MYSQL_URL"),
+      databaseName
+    );
     if (DBHelper.instance == null) {
-      DBHelper.instance = new DBHelper();
+      DBHelper.instance = new DBHelper(MySQLConnectionString);
     }
     return DBHelper.instance;
   }
