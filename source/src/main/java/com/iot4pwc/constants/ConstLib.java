@@ -4,7 +4,7 @@ public class ConstLib {
   public static final String PARSER_ADDRESS = "iot4pwc.data.parser";
   public static final String PUBLISHER_ADDRESS = "iot4pwc.data.publisher";
   public static final String DATA_SERVICE_ADDRESS = "iot4pwc.data.dataService";
-  public static final String APP_AUTHENTICATOR_ADDRESS = "iot4pwc.data.dataService";
+  public static final String APP_AUTHENTICATOR_ADDRESS = "iot4pwc.data.appAuthenticator";
 
   public static final String DATA_SERVICE_WORKER_POOL = "data service pool";
   public static final String DATA_PUBLISHER_WORKER_POOL = "data publisher pool";

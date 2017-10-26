@@ -34,7 +34,7 @@ public class AppAuthenticator extends AbstractVerticle {
   
   @Override
   public void stop() {
-
+    dbHelper.closeConnection();
   }
   
   private Boolean verifyAuthenticity(String data) {
@@ -47,10 +47,11 @@ public class AppAuthenticator extends AbstractVerticle {
     Creating a dbHelper everytime and closing the connection because it might be wasteful to have a live connection and not use it.
     May be changed when authenticater has to scale.
     */
-    this.dbHelper = new DBHelper();
+    if( this.dbHelper == null) {
+        this.dbHelper = new DBHelper();
+    }
     String query = "SELECT COUNT(*) AS CNT FROM app_action_map WHERE app_id = " + appId + " AND recordId = " + actionId;
     List<JsonObject> records = dbHelper.select(query);
-    dbHelper.closeConnection();
     if(records != null) {
       int count = Integer.parseInt(records.get(0).getString("CNT"));
       if(count > 0) {
