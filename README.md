@@ -26,67 +26,40 @@ cd src
 mvn package
 ```
 
-Deploy the fat .jar file:
+Deploy the fat .jar file locally:
 
 ```
 java -jar servicePlatform-[VERSION_NUMBER]-SNAPSHOT-fat.jar
 ```
-
-/// TODO
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
+or, to just run parts of the platform:
 ```
-Give an example
+java -jar servicePlatform-[VERSION_NUMBER]-SNAPSHOT-fat.jar -dg
+java -jar servicePlatform-[VERSION_NUMBER]-SNAPSHOT-fat.jar -sp
 ```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
 
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
+* [Vert.x](http://vertx.io/) - The Java framework used
 * [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+* [Mosquitto](https://mosquitto.org/) - Used as a MQTT
+* [Paho](https://www.eclipse.org/paho/) - Used to read from and write to the MQTT
+* [DCloud HBuilder](https://dcloud.io/index.html) - Used for transpiling web code to Android
+* MySQL
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **Tarun Khandelwal** - *Project Manager*
+* **Xianru Wu** - *Engineering Lead*
+* **Lydia Li** - *Engineering IC*
+* **Yan Wang** - *Engineering IC*
+* **Giovanni Burresi** - *Hardware Lead*
+* **Stefan Hermanek** - *Product Lead*
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+[TBD]
 
 ## Acknowledgments
 
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc
-
+* [TBD]
