@@ -1,3 +1,5 @@
+USE service_platform;
+
 INSERT INTO sensor (sensor_id, sensor_type, sensor_desc, model_no, installed_on, expiration_date, install_loc)
 VALUES (1, 'Noise', 'Measures noise', 'NVT1276', '2016-7-04', '2020-8-15', 'Gates Conference Room');
 

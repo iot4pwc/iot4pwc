@@ -2,10 +2,14 @@ DROP DATABASE service_platform;
 CREATE DATABASE service_platform;
 USE service_platform;
 
+DROP DATABASE information_broadcaster;
+CREATE DATABASE information_broadcaster;
+
 DROP USER 'iot4pwc'@'%';
 FLUSH PRIVILEGES;
 CREATE USER 'iot4pwc'@'%' IDENTIFIED BY 'Heinz123!';
 GRANT ALL PRIVILEGES ON service_platform.* TO 'iot4pwc'@'%';
+GRANT ALL PRIVILEGES ON information_broadcaster.* TO 'iot4pwc'@'%';
 
 SET GLOBAL max_connections = 5000;
 # for some reason dropping the tables will introduce error even with -f option
@@ -83,29 +87,27 @@ CREATE TABLE app_action_map (
   CONSTRAINT app_action_map_fk_2 FOREIGN KEY (app_id) REFERENCES application(app_id)
 );
 
-DROP DATABASE information_broadcaster;
-CREATE DATABASE information_broadcaster;
 USE information_broadcaster;
 
 CREATE TABLE IF NOT EXISTS `uuid_meeting_room_url` (
   `id` int(10) NOT NULL auto_increment,
   `uuid` varchar(255),
-  `meeting_room` varchar(255),
+  `meeting_room_name` varchar(255),
   `url` varchar(255),
   PRIMARY KEY( `id` )
 );
 
 CREATE TABLE IF NOT EXISTS `meeting_room_occupancy` (
   `id` int(10) NOT NULL auto_increment,
-  `user` varchar(255),
-  `meeting_room` varchar(255),
+  `user_name` varchar(255),
+  `meeting_room_name` varchar(255),
   `host_token` varchar(255),
   PRIMARY KEY( `id` )
 );
 
 CREATE TABLE IF NOT EXISTS `user` (
   `id` int(10) NOT NULL auto_increment,
-  `user` varchar(255),
+  `user_name` varchar(255),
   `key` varchar(255),
   `value` varchar(255),
   `type` varchar(255),
@@ -114,7 +116,7 @@ CREATE TABLE IF NOT EXISTS `user` (
 
 CREATE TABLE IF NOT EXISTS `meeting_room_info` (
   `id` int(10) NOT NULL auto_increment,
-  `meeting_room` varchar(255),
+  `meeting_room_name` varchar(255),
   `key` varchar(255),
   `value` varchar(255),
   `type` varchar(255),
@@ -124,7 +126,7 @@ CREATE TABLE IF NOT EXISTS `meeting_room_info` (
 
 CREATE TABLE IF NOT EXISTS `meeting_room_files` (
   `id` int(10) NOT NULL auto_increment,
-  `meeting_room` varchar(255),
+  `meeting_room_name` varchar(255),
   `key` varchar(255),
   `value` varchar(255),
   `type` varchar(255),
