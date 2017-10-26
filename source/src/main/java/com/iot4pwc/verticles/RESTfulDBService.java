@@ -3,8 +3,10 @@ package com.iot4pwc.verticles;
 import java.util.List;
 import com.iot4pwc.components.helpers.DBHelper;
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.net.PemKeyCertOptions;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
@@ -13,7 +15,7 @@ public class RESTfulDBService extends AbstractVerticle {
 	@Override
 	public void start(){
 		Router router = Router.router(vertx);
-		System.out.println(RESTfulDBService.class.getName()+" : Initializing RESTful service running on port 8080");
+		System.out.println(RESTfulDBService.class.getName()+" : Initializing RESTful service running on port 8443");
 		/**
 		 * GET /data?topic=topic&start=starttime&end=endtime&limit=limit  -- topic related data
 		 * GET /data/getSensor?limit=limit                       		  -- all sensor installed
@@ -26,8 +28,8 @@ public class RESTfulDBService extends AbstractVerticle {
 		router.get("/data/getLocation").handler(this::getLocInfo);
 		router.post("/actuate").handler(this::actuationCommand);
 
-		vertx.createHttpServer().requestHandler(router::accept).listen(8080);
-		System.out.println(RESTfulDBService.class.getName()+" : RESTful service running on port 8080");
+		vertx.createHttpServer(new HttpServerOptions().setSsl(true).setPemKeyCertOptions(new PemKeyCertOptions().setKeyPath(System.getenv("PRIVATE_KEY_PATH")).setCertPath(System.getenv("CERTIFICATE_PATH")))).requestHandler(router::accept).listen(8443);
+		System.out.println(RESTfulDBService.class.getName()+" : RESTful service running on port 8443");
 
 	}
 
