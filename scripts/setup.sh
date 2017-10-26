@@ -15,9 +15,9 @@ export DB_USER_NAME
 DB_USER_PW='Heinz123!'
 export DB_USER_PW
 
-PRIVATE_KEY_PATH='/home/ubuntu/ca.key'
+PRIVATE_KEY_PATH=$(pwd)'/ca.key'
 export PRIVATE_KEY_PATH
-CERTIFICATE_PATH='/home/ubuntu/ca.crt'
+CERTIFICATE_PATH=$(pwd)'/ca.crt'
 export CERTIFICATE_PATH
 
 sudo ufw allow 37288
