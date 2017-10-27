@@ -33,6 +33,8 @@ public class ActuatorController extends AbstractVerticle{
 						//if(sendRequest(command)){
 						message.reply("Success");
 						//}
+					}else{
+						message.reply("Failed");
 					}
 				}else{
 					message.reply("Failed");

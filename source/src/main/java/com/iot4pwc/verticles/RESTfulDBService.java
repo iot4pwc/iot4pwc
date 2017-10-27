@@ -21,7 +21,7 @@ public class RESTfulDBService extends AbstractVerticle {
 	@Override
 	public void start(){
 		Router router = Router.router(vertx);
-		System.out.println(RESTfulDBService.class.getName()+" : Initializing RESTful service running on port 8080");
+		System.out.println(RESTfulDBService.class.getName()+" : Initializing RESTful service running on port 8443");
 		/**
 		 * GET /data?topic=topic&start=starttime&end=endtime&limit=limit  -- topic related data
 		 * GET /data/getSensor?limit=limit                       		  -- all sensor installed
@@ -34,9 +34,9 @@ public class RESTfulDBService extends AbstractVerticle {
 		router.get("/data/getLocation").handler(this::getLocInfo);
 		router.post("/actuate").handler(this::actuationCommand);
 
-		//vertx.createHttpServer(new HttpServerOptions().setSsl(true).setPemKeyCertOptions(new PemKeyCertOptions().setKeyPath(System.getenv("PRIVATE_KEY_PATH")).setCertPath(System.getenv("CERTIFICATE_PATH")))).requestHandler(router::accept).listen(8443);
-		vertx.createHttpServer().requestHandler(router::accept).listen(8080);
-		System.out.println(RESTfulDBService.class.getName()+" : RESTful service running on port 8080");
+		vertx.createHttpServer(new HttpServerOptions().setSsl(true).setPemKeyCertOptions(new PemKeyCertOptions().setKeyPath(System.getenv("PRIVATE_KEY_PATH")).setCertPath(System.getenv("CERTIFICATE_PATH")))).requestHandler(router::accept).listen(8443);
+		//vertx.createHttpServer().requestHandler(router::accept).listen(8080);
+		System.out.println(RESTfulDBService.class.getName()+" : RESTful service running on port 8443");
 
 	}
 
@@ -129,15 +129,21 @@ public class RESTfulDBService extends AbstractVerticle {
 					routingContext.response()
 					.putHeader("content-type", "application/json; charset=utf-8")
 					.setStatusCode(200)
-					.end("Action request ["+ body.getString("action_id") + "] on #" + body.getString("sensor_id") + " processed");
+					.end("Action request processed");
 					return;
 				}
+				System.out.println(RESTfulDBService.class.getName()+" : Action request ["+ body.getString("action_id") + "] on #" + body.getString("sensor_id") + " failed due to " + ar.result().body());
+				routingContext.response()
+				.putHeader("content-type", "application/json; charset=utf-8")
+				.setStatusCode(200)
+				.end("Action request failed");
+				return;
 			}else{
 				System.out.println(RESTfulDBService.class.getName()+" : Action request ["+ body.getString("action_id") + "] on #" + body.getString("sensor_id") + " failed due to " + ar.result().body());
 				routingContext.response()
 				.putHeader("content-type", "application/json; charset=utf-8")
 				.setStatusCode(500)
-				.end("Action request ["+ body.getString("action_id") + "] on #" + body.getString("sensor_id") + " failed");
+				.end("Action request failed");
 				return;
 			}
 		});
