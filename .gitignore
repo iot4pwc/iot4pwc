@@ -1,5 +1,4 @@
 .idea
-source/src/main/resources/cluster.xml
 .DS_Store
 .vertx
 source/target/classes/cluster.xml
