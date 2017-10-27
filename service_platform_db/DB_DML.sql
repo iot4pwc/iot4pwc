@@ -99,25 +99,30 @@ CREATE TABLE IF NOT EXISTS `uuid_meeting_room_url` (
 
 CREATE TABLE IF NOT EXISTS `meeting_room_occupancy` (
   `id` int(10) NOT NULL auto_increment,
-  `user_name` varchar(255),
+  `user_email` varchar(255),
   `meeting_room_name` varchar(255),
-  `host_token` varchar(255),
+  `host_token` varchar(255)
   PRIMARY KEY( `id` )
 );
 
+-- setting up cascade
+-- type and asset map is hard coded
+-- index on meeting_room_name
+
 CREATE TABLE IF NOT EXISTS `user` (
   `id` int(10) NOT NULL auto_increment,
-  `user_name` varchar(255),
-  `key` varchar(255),
+  `user_email` varchar(255),
+  `asset_name` varchar(255),
   `value` varchar(255),
   `type` varchar(255),
   PRIMARY KEY( `id` )
 );
 
+-- index on meeting_room_name?
 CREATE TABLE IF NOT EXISTS `meeting_room_info` (
   `id` int(10) NOT NULL auto_increment,
   `meeting_room_name` varchar(255),
-  `key` varchar(255),
+  `asset_name` varchar(255),
   `value` varchar(255),
   `type` varchar(255),
   PRIMARY KEY( `id` )
@@ -127,9 +132,9 @@ CREATE TABLE IF NOT EXISTS `meeting_room_info` (
 CREATE TABLE IF NOT EXISTS `meeting_room_files` (
   `id` int(10) NOT NULL auto_increment,
   `meeting_room_name` varchar(255),
-  `key` varchar(255),
+  `asset_name` varchar(255),
   `value` varchar(255),
   `type` varchar(255),
-  `access_code` varchar(255),
+  `hashed_host_token` varchar(255),
   PRIMARY KEY( `id` )
 );
