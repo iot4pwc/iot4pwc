@@ -1,9 +1,14 @@
 package com.iot4pwc.verticles;
 
 import java.util.List;
+
 import com.iot4pwc.components.helpers.DBHelper;
 import com.iot4pwc.constants.ConstLib;
+
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.WorkerExecutor;
+import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.eventbus.Message;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -16,7 +21,7 @@ public class RESTfulDBService extends AbstractVerticle {
 	@Override
 	public void start(){
 		Router router = Router.router(vertx);
-		System.out.println(RESTfulDBService.class.getName()+" : Initializing RESTful service running on port 8443");
+		System.out.println(RESTfulDBService.class.getName()+" : Initializing RESTful service running on port 8080");
 		/**
 		 * GET /data?topic=topic&start=starttime&end=endtime&limit=limit  -- topic related data
 		 * GET /data/getSensor?limit=limit                       		  -- all sensor installed
@@ -29,8 +34,9 @@ public class RESTfulDBService extends AbstractVerticle {
 		router.get("/data/getLocation").handler(this::getLocInfo);
 		router.post("/actuate").handler(this::actuationCommand);
 
-		vertx.createHttpServer(new HttpServerOptions().setSsl(true).setPemKeyCertOptions(new PemKeyCertOptions().setKeyPath(System.getenv("PRIVATE_KEY_PATH")).setCertPath(System.getenv("CERTIFICATE_PATH")))).requestHandler(router::accept).listen(8443);
-		System.out.println(RESTfulDBService.class.getName()+" : RESTful service running on port 8443");
+		//vertx.createHttpServer(new HttpServerOptions().setSsl(true).setPemKeyCertOptions(new PemKeyCertOptions().setKeyPath(System.getenv("PRIVATE_KEY_PATH")).setCertPath(System.getenv("CERTIFICATE_PATH")))).requestHandler(router::accept).listen(8443);
+		vertx.createHttpServer().requestHandler(router::accept).listen(8080);
+		System.out.println(RESTfulDBService.class.getName()+" : RESTful service running on port 8080");
 
 	}
 
@@ -100,20 +106,42 @@ public class RESTfulDBService extends AbstractVerticle {
 	private void actuationCommand(RoutingContext routingContext){
 		System.out.println(RESTfulDBService.class.getName()+" : POST " + routingContext.request().uri());
 		JsonObject body = routingContext.getBodyAsJson();
-		if(body.isEmpty() || !body.containsKey("sensorid") || !body.containsKey("action")){
+		if(body.isEmpty() || !body.containsKey("sensor_id") || !body.containsKey("action_id") || !body.containsKey("app_id")){
 			routingContext.response()
-				.putHeader("content-type", "application/json; charset=utf-8")
-				.setStatusCode(400)
-				.end();
+			.putHeader("content-type", "application/json; charset=utf-8")
+			.setStatusCode(400)
+			.end();
 			return;
 		}
-
-		String sensorid = body.getString("sensorid");
-		String action = body.getString("action");
-		System.out.println(RESTfulDBService.class.getName()+" : Action request ["+ action + "] on #" + sensorid + " processed");
-		routingContext.response( )
-			.putHeader("content-type", "application/json; charset=utf-8")
-			.setStatusCode(200)
-			.end();
+		
+		//System.out.println("Response status at check point 1: " + routingContext.response().ended());
+		System.out.println(RESTfulDBService.class.getName()+" : sending to acutator");
+		
+		EventBus eb = vertx.eventBus();
+		eb.send(ConstLib.ACTUATOR_ADDRESS, body.toString(), ar -> {
+			System.out.println(RESTfulDBService.class.getName()+" : message send to actuator");
+			if (ar.succeeded()) {
+				System.out.println(RESTfulDBService.class.getName()+ar.result().body());
+				String result = (String) ar.result().body();
+				if(result.equals("Success")){
+					System.out.println(RESTfulDBService.class.getName()+" : Action request ["+ body.getString("action_id") + "] on #" + body.getString("sensor_id") + " processed");
+					//System.out.println("Response status at check point 2: " + routingContext.response().ended());
+					routingContext.response()
+					.putHeader("content-type", "application/json; charset=utf-8")
+					.setStatusCode(200)
+					.end("Action request ["+ body.getString("action_id") + "] on #" + body.getString("sensor_id") + " processed");
+					return;
+				}
+			}else{
+				System.out.println(RESTfulDBService.class.getName()+" : Action request ["+ body.getString("action_id") + "] on #" + body.getString("sensor_id") + " failed due to " + ar.result().body());
+				routingContext.response()
+				.putHeader("content-type", "application/json; charset=utf-8")
+				.setStatusCode(500)
+				.end("Action request ["+ body.getString("action_id") + "] on #" + body.getString("sensor_id") + " failed");
+				return;
+			}
+		});
+		
+		//System.out.println("Response status at check point 3: " + routingContext.response().ended());
 	}
 }

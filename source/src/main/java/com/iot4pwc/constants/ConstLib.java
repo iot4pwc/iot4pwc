@@ -4,6 +4,8 @@ public class ConstLib {
   public static final String PARSER_ADDRESS = "iot4pwc.data.parser";
   public static final String PUBLISHER_ADDRESS = "iot4pwc.data.publisher";
   public static final String DATA_SERVICE_ADDRESS = "iot4pwc.data.dataService";
+  public static final String ACTUATOR_ADDRESS = "iot4pwc.data.actuator";
+  public static final String APP_AUTHENTICATOR_ADDRESS = "iot4pwc.data.appAuthenticator";
 
   public static final String DATA_SERVICE_WORKER_POOL = "data service pool";
   public static final String RESTFUL_DB_SERVICE_POOL = "restful service pool";
@@ -19,6 +21,8 @@ public class ConstLib {
   public static final int DATA_PUBLISHER_NUMBER = 10;
   public static final int DATA_SERVICE_NUMBER = 10;
   public static final int RESTFUL_DB_SERVICE_NUMBER = 1;
+  public static final int APP_AUTHENICATOR_NUMBER = 1;
+  public static final int ACTUATOR_NUMBER = 1;
 
   public static final String SERVICE_PLATFORM_OPTION = "-sp";
   public static final String DATA_GENERATOR_OPTION = "-dg";
@@ -40,5 +44,10 @@ public class ConstLib {
   public static final String MQTT_CLIENT_ID = "iot4pwc";
   public static final int MQTT_QUALITY_OF_SERVICE = 2;
 
-
+  public static final String PAYLOAD_FIELD_APP_ID = "app_id";
+  public static final String PAYLOAD_FIELD_ACTION_ID = "action_id";
+  
+  public static final String UDOO_ENDPOINT = "cmu.udoo.cloud";
+  public static final String UDOO_USERNAME = "cmu4pwc";
+  public static final String UDOO_PWD = "CMU4pwc.";
 }
