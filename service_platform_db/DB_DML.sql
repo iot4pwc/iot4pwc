@@ -19,6 +19,7 @@ DROP TABLE IF EXISTS sensor;
 DROP TABLE IF EXISTS app_action_map;
 DROP TABLE IF EXISTS actuator_action_map;
 DROP TABLE IF EXISTS actuator;
+DROP TABLE IF EXISTS application;
 
 CREATE TABLE sensor (
   sensor_id INT(10) AUTO_INCREMENT,
