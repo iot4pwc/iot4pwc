@@ -12,18 +12,13 @@ GRANT ALL PRIVILEGES ON service_platform.* TO 'iot4pwc'@'%';
 GRANT ALL PRIVILEGES ON information_broadcaster.* TO 'iot4pwc'@'%';
 
 SET GLOBAL max_connections = 5000;
-# for some reason dropping the tables will introduce error even with -f option
--- DROP TABLE sensor_topic_map;
--- DROP TABLE sensor_history;
--- DROP TABLE sensor;
--- DROP TABLE app_action_map;
--- DROP TABLE actuator_action_map;
--- DROP TABLE actuator;
--- DROP TABLE uuid_meeting_room_url;
--- DROP TABLE meeting_room_occupancy;
--- DROP TABLE user;
--- DROP TABLE meeting_room_info;
--- DROP TABLE meeting_room_files;
+
+DROP TABLE IF EXISTS sensor_topic_map;
+DROP TABLE IF EXISTS sensor_history;
+DROP TABLE IF EXISTS sensor;
+DROP TABLE IF EXISTS app_action_map;
+DROP TABLE IF EXISTS actuator_action_map;
+DROP TABLE IF EXISTS actuator;
 
 CREATE TABLE sensor (
   sensor_id INT(10) AUTO_INCREMENT,
@@ -87,54 +82,67 @@ CREATE TABLE app_action_map (
   CONSTRAINT app_action_map_fk_2 FOREIGN KEY (app_id) REFERENCES application(app_id)
 );
 
+--- Information Broadcaster
+
 USE information_broadcaster;
 
-CREATE TABLE IF NOT EXISTS `uuid_meeting_room_url` (
-  `id` int(10) NOT NULL auto_increment,
-  `uuid` varchar(255),
-  `meeting_room_name` varchar(255),
-  `url` varchar(255),
-  PRIMARY KEY( `id` )
+DROP TABLE IF EXISTS room_fileshare;
+DROP TABLE IF EXISTS user_detail;
+DROP TABLE IF EXISTS room_occupancy;
+DROP TABLE IF EXISTS uuid_room_url;
+DROP TABLE IF EXISTS room_details;
+DROP TABLE IF EXISTS room_info;
+
+CREATE TABLE room_info (
+  room_id int(10) auto_increment,
+  room_name varchar(255),
+  room_type varchar(255),
+  room_location varchar(255),
+  CONSTRAINT room_info_pk PRIMARY KEY(room_id)
 );
 
-CREATE TABLE IF NOT EXISTS `meeting_room_occupancy` (
-  `id` int(10) NOT NULL auto_increment,
-  `user_email` varchar(255),
-  `meeting_room_name` varchar(255),
-  `host_token` varchar(255)
-  PRIMARY KEY( `id` )
+CREATE TABLE room_details (
+  room_id int(10),
+  info_key varchar(50),
+  info_value varchar(1000),
+  value_type varchar(10),
+  CONSTRAINT room_details_pk PRIMARY KEY (room_id, info_key)
 );
 
--- setting up cascade
--- type and asset map is hard coded
--- index on meeting_room_name
-
-CREATE TABLE IF NOT EXISTS `user` (
-  `id` int(10) NOT NULL auto_increment,
-  `user_email` varchar(255),
-  `asset_name` varchar(255),
-  `value` varchar(255),
-  `type` varchar(255),
-  PRIMARY KEY( `id` )
+CREATE TABLE uuid_room_url (
+  record_id int(10) NOT NULL auto_increment,
+  uuid varchar(255),
+  room_id int(10),
+  url varchar(255),
+  CONSTRAINT uuid_room_url_pk PRIMARY KEY(record_id),
+  CONSTRAINT uuid_room_url_fk FOREIGN KEY (room_id) REFERENCES room_info (room_id)
 );
 
--- index on meeting_room_name?
-CREATE TABLE IF NOT EXISTS `meeting_room_info` (
-  `id` int(10) NOT NULL auto_increment,
-  `meeting_room_name` varchar(255),
-  `asset_name` varchar(255),
-  `value` varchar(255),
-  `type` varchar(255),
-  PRIMARY KEY( `id` )
+CREATE TABLE room_occupancy (
+  user_email varchar(255),
+  room_id int(10),
+  is_host varchar(1),
+  host_token varchar(255),
+  CONSTRAINT room_occupancy_pk PRIMARY KEY(user_email),
+  CONSTRAINT room_occupancy_fk FOREIGN KEY (room_id) REFERENCES room_info (room_id)
 );
 
+CREATE TABLE user_detail (
+  user_detail_id int(10) AUTO_INCREMENT,
+  user_email varchar(255),
+  info_key varchar(50),
+  info_value varchar(1000),
+  CONSTRAINT user_detail_pk PRIMARY KEY(user_detail_id),
+  CONSTRAINT user_detail_fk FOREIGN KEY (user_email) REFERENCES room_occupancy (user_email) ON DELETE CASCADE
+);
 
-CREATE TABLE IF NOT EXISTS `meeting_room_files` (
-  `id` int(10) NOT NULL auto_increment,
-  `meeting_room_name` varchar(255),
-  `asset_name` varchar(255),
-  `value` varchar(255),
-  `type` varchar(255),
-  `hashed_host_token` varchar(255),
-  PRIMARY KEY( `id` )
+CREATE TABLE room_fileshare (
+  fileshare_id int(10) auto_increment,
+  room_id int(10),
+  file_header varchar(255),
+  file_link varchar(255),
+  file_type varchar(255),
+  hashed_host_token varchar(255),
+  CONSTRAINT room_fileshare_pk PRIMARY KEY(fileshare_id),
+  CONSTRAINT room_fileshare_fk FOREIGN KEY (room_id) REFERENCES room_info (room_id)
 );
