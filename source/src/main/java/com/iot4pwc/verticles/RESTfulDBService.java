@@ -2,6 +2,9 @@ package com.iot4pwc.verticles;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.iot4pwc.components.helpers.DBHelper;
 import com.iot4pwc.constants.ConstLib;
 
@@ -16,12 +19,13 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 
 public class RESTfulDBService extends AbstractVerticle {
+  Logger logger = LogManager.getLogger(RESTfulDBService.class);
   @Override
   public void start() {
     Router router = Router.router(vertx);
     /**
      * GET /data?topic=topic&start=starttime&end=endtime&limit=limit  -- topic related data
-     * GET /data/getSensor?limit=limit                       		  -- all sensor installed
+     * GET /data/getSensor?limit=limit                            -- all sensor installed
      * GET /data/getLocation?location=location&limit=limit                        -- all sensor installed in certain location
      * POST /data  {sensorid:sensorid, action:command}
      */
@@ -40,11 +44,11 @@ public class RESTfulDBService extends AbstractVerticle {
             .setCertPath(System.getenv("CERTIFICATE_PATH"))
         )
     ).requestHandler(router::accept).listen(8443);
-    System.out.println(RESTfulDBService.class.getName() + " : RESTful service running on port 8443");
+    logger.info(RESTfulDBService.class.getName() + " : RESTful service running on port 8443");
   }
 
   private void getSensorHistory(RoutingContext routingContext) {
-    System.out.println(RESTfulDBService.class.getName() + " : GET " + routingContext.request().uri());
+    logger.info(RESTfulDBService.class.getName() + " : GET " + routingContext.request().uri());
     String topic = routingContext.request().getParam("topic");
     String start = routingContext.request().getParam("start");
     String end = routingContext.request().getParam("end");
@@ -67,7 +71,7 @@ public class RESTfulDBService extends AbstractVerticle {
         "(select distinct sensor_id from sensor_topic_map " +
         "where topic = '" + topic + "') order by recorded_time desc " +
         "limit " + limit + ";";
-      System.out.println(query);
+      logger.info(RESTfulDBService.class.getName() + " : QUERY " + query);
       result = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select(query);
     } else {
       query = "select * from sensor_history " +
@@ -78,7 +82,7 @@ public class RESTfulDBService extends AbstractVerticle {
         "where topic = '" + topic + "') " +
         "order by recorded_time desc " +
         "limit " + limit + ";";
-      System.out.println(query);
+      logger.info(RESTfulDBService.class.getName() + " : QUERY " + query);
       result = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select(query);
     }
     JsonArray arr = new JsonArray(result);
@@ -92,7 +96,7 @@ public class RESTfulDBService extends AbstractVerticle {
   private void getInstalledSensor(RoutingContext routingContext) {
     String limitStr = routingContext.request().getParam("limit");
     int limit = limitStr == null ? 100 : Integer.valueOf(limitStr.trim());
-    System.out.println(RESTfulDBService.class.getName() + " : GET " + routingContext.request().uri());
+    logger.info(RESTfulDBService.class.getName() + " : GET " + routingContext.request().uri());
     List<JsonObject> result = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select("select * from sensor limit " + limit + ";");
     JsonArray arr = new JsonArray(result);
     JsonObject obj = new JsonObject().put("result", arr);
@@ -103,7 +107,7 @@ public class RESTfulDBService extends AbstractVerticle {
   }
 
   private void getLocInfo(RoutingContext routingContext) {
-    System.out.println(RESTfulDBService.class.getName() + " : GET " + routingContext.request().uri());
+    logger.info(RESTfulDBService.class.getName() + " : GET " + routingContext.request().uri());
     String location = routingContext.request().getParam("location");
     String limitStr = routingContext.request().getParam("limit");
     int limit = limitStr == null ? 100 : Integer.valueOf(limitStr.trim());
@@ -119,7 +123,7 @@ public class RESTfulDBService extends AbstractVerticle {
   }
 
   private void actuationCommand(RoutingContext routingContext) {
-    System.out.println(RESTfulDBService.class.getName() + " : POST " + routingContext.request().uri());
+    logger.info(RESTfulDBService.class.getName() + " : POST " + routingContext.request().uri());
     JsonObject body = routingContext.getBodyAsJson();
     if (body.isEmpty() || !body.containsKey("sensor_id") || !body.containsKey("action_id") || !body.containsKey("app_id")) {
       routingContext.response()
@@ -129,29 +133,29 @@ public class RESTfulDBService extends AbstractVerticle {
       return;
     }
 
-    System.out.println(RESTfulDBService.class.getName() + " : sending to acutator");
+    logger.info(RESTfulDBService.class.getName() + " : sending to acutator");
 
     EventBus eb = vertx.eventBus();
     eb.send(ConstLib.ACTUATOR_ADDRESS, body.toString(), ar -> {
-      System.out.println(RESTfulDBService.class.getName() + " : message send to actuator");
+      logger.info(RESTfulDBService.class.getName() + " : message send to actuator");
       if (ar.succeeded()) {
         String result = (String) ar.result().body();
         if (result.equals("Success")) {
-          System.out.println(RESTfulDBService.class.getName() + " : Action request [" + body.getString("action_id") + "] on #" + body.getString("sensor_id") + " processed");
+          logger.info(RESTfulDBService.class.getName() + " : Action request [" + body.getString("action_id") + "] on #" + body.getString("sensor_id") + " processed");
           routingContext.response()
             .putHeader("content-type", "application/json; charset=utf-8")
             .setStatusCode(200)
             .end("Action request processed");
           return;
         }
-        System.out.println(RESTfulDBService.class.getName() + " : Action request [" + body.getString("action_id") + "] on #" + body.getString("sensor_id") + " failed due to " + ar.result().body());
+        logger.info(RESTfulDBService.class.getName() + " : Action request [" + body.getString("action_id") + "] on #" + body.getString("sensor_id") + " failed due to " + ar.result().body());
         routingContext.response()
           .putHeader("content-type", "application/json; charset=utf-8")
           .setStatusCode(200)
           .end("Action request failed");
         return;
       } else {
-        System.out.println(RESTfulDBService.class.getName() + " : Action request [" + body.getString("action_id") + "] on #" + body.getString("sensor_id") + " failed due to " + ar.result().body());
+        logger.error(RESTfulDBService.class.getName() + " : Action request [" + body.getString("action_id") + "] on #" + body.getString("sensor_id") + " failed due to " + ar.result().body());
         routingContext.response()
           .putHeader("content-type", "application/json; charset=utf-8")
           .setStatusCode(500)

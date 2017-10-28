@@ -2,6 +2,9 @@ package com.iot4pwc.verticles;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.iot4pwc.components.helpers.DBHelper;
 import com.iot4pwc.constants.ConstLib;
 
@@ -13,17 +16,17 @@ import io.vertx.core.json.JsonObject;
  * This is an authenticator that checks whether an application has access to certain hardware
  */
 public class AppAuthenticator extends AbstractVerticle {
-
+  Logger logger = LogManager.getLogger(AppAuthenticator.class);
   @Override
   public void start() {
     EventBus bus = vertx.eventBus();
 
     bus.consumer(ConstLib.APP_AUTHENTICATOR_ADDRESS, message -> {
       String data = (String) message.body();
-      System.out.println(AppAuthenticator.class.getName() + " : got message " + data);
+      logger.info(AppAuthenticator.class.getName() + " : got message " + data);
       vertx.executeBlocking(future -> {
         Boolean result = verifyAuthenticity(data);
-        System.out.println(AppAuthenticator.class.getName() + " : send message " + result);
+        logger.info(AppAuthenticator.class.getName() + " : send message " + result);
         future.complete(result);
       }, res -> message.reply(res.result()));
     });

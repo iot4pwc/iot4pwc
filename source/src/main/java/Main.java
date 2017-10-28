@@ -6,6 +6,10 @@ import io.vertx.core.VertxOptions;
 import io.vertx.core.eventbus.EventBusOptions;
 import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
 
+import java.util.Properties;
+
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
 /**
  * The main class for the program. Run: mvn package to get A fat jar.
  * In terminal, run: java -jar servicePlatform-1.0-SNAPSHOT-fat.jar [options] to run the program. Please
@@ -19,6 +23,14 @@ import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
  */
 public class Main {
   public static void main(String[] args) {
+  // Modify logging configuration here
+  Configurator.setLevel("com.iot4pwc.verticles", Level.ERROR);
+  Configurator.setRootLevel(Level.ERROR);
+  // set system properties
+  Properties props = System.getProperties();
+  props.setProperty("java.util.logging.config.file", "file:/home/ubuntu/log4j2.xml");
+  props.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.Log4j2LogDelegateFactory");
+      
     if (args.length == 0) {
       Vertx vertx = Vertx.vertx();
 
