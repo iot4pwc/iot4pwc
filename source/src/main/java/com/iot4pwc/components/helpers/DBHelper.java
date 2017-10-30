@@ -2,7 +2,6 @@ package com.iot4pwc.components.helpers;
 
 import com.iot4pwc.components.tables.Queriable;
 import com.iot4pwc.constants.ConstLib;
-//import com.mysql.jdbc.Statement;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.vertx.core.json.JsonObject;
@@ -123,6 +122,18 @@ public class DBHelper {
       }
     }
     return null;
+  }
+
+  public boolean delete(String query) {
+    Statement statement;
+    try (Connection connection = ds.getConnection()) {
+      statement = connection.createStatement();
+      statement.executeUpdate(query);
+      return true;
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return false;
   }
 
   public void closeDatasource() {
