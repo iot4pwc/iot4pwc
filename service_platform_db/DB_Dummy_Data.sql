@@ -98,6 +98,8 @@ VALUES(1, 6);
 
 --- Info Bro
 
+USE information_broadcaster;
+
 INSERT INTO room_info(room_id, room_name, room_type, room_location)
 VALUES (1, 'Monroe Conference Room', 'conf-room', 'First Floor West Wing Corner Room'),
 	   (2, 'Gates Conference Room', 'conf-room', 'First Floor East Wing Corner Room'),
