@@ -108,9 +108,9 @@ VALUES (1, 'Television Instructions', 'url.com/tv-1', 'url'),
        (1, 'Bluejeans Instructions', 'Some Instructions Text', 'text'),
        (2, 'Television Instructions', 'url.com/tv-2', 'url');
 
-INSERT INTO uuid_room_url(record_id, uuid, room_id, url)
-VALUES (1, 'XCYBS', 1, 'some-url.com'),
-       (2, 'AFGTE', 2, 'some-other-url.com');
+INSERT INTO uuid_room(record_id, uuid, room_id)
+VALUES (1, 'XCYBS', 1),
+       (2, 'AFGTE', 2);
 
 INSERT INTO room_occupancy(user_email, room_id, is_host, host_token)
 VALUES ('cool@infobro.com', 1, 'N', ''),
