@@ -13,8 +13,11 @@
 		<Logger name="com.iot4pwc.verticles" level="error">
 			<appender-ref ref="MyFile"/> 
 		</Logger>
+		<Logger name="Main" level="error">
+			<appender-ref ref="MyFile"/>
+		</Logger>
 		<Root level="error">
-			<AppenderRef ref="MyFile"/>
+			<AppenderRef ref="Console"/>
 		</Root>
 	</Loggers> 
 	

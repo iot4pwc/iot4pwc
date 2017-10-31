@@ -8,6 +8,8 @@ import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
 
 import java.util.Properties;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
 /**
  * The main class for the program. Run: mvn package to get A fat jar.
@@ -29,7 +31,8 @@ public class Main {
   // Modify logging configuration here
   Configurator.setLevel("com.iot4pwc.verticles", ConstLib.LOGGING_LEVEL);
   Configurator.setRootLevel(ConstLib.LOGGING_LEVEL);
-      
+  Logger logger = LogManager.getLogger(Main.class);
+
     if (args.length == 0) {
       Vertx vertx = Vertx.vertx();
 
@@ -89,16 +92,12 @@ public class Main {
               break;
             }
             default: {
-              System.out.println(
-                String.format("Use %s to start the service platform.", ConstLib.SERVICE_PLATFORM_OPTION)
-              );
-              System.out.println(
-                String.format("Use %s to start the data generator.", ConstLib.DATA_GENERATOR_OPTION)
-              );
+              logger.info(String.format("Use %s to start the service platform.", ConstLib.SERVICE_PLATFORM_OPTION));
+              logger.info(String.format("Use %s to start the data generator.", ConstLib.DATA_GENERATOR_OPTION));
             }
           }
         } else {
-          System.out.println(vertxAsyncResult.cause());
+          logger.error(vertxAsyncResult.cause());
         }
       });
     }
