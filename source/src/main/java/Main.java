@@ -1,4 +1,3 @@
-import com.iot4pwc.components.helpers.DBHelper;
 import com.iot4pwc.constants.ConstLib;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
@@ -22,13 +21,13 @@ import org.apache.logging.log4j.core.config.Configurator;
  */
 public class Main {
   public static void main(String[] args) {
+  // set system properties
+  Properties props = System.getProperties();
+  props.setProperty("java.util.logging.config.file", ConstLib.LOGGING_CONFIG);
+  props.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.Log4j2LogDelegateFactory");
   // Modify logging configuration here
   Configurator.setLevel("com.iot4pwc.verticles", ConstLib.LOGGING_LEVEL);
   Configurator.setRootLevel(ConstLib.LOGGING_LEVEL);
-  // set system properties
-  Properties props = System.getProperties();
-  props.setProperty("java.util.logging.config.file", System.getenv("LOGGING_FILE"));
-  props.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.Log4j2LogDelegateFactory");
       
     if (args.length == 0) {
       Vertx vertx = Vertx.vertx();
