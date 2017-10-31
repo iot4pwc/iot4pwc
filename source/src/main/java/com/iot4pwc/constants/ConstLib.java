@@ -1,4 +1,5 @@
 package com.iot4pwc.constants;
+import org.apache.logging.log4j.Level;
 
 public class ConstLib {
   public static final String PARSER_ADDRESS = "iot4pwc.data.parser";
@@ -50,4 +51,6 @@ public class ConstLib {
   public static final String UDOO_ENDPOINT = "cmu.udoo.cloud";
   public static final String UDOO_USERNAME = "cmu4pwc";
   public static final String UDOO_PWD = "CMU4pwc.";
+
+  public static final Level LOGGING_LEVEL = Level.ERROR;
 }
