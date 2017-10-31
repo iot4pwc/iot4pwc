@@ -52,5 +52,5 @@ public class ConstLib {
   public static final String UDOO_USERNAME = "cmu4pwc";
   public static final String UDOO_PWD = "CMU4pwc.";
 
-  public static final Level LOGGING_LEVEL = LEVEL.ERROR;
+  public static final Level LOGGING_LEVEL = Level.ERROR;
 }
