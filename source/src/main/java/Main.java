@@ -3,6 +3,7 @@ import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.eventbus.EventBusOptions;
+import io.vertx.core.net.PemKeyCertOptions;
 import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
 
 import java.util.Properties;
@@ -52,6 +53,11 @@ public class Main {
       VertxOptions vertxOptions = new VertxOptions()
         .setClustered(true)
         .setEventBusOptions(new EventBusOptions()
+          .setSsl(true)
+          .setPemKeyCertOptions(
+            new PemKeyCertOptions()
+              .setKeyPath(ConstLib.PRIVATE_KEY_PATH)
+              .setCertPath(ConstLib.CERTIFICATE_PATH))
           .setClustered(true)
           .setPort(ConstLib.CLUSTER_EVENT_BUS_PORT)
           .setHost(System.getenv("HOST")))
