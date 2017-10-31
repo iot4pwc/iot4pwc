@@ -14,7 +14,7 @@ import io.vertx.ext.web.client.WebClient;
 
 
 public class ActuatorController extends AbstractVerticle {
-  Logger logger = LogManager.getLogger(ActuatorController.class);
+  Logger logger = LogManager.getLogger();
   @Override
   public void start() {
     EventBus eb = vertx.eventBus();

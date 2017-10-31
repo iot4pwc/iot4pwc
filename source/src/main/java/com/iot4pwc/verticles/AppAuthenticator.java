@@ -16,7 +16,7 @@ import io.vertx.core.json.JsonObject;
  * This is an authenticator that checks whether an application has access to certain hardware
  */
 public class AppAuthenticator extends AbstractVerticle {
-  Logger logger = LogManager.getLogger(AppAuthenticator.class);
+  Logger logger = LogManager.getLogger();
   @Override
   public void start() {
     EventBus bus = vertx.eventBus();

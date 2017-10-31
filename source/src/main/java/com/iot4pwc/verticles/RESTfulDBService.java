@@ -19,7 +19,7 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 
 public class RESTfulDBService extends AbstractVerticle {
-  Logger logger = LogManager.getLogger(RESTfulDBService.class);
+  Logger logger = LogManager.getLogger();
   @Override
   public void start() {
     Router router = Router.router(vertx);
@@ -44,6 +44,7 @@ public class RESTfulDBService extends AbstractVerticle {
             .setCertPath(System.getenv("CERTIFICATE_PATH"))
         )
     ).requestHandler(router::accept).listen(8443);
+    System.out.println(RESTfulDBService.class.getName() + " : RESTful service running on port 8443");
     logger.info(RESTfulDBService.class.getName() + " : RESTful service running on port 8443");
   }
 
