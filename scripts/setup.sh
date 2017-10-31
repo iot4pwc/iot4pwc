@@ -19,6 +19,8 @@ PRIVATE_KEY_PATH=$(pwd)'/ca.key'
 export PRIVATE_KEY_PATH
 CERTIFICATE_PATH=$(pwd)'/ca.crt'
 export CERTIFICATE_PATH
+LOGGING_FILE=$(pwd)'/log4j2.xml'
+export LOGGING_FILE
 
 sudo ufw allow 37288
 echo "#################################################################################"
