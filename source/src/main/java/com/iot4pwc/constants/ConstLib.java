@@ -53,5 +53,4 @@ public class ConstLib {
   public static final String UDOO_PWD = "CMU4pwc.";
 
   public static final Level LOGGING_LEVEL = LEVEL.ERROR;
-  public static final String LOGGING_FILE = "file:/home/ubuntu/log4j2.xml";
 }
