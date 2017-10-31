@@ -90,7 +90,7 @@ USE information_broadcaster;
 DROP TABLE IF EXISTS room_fileshare;
 DROP TABLE IF EXISTS user_detail;
 DROP TABLE IF EXISTS room_occupancy;
-DROP TABLE IF EXISTS uuid_room_url;
+DROP TABLE IF EXISTS uuid_room;
 DROP TABLE IF EXISTS room_details;
 DROP TABLE IF EXISTS room_info;
 
@@ -110,13 +110,12 @@ CREATE TABLE room_details (
   CONSTRAINT room_details_pk PRIMARY KEY (room_id, info_key)
 );
 
-CREATE TABLE uuid_room_url (
+CREATE TABLE uuid_room (
   record_id int(10) NOT NULL auto_increment,
   uuid varchar(255),
   room_id int(10),
-  url varchar(255),
-  CONSTRAINT uuid_room_url_pk PRIMARY KEY(record_id),
-  CONSTRAINT uuid_room_url_fk FOREIGN KEY (room_id) REFERENCES room_info (room_id)
+  CONSTRAINT uuid_room_pk PRIMARY KEY(record_id),
+  CONSTRAINT uuid_room_fk FOREIGN KEY (room_id) REFERENCES room_info (room_id)
 );
 
 CREATE TABLE room_occupancy (
