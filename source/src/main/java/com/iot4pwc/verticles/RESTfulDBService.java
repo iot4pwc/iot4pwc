@@ -40,11 +40,10 @@ public class RESTfulDBService extends AbstractVerticle {
         .setSsl(true)
         .setPemKeyCertOptions(
           new PemKeyCertOptions()
-            .setKeyPath(System.getenv("PRIVATE_KEY_PATH"))
-            .setCertPath(System.getenv("CERTIFICATE_PATH"))
+            .setKeyPath(System.getenv(ConstLib.PRIVATE_KEY_PATH))
+            .setCertPath(System.getenv(ConstLib.CERTIFICATE_PATH))
         )
     ).requestHandler(router::accept).listen(8443);
-    System.out.println(RESTfulDBService.class.getName() + " : RESTful service running on port 8443");
     logger.info("RESTful service running on port 8443");
   }
 

@@ -15,13 +15,6 @@ export DB_USER_NAME
 DB_USER_PW='Heinz123!'
 export DB_USER_PW
 
-PRIVATE_KEY_PATH=$(pwd)'/ca.key'
-export PRIVATE_KEY_PATH
-CERTIFICATE_PATH=$(pwd)'/ca.crt'
-export CERTIFICATE_PATH
-LOGGING_FILE=$(pwd)'/log4j2.xml'
-export LOGGING_FILE
-
 sudo ufw allow 37288
 echo "#################################################################################"
 echo "Please input the public ip and port of the MySQL instance: E.g 18.221.182.91:3306"
