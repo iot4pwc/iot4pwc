@@ -16,17 +16,17 @@ import io.vertx.core.json.JsonObject;
  * This is an authenticator that checks whether an application has access to certain hardware
  */
 public class AppAuthenticator extends AbstractVerticle {
-  Logger logger = LogManager.getLogger();
+  Logger logger = LogManager.getLogger(AppAuthenticator.class);
   @Override
   public void start() {
     EventBus bus = vertx.eventBus();
 
     bus.consumer(ConstLib.APP_AUTHENTICATOR_ADDRESS, message -> {
       String data = (String) message.body();
-      logger.info(AppAuthenticator.class.getName() + " : got message " + data);
+      logger.info("got message " + data);
       vertx.executeBlocking(future -> {
         Boolean result = verifyAuthenticity(data);
-        logger.info(AppAuthenticator.class.getName() + " : send message " + result);
+        logger.info("send message " + result);
         future.complete(result);
       }, res -> message.reply(res.result()));
     });
