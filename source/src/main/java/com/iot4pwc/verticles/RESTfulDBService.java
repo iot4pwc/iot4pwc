@@ -20,6 +20,8 @@ import io.vertx.ext.web.handler.BodyHandler;
 
 public class RESTfulDBService extends AbstractVerticle {
   Logger logger = LogManager.getLogger(RESTfulDBService.class);
+  private DBHelper dbHelper; 
+  
   @Override
   public void start() {
     Router router = Router.router(vertx);
@@ -44,7 +46,18 @@ public class RESTfulDBService extends AbstractVerticle {
             .setCertPath(ConstLib.CERTIFICATE_PATH)
         )
     ).requestHandler(router::accept).listen(8443);
-    logger.info("RESTful service running on port 8443");
+    
+    vertx.executeBlocking(future -> {
+      dbHelper = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM);
+      future.complete();
+    }, response -> {
+      logger.info("RESTful service running on port 8443");
+    });
+    
+  }
+  
+  @Override
+  public void stop() {
   }
 
   private void getSensorHistory(RoutingContext routingContext) {
@@ -72,7 +85,7 @@ public class RESTfulDBService extends AbstractVerticle {
         "where topic = '" + topic + "') order by recorded_time desc " +
         "limit " + limit + ";";
       logger.info("QUERY " + query);
-      result = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select(query);
+      result = dbHelper.select(query);
     } else {
       query = "select * from sensor_history " +
         "where recorded_time between STR_TO_DATE('" + start + "', '%Y-%m-%d %H:%i:%S') " +
@@ -83,7 +96,7 @@ public class RESTfulDBService extends AbstractVerticle {
         "order by recorded_time desc " +
         "limit " + limit + ";";
       logger.info("QUERY " + query);
-      result = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select(query);
+      result = dbHelper.select(query);
     }
     JsonArray arr = new JsonArray(result);
     JsonObject obj = new JsonObject().put("result", arr);
@@ -97,7 +110,7 @@ public class RESTfulDBService extends AbstractVerticle {
     String limitStr = routingContext.request().getParam("limit");
     int limit = limitStr == null ? 100 : Integer.valueOf(limitStr.trim());
     logger.info("GET " + routingContext.request().uri());
-    List<JsonObject> result = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select("select * from sensor limit " + limit + ";");
+    List<JsonObject> result = dbHelper.select("select * from sensor limit " + limit + ";");
     JsonArray arr = new JsonArray(result);
     JsonObject obj = new JsonObject().put("result", arr);
     routingContext.response()
@@ -111,8 +124,7 @@ public class RESTfulDBService extends AbstractVerticle {
     String location = routingContext.request().getParam("location");
     String limitStr = routingContext.request().getParam("limit");
     int limit = limitStr == null ? 100 : Integer.valueOf(limitStr.trim());
-    List<JsonObject> result = DBHelper
-      .getInstance(ConstLib.SERVICE_PLATFORM)
+    List<JsonObject> result = dbHelper
       .select("select * from sensor where install_loc like '%" + location + "%' limit " + limit + ";");
     JsonArray arr = new JsonArray(result);
     JsonObject obj = new JsonObject().put("result", arr);
