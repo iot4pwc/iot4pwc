@@ -1,3 +1,5 @@
+USE service_platform;
+
 INSERT INTO sensor (sensor_id, sensor_type, sensor_desc, model_no, installed_on, expiration_date, install_loc)
 VALUES (1, 'Noise', 'Measures noise', 'NVT1276', '2016-7-04', '2020-8-15', 'Gates Conference Room');
 
@@ -93,3 +95,35 @@ VALUES(1, 5);
 
 INSERT INTO app_action_map(app_id, record_id)
 VALUES(1, 6);
+
+--- Info Bro
+
+USE information_broadcaster;
+
+INSERT INTO room_info(room_id, room_name, room_type, room_location)
+VALUES (1, 'Monroe Conference Room', 'conf-room', 'First Floor West Wing Corner Room'),
+	   (2, 'Gates Conference Room', 'conf-room', 'First Floor East Wing Corner Room'),
+       (3, 'Executive Board Room', 'exec-room', 'Fourth Floor West Wing Corner Room');
+
+INSERT INTO room_details(room_id, info_key, info_value, value_type)
+VALUES (1, 'Television Instructions', 'url.com/tv-1', 'url'),
+       (1, 'Bluejeans Instructions', 'Some Instructions Text', 'text'),
+       (2, 'Television Instructions', 'url.com/tv-2', 'url');
+
+INSERT INTO uuid_room(record_id, uuid, room_id)
+VALUES (1, 'XCYBS', 1),
+       (2, 'AFGTE', 2);
+
+INSERT INTO room_occupancy(user_email, room_id, is_host, host_token)
+VALUES ('cool@infobro.com', 1, 'N', ''),
+       ('awesome@infobro.com', 1, 'N', ''),
+	   ('host@infobro.com', 1, 'Y', 'DHEG4y5');
+
+INSERT INTO user_detail(user_detail_id, user_email, info_key, info_value)
+VALUES (1, 'cool@infobro.com', 'Name', 'Cool Guy'),
+       (2, 'cool@infobro.com', 'Company', 'UDOOOOOO'),
+	   (3, 'awesome@infobro.com', 'Name', 'Awesome girl'),
+	   (4, 'host@infobro.com', 'Name', 'The wonderful host');
+	   
+INSERT INTO room_fileshare(fileshare_id, room_id, file_header, file_link, file_type)
+VALUES (1, 1, 'Presentation', 'drive.google.com/ppt', 'Official Presentation');

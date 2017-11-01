@@ -3,8 +3,14 @@ import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.eventbus.EventBusOptions;
+import io.vertx.core.net.PemKeyCertOptions;
 import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
 
+import java.util.Properties;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 /**
  * The main class for the program. Run: mvn package to get A fat jar.
  * In terminal, run: java -jar servicePlatform-1.0-SNAPSHOT-fat.jar [options] to run the program. Please
@@ -18,6 +24,15 @@ import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
  */
 public class Main {
   public static void main(String[] args) {
+  // set system properties
+  Properties props = System.getProperties();
+  props.setProperty("java.util.logging.config.file", ConstLib.LOGGING_CONFIG);
+  props.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.Log4j2LogDelegateFactory");
+  // Modify logging configuration here
+  Configurator.setLevel("com.iot4pwc.verticles", ConstLib.LOGGING_LEVEL);
+  Configurator.setRootLevel(ConstLib.LOGGING_LEVEL);
+  Logger logger = LogManager.getLogger(Main.class);
+
     if (args.length == 0) {
       Vertx vertx = Vertx.vertx();
 
@@ -31,12 +46,21 @@ public class Main {
       vertx.deployVerticle("com.iot4pwc.verticles.DataService", deploymentOptions);
       deploymentOptions = new DeploymentOptions().setInstances(ConstLib.RESTFUL_DB_SERVICE_NUMBER);
       vertx.deployVerticle("com.iot4pwc.verticles.RESTfulDBService", deploymentOptions);
+      deploymentOptions = new DeploymentOptions().setInstances(ConstLib.ACTUATOR_NUMBER);
+      vertx.deployVerticle("com.iot4pwc.verticles.ActuatorController", deploymentOptions);
+      deploymentOptions = new DeploymentOptions().setInstances(ConstLib.APP_AUTHENICATOR_NUMBER);
+      vertx.deployVerticle("com.iot4pwc.verticles.AppAuthenticator", deploymentOptions);
     } else {
       String option = args[0];
 
       VertxOptions vertxOptions = new VertxOptions()
         .setClustered(true)
         .setEventBusOptions(new EventBusOptions()
+          .setSsl(true)
+          .setPemKeyCertOptions(
+            new PemKeyCertOptions()
+              .setKeyPath(ConstLib.PRIVATE_KEY_PATH)
+              .setCertPath(ConstLib.CERTIFICATE_PATH))
           .setClustered(true)
           .setPort(ConstLib.CLUSTER_EVENT_BUS_PORT)
           .setHost(System.getenv("HOST")))
@@ -54,6 +78,12 @@ public class Main {
               vertx.deployVerticle("com.iot4pwc.verticles.DataPublisher", deploymentOptions);
               deploymentOptions = new DeploymentOptions().setInstances(ConstLib.DATA_SERVICE_NUMBER);
               vertx.deployVerticle("com.iot4pwc.verticles.DataService", deploymentOptions);
+              deploymentOptions = new DeploymentOptions().setInstances(ConstLib.RESTFUL_DB_SERVICE_NUMBER);
+              vertx.deployVerticle("com.iot4pwc.verticles.RESTfulDBService", deploymentOptions);
+              deploymentOptions = new DeploymentOptions().setInstances(ConstLib.ACTUATOR_NUMBER);
+              vertx.deployVerticle("com.iot4pwc.verticles.ActuatorController", deploymentOptions);
+              deploymentOptions = new DeploymentOptions().setInstances(ConstLib.APP_AUTHENICATOR_NUMBER);
+              vertx.deployVerticle("com.iot4pwc.verticles.AppAuthenticator", deploymentOptions);
               break;
             }
             case ConstLib.DATA_GENERATOR_OPTION: {
@@ -62,16 +92,12 @@ public class Main {
               break;
             }
             default: {
-              System.out.println(
-                String.format("Use %s to start the service platform.", ConstLib.SERVICE_PLATFORM_OPTION)
-              );
-              System.out.println(
-                String.format("Use %s to start the data generator.", ConstLib.DATA_GENERATOR_OPTION)
-              );
+              logger.info(String.format("Use %s to start the service platform.", ConstLib.SERVICE_PLATFORM_OPTION));
+              logger.info(String.format("Use %s to start the data generator.", ConstLib.DATA_GENERATOR_OPTION));
             }
           }
         } else {
-          System.out.println(vertxAsyncResult.cause());
+          logger.error(vertxAsyncResult.cause());
         }
       });
     }

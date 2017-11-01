@@ -14,29 +14,32 @@ import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
 
 /**
- * This is a publisher that subscribes to an event published by DataParser and pass the
- * data to the MQTT under certain topic.
+ * This is a publisher that subscribes to an event published by DataParser and
+ * pass the data to the MQTT under certain topic.
  */
 public class DataPublisher extends AbstractVerticle {
-  private DBHelper dbHelper;
+
   private MqttHelper mqttHelper;
   private static Map<Integer, Set<String>> sensorTopicMapping = new HashMap<>();
+  private DBHelper dbHelper;
 
   public void start() {
     EventBus eb = vertx.eventBus();
 
-    WorkerExecutor executor = vertx.createSharedWorkerExecutor(
-      ConstLib.DATA_PUBLISHER_WORKER_POOL,
-      ConstLib.DATA_PUBLISHER_WORKER_POOL_SIZE
-    );
-    executor.executeBlocking (future -> {
-      dbHelper = new DBHelper();
-      mqttHelper = new MqttHelper(ConstLib.MQTT_TLS_ENABLED);
-      sensorTopicMapping = getSensorTopicMapping();
-
-      eb.consumer(ConstLib.PUBLISHER_ADDRESS, message -> {
-        String structuredData = (String)message.body();
-
+    vertx.executeBlocking(future -> {
+      dbHelper = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM);
+      future.complete();
+    }, response -> {
+      WorkerExecutor executor = vertx.createSharedWorkerExecutor(
+              ConstLib.DATA_PUBLISHER_WORKER_POOL,
+              ConstLib.DATA_PUBLISHER_WORKER_POOL_SIZE
+      );
+      executor.executeBlocking(future -> {
+        mqttHelper = new MqttHelper(ConstLib.MQTT_TLS_ENABLED);
+        sensorTopicMapping = getSensorTopicMapping();
+        future.complete();
+      }, res -> eb.consumer(ConstLib.PUBLISHER_ADDRESS, message -> {
+        String structuredData = (String) message.body();
         JsonObject structuredDataJSON = new JsonObject(structuredData);
         Set<String> sensorTopics = getTopicSet(structuredDataJSON);
 
@@ -44,25 +47,22 @@ public class DataPublisher extends AbstractVerticle {
         if (sensorTopics != null && mqttHelper != null) {
           for (String topic : sensorTopics) {
             MosquittoPublishRequest request = new MosquittoPublishRequest(
-              topic,
-              structuredData,
-              ConstLib.MQTT_QUALITY_OF_SERVICE
+                    topic,
+                    structuredData,
+                    ConstLib.MQTT_QUALITY_OF_SERVICE
             );
 
             publishRequests.add(request);
           }
           mqttHelper.publish(publishRequests);
         }
-      });
+      })
+      );
+    });
 
-      future.complete();
-
-      // TODO: add response
-    }, res -> {});
   }
 
   public void stop() {
-    dbHelper.closeConnection();
     mqttHelper.closeConnection();
   }
 
@@ -72,7 +72,7 @@ public class DataPublisher extends AbstractVerticle {
 
     List<JsonObject> records = dbHelper.select(query);
 
-    for (JsonObject record: records) {
+    for (JsonObject record : records) {
       int sensorId = Integer.parseInt(record.getString(SensorTopic.sensor_id));
       String topic = record.getString(SensorTopic.topic);
       Set<String> topicSet = sensorTopicMap.getOrDefault(sensorId, new HashSet<>());
@@ -88,7 +88,7 @@ public class DataPublisher extends AbstractVerticle {
       List<JsonObject> records = dbHelper.select(query);
       Set<String> sensorTopics = new HashSet<>();
 
-      for (JsonObject record: records) {
+      for (JsonObject record : records) {
         sensorTopics.add(record.getString(SensorTopic.topic));
       }
 
@@ -108,5 +108,5 @@ public class DataPublisher extends AbstractVerticle {
     sensorTopics = sensorTopicMapping.getOrDefault(sensorID, new HashSet<>());
 
     return sensorTopics;
-  } 
+  }
 }

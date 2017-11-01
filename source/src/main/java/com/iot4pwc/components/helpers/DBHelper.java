@@ -2,8 +2,8 @@ package com.iot4pwc.components.helpers;
 
 import com.iot4pwc.components.tables.Queriable;
 import com.iot4pwc.constants.ConstLib;
-import com.iot4pwc.verticles.DataService;
-import com.mysql.jdbc.Statement;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import io.vertx.core.json.JsonObject;
 
 import java.sql.*;
@@ -12,16 +12,43 @@ import java.util.List;
 import java.util.Map;
 
 public class DBHelper {
-  private Connection connection;
+  private static DBHelper instance;
+  private HikariDataSource ds;
 
-  public DBHelper() {
-    this.connection = getConnection();
+  private DBHelper(String mySQLConnectionString) {
+    HikariConfig config = new HikariConfig();
+    config.setPoolName(ConstLib.HIKARI_POOL_NAME);
+    config.setJdbcUrl(mySQLConnectionString);
+    config.setUsername(System.getenv("DB_USER_NAME"));
+    config.setPassword(System.getenv("DB_USER_PW"));
+    config.setMaximumPoolSize(ConstLib.HIKARI_MAX_POOL_SIZE);
+
+    // caching
+    config.addDataSourceProperty("cachePrepStmts", ConstLib.HIKARI_CACHE_PSTMT);
+    config.addDataSourceProperty("prepStmtCacheSize", ConstLib.HIKARI_PSTMT_CACHE_SIZE);
+    config.addDataSourceProperty("useServerPrepStmts", ConstLib.HIKARI_USE_SERVER_PSTMT);
+    ds = new HikariDataSource(config);
   }
+
+  public static DBHelper getInstance(String databaseName) {
+    String MySQLConnectionString = String.format(
+      ConstLib.MYSQL_CONNECTION_STRING,
+      System.getenv("MYSQL_URL"),
+      databaseName
+    );
+    if (DBHelper.instance == null) {
+      DBHelper.instance = new DBHelper(MySQLConnectionString);
+    }
+    return DBHelper.instance;
+  }
+
 
   public boolean insert(JsonObject recordObject, Queriable table) {
     try {
-      PreparedStatement pstmt = getInsertStatement(table, recordObject);
+      Connection connection = ds.getConnection();
+      PreparedStatement pstmt = getInsertStatement(table, recordObject, connection);
       pstmt.execute();
+      connection.close();
       return true;
 
     } catch (SQLException e) {
@@ -32,13 +59,14 @@ public class DBHelper {
 
   private PreparedStatement getInsertStatement(
     Queriable table,
-    JsonObject recordObject
+    JsonObject recordObject,
+    Connection connection
   ) throws SQLException {
     List<String> attributeNames = new LinkedList<>();
     StringBuilder attrSection = new StringBuilder();
     StringBuilder valueSection = new StringBuilder();
 
-    for (Map.Entry<String, Object> entry: recordObject) {
+    for (Map.Entry<String, Object> entry : recordObject) {
       String attributeName = entry.getKey();
       attributeNames.add(attributeName);
       attrSection.append(attributeName + ",");
@@ -62,17 +90,19 @@ public class DBHelper {
 
   public List<JsonObject> select(String query) {
     Statement statement;
+    Connection connection = null;
     try {
       LinkedList<JsonObject> records = new LinkedList<>();
 
-      statement = (Statement) connection.createStatement();
+      connection = ds.getConnection();
+      statement = connection.createStatement();
       ResultSet rs = statement.executeQuery(query);
       ResultSetMetaData rsMetaData = rs.getMetaData();
       int columnCount = rsMetaData.getColumnCount();
 
       while (rs.next()) {
         JsonObject record = new JsonObject();
-        for (int i = 1; i <= columnCount; i++ ) {
+        for (int i = 1; i <= columnCount; i++) {
           String field = rsMetaData.getColumnName(i);
           record.put(field, rs.getString(field));
         }
@@ -82,43 +112,37 @@ public class DBHelper {
       return records;
     } catch (Exception e) {
       e.printStackTrace();
+    } finally {
+      if (connection != null) {
+        try {
+          connection.close();
+        } catch (SQLException e) {
+          e.printStackTrace();
+        }
+      }
     }
-
     return null;
   }
 
-  private Connection getConnection() {
-    if (connection == null) {
-      String userName = System.getenv("DB_USER_NAME");
-      String password = System.getenv("DB_USER_PW");
-
-      try {
-        Class.forName("com.mysql.jdbc.Driver").newInstance();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-
-      try {
-        connection =  DriverManager.getConnection(ConstLib.MYSQL_CONNECTION_STRING, userName, password);
-        return connection;
-      } catch (Exception e) {
-        e.printStackTrace();
-      } finally {
-        return connection;
-      }
+  public boolean delete(String query) {
+    Statement statement;
+    try (Connection connection = ds.getConnection()) {
+      statement = connection.createStatement();
+      statement.executeUpdate(query);
+      return true;
+    } catch (Exception e) {
+      e.printStackTrace();
     }
-
-    return connection;
+    return false;
   }
 
-  public void closeConnection() {
-    if(connection!= null) {
+  public void closeDatasource() {
+    if (ds != null) {
       try {
-        connection.close();
-      } catch (SQLException e) {
+        ds.close();
+      } catch (Exception e) {
         e.printStackTrace();
       }
-      System.out.println(DataService.class.getName()+": Closed connection!");
     }
   }
 }
