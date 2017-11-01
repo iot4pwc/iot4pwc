@@ -125,5 +125,5 @@ VALUES (1, 'cool@infobro.com', 'Name', 'Cool Guy'),
 	   (3, 'awesome@infobro.com', 'Name', 'Awesome girl'),
 	   (4, 'host@infobro.com', 'Name', 'The wonderful host');
 	   
-INSERT INTO room_fileshare(fileshare_id, room_id, file_header, file_link, file_type, hashed_host_token)
-VALUES (1, 1, 'Presentation', 'drive.google.com/ppt', 'Official Presentation', '43tgvretreg34w532t3ytrgdt436');
+INSERT INTO room_fileshare(fileshare_id, room_id, file_header, file_link, file_type)
+VALUES (1, 1, 'Presentation', 'drive.google.com/ppt', 'Official Presentation');
