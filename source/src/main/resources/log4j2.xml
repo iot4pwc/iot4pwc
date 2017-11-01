@@ -21,7 +21,7 @@
 		<Logger name="Main" level="error">
 			<appender-ref ref="MyFile"/>
 		</Logger>
-		<Logger name="com.iot4pwc.actuator" level="error">
+		<Logger name="com.iot4pwc.actuator.controller" level="error">
 			<appender-ref ref="ActuatorFile"/> 
 		</Logger>
 		<Root level="error">
