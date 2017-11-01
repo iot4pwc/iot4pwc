@@ -53,8 +53,8 @@ public class ConstLib {
   public static final String UDOO_PWD = "CMU4pwc.";
 
   public static final Level LOGGING_LEVEL = Level.INFO;
-  public static final String LOGGING_CONFIG = "src/main/resources/log4j2.xml";
+  public static final String LOGGING_CONFIG = "log4j2.xml";
 
-  public static final String PRIVATE_KEY_PATH = "src/main/resources/ca.key";
-  public static final String CERTIFICATE_PATH = "src/main/resources/ca.crt";
+  public static final String PRIVATE_KEY_PATH = "ca.key";
+  public static final String CERTIFICATE_PATH = "ca.crt";
 }
