@@ -16,23 +16,36 @@ import io.vertx.core.json.JsonObject;
  * This is an authenticator that checks whether an application has access to certain hardware
  */
 public class AppAuthenticator extends AbstractVerticle {
+  
   Logger logger = LogManager.getLogger(AppAuthenticator.class);
+  private DBHelper dbHelper;
+  
   @Override
   public void start() {
     EventBus bus = vertx.eventBus();
 
-    bus.consumer(ConstLib.APP_AUTHENTICATOR_ADDRESS, message -> {
-      String data = (String) message.body();
-      logger.info("got message " + data);
-      vertx.executeBlocking(future -> {
-        Boolean result = verifyAuthenticity(data);
-        logger.info("send message " + result);
-        future.complete(result);
-      }, res -> message.reply(res.result()));
+    vertx.executeBlocking(future -> {
+      dbHelper = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM);
+      future.complete();
+    }, response -> {
+      bus.consumer(ConstLib.APP_AUTHENTICATOR_ADDRESS, message -> {
+        String data = (String) message.body();
+        logger.info("got message " + data);
+        vertx.executeBlocking(future -> {
+          Boolean result = verifyAuthenticity(data);
+          logger.info("send message " + result);
+          future.complete(result);
+        }, res -> message.reply(res.result()));
+      });
     });
 
   }
 
+  @Override
+  public void stop() {
+    dbHelper.closeDatasource();
+  }
+  
   private Boolean verifyAuthenticity(String data) {
     JsonObject dataObj = new JsonObject(data);
     String appId = dataObj.getString(ConstLib.PAYLOAD_FIELD_APP_ID);
@@ -46,7 +59,7 @@ public class AppAuthenticator extends AbstractVerticle {
     String query = "SELECT COUNT(*) AS CNT FROM app_action_map " +
       "WHERE app_id = " + appId + " AND record_id = " + actionId;
 
-    List<JsonObject> records = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select(query);
+    List<JsonObject> records = dbHelper.select(query);
     if (records != null) {
       int count = Integer.parseInt(records.get(0).getString("CNT"));
       if (count > 0) {
