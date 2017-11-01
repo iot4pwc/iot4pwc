@@ -8,11 +8,6 @@
 				<Pattern>%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Pattern> 
 			</PatternLayout> 
 		</File> 
-	</Appenders> 
-	<Appenders> 
-		<Console name="Console" target="SYSTEM_OUT"> 
-			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/> 
-		</Console> 
 		<File name="ActuatorFile" fileName="logs/actuator.log"> 
 			<PatternLayout> 
 				<Pattern>%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Pattern> 
@@ -25,6 +20,9 @@
 		</Logger>
 		<Logger name="Main" level="error">
 			<appender-ref ref="MyFile"/>
+		</Logger>
+		<Logger name="com.iot4pwc.actuator" level="error">
+			<appender-ref ref="ActuatorFile"/> 
 		</Logger>
 		<Root level="error">
 			<AppenderRef ref="Console"/>

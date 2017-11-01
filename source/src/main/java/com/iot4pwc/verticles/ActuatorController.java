@@ -15,6 +15,7 @@ import io.vertx.ext.web.client.WebClient;
 
 public class ActuatorController extends AbstractVerticle {
   Logger logger = LogManager.getLogger(ActuatorController.class);
+  Logger actuatorLogger = LogManager.getLogger("com.iot4pwc.actuator");
   @Override
   public void start() {
     EventBus eb = vertx.eventBus();
@@ -35,11 +36,15 @@ public class ActuatorController extends AbstractVerticle {
         if (auth.succeeded()) {
           logger.info("got message from authenticator " + auth.result().body());
           if ((boolean) auth.result().body()) {
+        	actuatorLogger.info("[Authenticated] Action [" + actionId + "] on sensor #" + command.getString("sensor_id") + " from application " + appId);
+        	//send out request
             message.reply("Success");
           } else {
+        	actuatorLogger.info("[Unauthenticated] Action [" + actionId + "] on sensor #" + command.getString("sensor_id") + " from application " + appId);
             message.reply("Failed");
           }
         } else {
+          actuatorLogger.info("[Failure] Action [" + actionId + "] on sensor #" + command.getString("sensor_id") + " from application " + appId);
           message.reply("Failed");
         }
       });
