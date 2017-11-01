@@ -64,7 +64,6 @@ public class DataPublisher extends AbstractVerticle {
 
   public void stop() {
     mqttHelper.closeConnection();
-    dbHelper.closeDatasource();
   }
 
   private Map<Integer, Set<String>> getSensorTopicMapping() {

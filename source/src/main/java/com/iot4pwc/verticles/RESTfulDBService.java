@@ -58,7 +58,6 @@ public class RESTfulDBService extends AbstractVerticle {
   
   @Override
   public void stop() {
-    dbHelper.closeDatasource();
   }
 
   private void getSensorHistory(RoutingContext routingContext) {

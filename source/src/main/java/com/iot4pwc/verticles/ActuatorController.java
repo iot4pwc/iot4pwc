@@ -57,7 +57,6 @@ public class ActuatorController extends AbstractVerticle {
 
   @Override
   public void stop() {
-    dbHelper.closeDatasource();
   }
   
   // TODO: test this method

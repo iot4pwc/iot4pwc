@@ -43,7 +43,6 @@ public class AppAuthenticator extends AbstractVerticle {
 
   @Override
   public void stop() {
-    dbHelper.closeDatasource();
   }
   
   private Boolean verifyAuthenticity(String data) {
