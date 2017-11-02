@@ -63,8 +63,6 @@ public class DataPoller extends AbstractVerticle {
 	        if (ar.succeeded()) {
 	          HttpResponse<JsonObject> response = ar.result();
 	          JsonObject body = response.body();
-	          body.put("sensor_id", sensorId);
-	          body.put("sensor_type", sensorType);
 	          EventBus eb = vertx.eventBus();
 	          eb.send(ConstLib.PARSER_ADDRESS, body);
 	        } else {
