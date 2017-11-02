@@ -25,7 +25,7 @@ public class DummySensor extends AbstractVerticle {
     EventBus eb = vertx.eventBus();
     timerID = vertx.setPeriodic(10, id -> {
       String payload = generateData();
-      eb.send(ConstLib.PARSER_ADDRESS, payload);
+//      eb.send(ConstLib.PARSER_ADDRESS, payload);
     });
   }
 

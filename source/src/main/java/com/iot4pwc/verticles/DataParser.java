@@ -1,8 +1,13 @@
 package com.iot4pwc.verticles;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.iot4pwc.constants.ConstLib;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 /**
  * This is a parser that will subscribe to an event published by DataPoller/DataListener.
@@ -14,16 +19,33 @@ public class DataParser extends AbstractVerticle {
     EventBus eb = vertx.eventBus();
 
     eb.consumer(ConstLib.PARSER_ADDRESS, message -> {
-      String data = (String)message.body();
+      JsonObject data = (JsonObject) message.body();
       /**
        * implement business logic here.
        * reconstruct data to proper format for publishing and persisting.
        * suppose the result is a JSON string named structuredData.
        */
-      String structuredData = data;
-
-      eb.send(ConstLib.DATA_SERVICE_ADDRESS, structuredData);
-      eb.send(ConstLib.PUBLISHER_ADDRESS, structuredData);
+      JsonArray value_type = (JsonArray)data.getValue("value_type");
+      JsonArray history = (JsonArray)data.getValue("history");
+      
+      List<String> types = new ArrayList<String>();
+      for (int i=0; i<value_type.size(); i++) {
+    	types.add(value_type.getJsonObject(i).getString("desc"));
+      }
+      for (int i=0; i<history.size(); i++) {
+        JsonObject structuredData = new JsonObject();
+    	JsonObject jo = history.getJsonObject(i);
+    	String timestamp = jo.getString("timestamp");
+    	structuredData.put("timestamp", timestamp);
+    	for (String type: types) {
+          int value = jo.getInteger(type);
+    	  structuredData.put(type, value);
+    	}
+//    	eb.send(ConstLib.DATA_SERVICE_ADDRESS, structuredData);
+//        eb.send(ConstLib.PUBLISHER_ADDRESS, structuredData);
+      }
     });
+    
   }
+  
 }
