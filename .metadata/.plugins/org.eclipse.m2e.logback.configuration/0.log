@@ -1,8 +1,0 @@
-2017-11-01 23:37:09,440 [Worker-764] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
-2017-11-01 23:37:09,442 [Worker-764] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 4 resources
-2017-11-01 23:37:09,443 [Worker-764] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
-2017-11-01 23:37:09,444 [Worker-764] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory /Users/yanw/Documents/github/iot4pwc_copy/source/src/test/resources
-2017-11-01 23:38:07,141 [Worker-760] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
-2017-11-01 23:38:07,145 [Worker-760] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 4 resources
-2017-11-01 23:38:07,146 [Worker-760] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
-2017-11-01 23:38:07,147 [Worker-760] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory /Users/yanw/Documents/github/iot4pwc_copy/source/src/test/resources

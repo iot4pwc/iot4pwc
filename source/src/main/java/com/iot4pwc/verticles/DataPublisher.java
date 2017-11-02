@@ -14,32 +14,27 @@ import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
 
 /**
- * This is a publisher that subscribes to an event published by DataParser and
- * pass the data to the MQTT under certain topic.
+ * This is a publisher that subscribes to an event published by DataParser and pass the
+ * data to the MQTT under certain topic.
  */
 public class DataPublisher extends AbstractVerticle {
-
   private MqttHelper mqttHelper;
   private static Map<Integer, Set<String>> sensorTopicMapping = new HashMap<>();
-  private DBHelper dbHelper;
 
   public void start() {
     EventBus eb = vertx.eventBus();
 
-    vertx.executeBlocking(future -> {
-      dbHelper = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM);
+    WorkerExecutor executor = vertx.createSharedWorkerExecutor(
+      ConstLib.DATA_PUBLISHER_WORKER_POOL,
+      ConstLib.DATA_PUBLISHER_WORKER_POOL_SIZE
+    );
+    executor.executeBlocking (future -> {
+      mqttHelper = new MqttHelper(ConstLib.MQTT_TLS_ENABLED);
+      sensorTopicMapping = getSensorTopicMapping();
       future.complete();
-    }, response -> {
-      WorkerExecutor executor = vertx.createSharedWorkerExecutor(
-              ConstLib.DATA_PUBLISHER_WORKER_POOL,
-              ConstLib.DATA_PUBLISHER_WORKER_POOL_SIZE
-      );
-      executor.executeBlocking(future -> {
-        mqttHelper = new MqttHelper(ConstLib.MQTT_TLS_ENABLED);
-        sensorTopicMapping = getSensorTopicMapping();
-        future.complete();
-      }, res -> eb.consumer(ConstLib.PUBLISHER_ADDRESS, message -> {
-        String structuredData = (String) message.body();
+    }, res ->
+      eb.consumer(ConstLib.PUBLISHER_ADDRESS, message -> {
+        String structuredData = (String)message.body();
         JsonObject structuredDataJSON = new JsonObject(structuredData);
         Set<String> sensorTopics = getTopicSet(structuredDataJSON);
 
@@ -47,9 +42,9 @@ public class DataPublisher extends AbstractVerticle {
         if (sensorTopics != null && mqttHelper != null) {
           for (String topic : sensorTopics) {
             MosquittoPublishRequest request = new MosquittoPublishRequest(
-                    topic,
-                    structuredData,
-                    ConstLib.MQTT_QUALITY_OF_SERVICE
+              topic,
+              structuredData,
+              ConstLib.MQTT_QUALITY_OF_SERVICE
             );
 
             publishRequests.add(request);
@@ -57,9 +52,7 @@ public class DataPublisher extends AbstractVerticle {
           mqttHelper.publish(publishRequests);
         }
       })
-      );
-    });
-
+    );
   }
 
   public void stop() {
@@ -70,9 +63,9 @@ public class DataPublisher extends AbstractVerticle {
     Map<Integer, Set<String>> sensorTopicMap = new HashMap<>();
     String query = "SELECT * FROM sensor_topic_map";
 
-    List<JsonObject> records = dbHelper.select(query);
+    List<JsonObject> records = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select(query);
 
-    for (JsonObject record : records) {
+    for (JsonObject record: records) {
       int sensorId = Integer.parseInt(record.getString(SensorTopic.sensor_id));
       String topic = record.getString(SensorTopic.topic);
       Set<String> topicSet = sensorTopicMap.getOrDefault(sensorId, new HashSet<>());
@@ -85,10 +78,10 @@ public class DataPublisher extends AbstractVerticle {
   private void getOneSensorMapping(int sensorId, Map<Integer, Set<String>> existingMapping) {
     try {
       String query = String.format("SELECT * FROM sensor_topic_map WHERE sensor_id = %d", sensorId);
-      List<JsonObject> records = dbHelper.select(query);
+      List<JsonObject> records = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select(query);
       Set<String> sensorTopics = new HashSet<>();
 
-      for (JsonObject record : records) {
+      for (JsonObject record: records) {
         sensorTopics.add(record.getString(SensorTopic.topic));
       }
 
@@ -108,5 +101,5 @@ public class DataPublisher extends AbstractVerticle {
     sensorTopics = sensorTopicMapping.getOrDefault(sensorID, new HashSet<>());
 
     return sensorTopics;
-  }
+  } 
 }
