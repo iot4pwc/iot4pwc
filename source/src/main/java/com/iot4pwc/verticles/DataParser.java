@@ -1,6 +1,9 @@
 package com.iot4pwc.verticles;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.iot4pwc.constants.ConstLib;
@@ -27,24 +30,30 @@ public class DataParser extends AbstractVerticle {
        */
       JsonArray value_type = (JsonArray)data.getValue("value_type");
       JsonArray history = (JsonArray)data.getValue("history");
+      String lastTime = data.getString("lastTime");
       
       List<String> types = new ArrayList<String>();
       for (int i=0; i<value_type.size(); i++) {
     	types.add(value_type.getJsonObject(i).getString("desc"));
       }
+      
       for (int i=0; i<history.size(); i++) {
         JsonObject structuredData = new JsonObject();
     	JsonObject jo = history.getJsonObject(i);
+    	System.out.println(jo);
     	String timestamp = jo.getString("timestamp");
-    	structuredData.put("timestamp", timestamp);
-    	for (String type: types) {
-          int value = jo.getInteger(type);
-    	  structuredData.put(type, value);
+    	
+    	if (lastTime.compareTo(timestamp) <= 0) {
+        	structuredData.put("timestamp", timestamp);
+        	for (String type: types) {
+              int value = jo.getInteger(type);
+        	  structuredData.put(type, value);
+        	}
+        	structuredData.put("sensor_id", jo.getString("sensor_id"));
+//        	eb.send(ConstLib.DATA_SERVICE_ADDRESS, structuredData);
+//            eb.send(ConstLib.PUBLISHER_ADDRESS, structuredData);
     	}
-    	structuredData.put("sensor_id", jo.getString("sensor_id"));
-    	structuredData.put("sensor_type", jo.getString("sensor_type"));
-//    	eb.send(ConstLib.DATA_SERVICE_ADDRESS, structuredData);
-//        eb.send(ConstLib.PUBLISHER_ADDRESS, structuredData);
+
       }
     });
     

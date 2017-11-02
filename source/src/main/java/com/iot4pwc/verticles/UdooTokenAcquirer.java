@@ -26,7 +26,10 @@ public class UdooTokenAcquirer extends AbstractVerticle {
   Logger logger = LogManager.getLogger(UdooTokenAcquirer.class);
   
   public void start() {
-    setToken();
+	setToken();
+  	vertx.setPeriodic(86400000, id -> {
+	  setToken();
+	});
   }
 
   private void setToken() {
