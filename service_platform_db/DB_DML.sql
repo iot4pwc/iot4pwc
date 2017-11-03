@@ -48,7 +48,6 @@ CREATE TABLE sensor_history (
   recorded_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   value_key VARCHAR(200),
   value_content VARCHAR(200),
-  value_type VARCHAR(200),
   CONSTRAINT sensor_history_pk PRIMARY KEY(record_id)
 );
 
@@ -66,6 +65,7 @@ CREATE TABLE actuator (
   act_desc VARCHAR(80),
   model_no VARCHAR(40),
   device_id VARCHAR(50),
+  gateway_id VARCHAR(50),
   pin VARCHAR(20),
   installed_on DATE,
   expiration_date DATE,
