@@ -22,28 +22,33 @@ DROP TABLE IF EXISTS actuator;
 DROP TABLE IF EXISTS application;
 
 CREATE TABLE sensor (
-  sensor_id INT(10) AUTO_INCREMENT,
+  sensor_num_id INT(10) AUTO_INCREMENT,
+  sensor_id VARCHAR(20),
   sensor_type VARCHAR(20),
   sensor_desc VARCHAR(80),
   model_no VARCHAR(40),
+  device_id VARCHAR(30),
+  gateway_id VARCHAR(50),
   installed_on DATE,
   expiration_date DATE,
   install_loc VARCHAR(40),
-  CONSTRAINT sensor_pk PRIMARY KEY(sensor_id)
+  CONSTRAINT sensor_pk PRIMARY KEY(sensor_num_id)
 );
 
 CREATE TABLE sensor_topic_map(
-  sensor_id INT(10),
+  sensor_num_id INT(10),
   topic VARCHAR(40),
-  CONSTRAINT sensor_topic_map_pk PRIMARY KEY(sensor_id, topic),
-  CONSTRAINT sensor_topic_map_fk FOREIGN KEY (sensor_id) REFERENCES sensor(sensor_id)
+  CONSTRAINT sensor_topic_map_pk PRIMARY KEY(sensor_num_id, topic),
+  CONSTRAINT sensor_topic_map_fk FOREIGN KEY (sensor_num_id) REFERENCES sensor(sensor_num_id)
 );
 
 CREATE TABLE sensor_history (
   record_id INT(10) AUTO_INCREMENT,
-  sensor_id INT(10),
-  recorded_time TIMESTAMP,
+  sensor_num_id INT(10),
+  recorded_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  value_key VARCHAR(200),
   value_content VARCHAR(200),
+  value_type VARCHAR(200),
   CONSTRAINT sensor_history_pk PRIMARY KEY(record_id)
 );
 
@@ -60,6 +65,8 @@ CREATE TABLE actuator (
   act_type VARCHAR(20),
   act_desc VARCHAR(80),
   model_no VARCHAR(40),
+  device_id VARCHAR(50),
+  pin VARCHAR(20),
   installed_on DATE,
   expiration_date DATE,
   install_loc VARCHAR(40),

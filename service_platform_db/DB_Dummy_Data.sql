@@ -1,55 +1,46 @@
 USE service_platform;
 
-INSERT INTO sensor (sensor_id, sensor_type, sensor_desc, model_no, installed_on, expiration_date, install_loc)
-VALUES (1, 'Noise', 'Measures noise', 'NVT1276', '2016-7-04', '2020-8-15', 'Gates Conference Room');
+INSERT INTO sensor (sensor_num_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc)
+VALUES (1, 'usbRFID', 'Noise', 'Measures noise', 'NVT1276', 'neo-231ab9d4e3167ab8', '33a84bf0ab9724cf90d20f464496d60aea877f3c4db8ccf465cf52f8e4d10f90', '2016-7-04', '2020-8-15', 'Gates Conference Room');
 
-INSERT INTO sensor (sensor_id, sensor_type, sensor_desc, model_no, installed_on, expiration_date, install_loc)
-VALUES (2, 'Noise', 'Measures noise', 'NVT1276', '2016-7-04', '2020-8-15', 'Monroe Conference Room');
+INSERT INTO sensor (sensor_num_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc)
+VALUES (2, 'usbRFID', 'Noise', 'Measures noise', 'NVT1276', 'neo-231ab9d4e3167ab8', '33a84bf0ab9724cf90d20f464496d60aea877f3c4db8ccf465cf52f8e4d10f90', '2016-7-04', '2020-8-15', 'Monroe Conference Room');
 
-INSERT INTO sensor (sensor_id, sensor_type, sensor_desc, model_no, installed_on, expiration_date, install_loc)
-VALUES (3, 'Temperature', 'Measures temperature and humidity', 'THM186', '2016-7-04', '2020-8-15', 'Gates Conference Room');
+INSERT INTO sensor (sensor_num_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc)
+VALUES (3, 'usbRFID', 'Temperature', 'Measures temperature and humidity', 'THM186', 'neo-231ab9d4e3167ab8', '33a84bf0ab9724cf90d20f464496d60aea877f3c4db8ccf465cf52f8e4d10f90', '2016-7-04', '2020-8-15', 'Gates Conference Room');
 
-INSERT INTO sensor (sensor_id, sensor_type, sensor_desc, model_no, installed_on, expiration_date, install_loc)
-VALUES (4, 'Temperature', 'Measures temperature and humidity', 'THM186', '2016-7-04', '2020-8-15', 'Monroe Conference Room');
+INSERT INTO sensor (sensor_num_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc)
+VALUES (4, 'usbRFID', 'Temperature', 'Measures temperature and humidity', 'THM186', 'neo-231ab9d4e3167ab8', '33a84bf0ab9724cf90d20f464496d60aea877f3c4db8ccf465cf52f8e4d10f90', '2016-7-04', '2020-8-15', 'Monroe Conference Room');
 
-INSERT INTO sensor (sensor_id, sensor_type, sensor_desc, model_no, installed_on, expiration_date, install_loc)
-VALUES (5, 'Temperature', 'Measures temperature and humidity', 'THM186', '2016-7-04', '2020-8-15', 'Main lobby');
+INSERT INTO sensor (sensor_num_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc)
+VALUES (5, 'usbRFID', 'Temperature', 'Measures temperature and humidity', 'THM186', 'neo-231ab9d4e3167ab8', '33a84bf0ab9724cf90d20f464496d60aea877f3c4db8ccf465cf52f8e4d10f90', '2016-7-04', '2020-8-15', 'Main lobby');
 
-INSERT INTO sensor (sensor_id, sensor_type, sensor_desc, model_no, installed_on, expiration_date, install_loc)
-VALUES (6, 'Motion', 'Measures noise', 'NHDG582', '2016-7-04', '2020-8-15', 'Main entrance');
+INSERT INTO sensor (sensor_num_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc)
+VALUES (6, 'Motion', 'Measures noise', 'NHDG582', 'neo-231ab9d4e3167ab8', '33a84bf0ab9724cf90d20f464496d60aea877f3c4db8ccf465cf52f8e4d10f90', '2016-7-04', '2020-8-15', 'Main entrance');
 
-INSERT INTO sensor_topic_map (sensor_id, topic)
+INSERT INTO sensor_topic_map (sensor_num_id, topic)
 VALUES (1, '/noise/gates-conf-room');
 
-INSERT INTO sensor_topic_map (sensor_id, topic)
+INSERT INTO sensor_topic_map (sensor_num_id, topic)
 VALUES (2, '/noise/monroe-conf-room');
 
-INSERT INTO sensor_topic_map (sensor_id, topic)
+INSERT INTO sensor_topic_map (sensor_num_id, topic)
 VALUES (3, '/temperature/gates-conf-room');
 
-INSERT INTO sensor_topic_map (sensor_id, topic)
+INSERT INTO sensor_topic_map (sensor_num_id, topic)
 VALUES (3, '/humidity/gates-conf-room');
 
-INSERT INTO sensor_topic_map (sensor_id, topic)
+INSERT INTO sensor_topic_map (sensor_num_id, topic)
 VALUES (4, '/temperature/monroe-conf-room');
 
-INSERT INTO sensor_topic_map (sensor_id, topic)
+INSERT INTO sensor_topic_map (sensor_num_id, topic)
 VALUES (4, '/humidity/monroe-conf-room');
 
-INSERT INTO sensor_topic_map (sensor_id, topic)
+INSERT INTO sensor_topic_map (sensor_num_id, topic)
 VALUES (5, '/temperature/main-lobby');
 
-INSERT INTO sensor_topic_map (sensor_id, topic)
+INSERT INTO sensor_topic_map (sensor_num_id, topic)
 VALUES (6, '/motion/main-enterence');
-
-INSERT INTO sensor_history (record_id, sensor_id, recorded_time, value_content)
-VALUES (1, 1, CURRENT_TIMESTAMP, '{"noise_db": 64}');
-
-INSERT INTO sensor_history (record_id, sensor_id, recorded_time, value_content)
-VALUES (2, 1, CURRENT_TIMESTAMP, '{"noise_db": 61}');
-
-INSERT INTO sensor_history (record_id, sensor_id, recorded_time, value_content)
-VALUES (3, 1, CURRENT_TIMESTAMP, '{"noise_db": 80}');
 
 INSERT INTO actuator (act_id, act_type, act_desc, model_no, installed_on, expiration_date, install_loc)
 VALUES (1, 'HVAC', 'Controls HVAC', 'NVT1276', '2016-7-04', '2020-8-15', 'Gates Conference Room');
