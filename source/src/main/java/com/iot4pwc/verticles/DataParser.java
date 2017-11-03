@@ -40,9 +40,9 @@ public class DataParser extends AbstractVerticle {
       for (int i=0; i<history.size(); i++) {
         JsonObject structuredData = new JsonObject();
     	JsonObject jo = history.getJsonObject(i);
-    	System.out.println(jo);
     	String timestamp = jo.getString("timestamp");
-    	
+    	System.out.println("lasttime "+lastTime);
+    	System.out.println("timestamp " +timestamp);
     	if (lastTime.compareTo(timestamp) <= 0) {
           structuredData.put("timestamp", timestamp);
         	for (String type: types) {
@@ -50,6 +50,7 @@ public class DataParser extends AbstractVerticle {
         	  structuredData.put(type, value);
         	}
           structuredData.put("sensor_id", data.getString("sensor_id"));
+//          System.out.println(structuredData);
 //        	eb.send(ConstLib.DATA_SERVICE_ADDRESS, structuredData);
 //            eb.send(ConstLib.PUBLISHER_ADDRESS, structuredData);
     	}

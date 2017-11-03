@@ -1,10 +1,8 @@
 package com.iot4pwc.components.helpers;
 
 
-public interface DataPollerHelper{
-
-   void pollData();
-	  
-   void getSensorHistoryValue(String gatewayId, String deviceId, String sensorType, String sensorId);
-   
+public abstract class DataPollerHelper{
+	
+	public abstract int getFrequency();
+	public abstract String getQuery();
 }
