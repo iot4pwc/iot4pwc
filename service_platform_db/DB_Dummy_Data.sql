@@ -16,7 +16,7 @@ INSERT INTO sensor (sensor_num_id, sensor_id, sensor_type, sensor_desc, model_no
 VALUES (5, 'usbRFID', 'Temperature', 'Measures temperature and humidity', 'THM186', 'neo-231ab9d4e3167ab8', '33a84bf0ab9724cf90d20f464496d60aea877f3c4db8ccf465cf52f8e4d10f90', '2016-7-04', '2020-8-15', 'Main lobby');
 
 INSERT INTO sensor (sensor_num_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc)
-VALUES (6, 'Motion', 'Measures noise', 'NHDG582', 'neo-231ab9d4e3167ab8', '33a84bf0ab9724cf90d20f464496d60aea877f3c4db8ccf465cf52f8e4d10f90', '2016-7-04', '2020-8-15', 'Main entrance');
+VALUES (6, 'usbRFID', 'Motion', 'Measures noise', 'NHDG582', 'neo-231ab9d4e3167ab8', '33a84bf0ab9724cf90d20f464496d60aea877f3c4db8ccf465cf52f8e4d10f90', '2016-7-04', '2020-8-15', 'Main entrance');
 
 INSERT INTO sensor_topic_map (sensor_num_id, topic)
 VALUES (1, '/noise/gates-conf-room');
