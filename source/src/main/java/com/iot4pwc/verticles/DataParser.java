@@ -44,12 +44,12 @@ public class DataParser extends AbstractVerticle {
     	String timestamp = jo.getString("timestamp");
     	
     	if (lastTime.compareTo(timestamp) <= 0) {
-        	structuredData.put("timestamp", timestamp);
+          structuredData.put("timestamp", timestamp);
         	for (String type: types) {
               int value = jo.getInteger(type);
         	  structuredData.put(type, value);
         	}
-        	structuredData.put("sensor_id", jo.getString("sensor_id"));
+          structuredData.put("sensor_id", data.getString("sensor_id"));
 //        	eb.send(ConstLib.DATA_SERVICE_ADDRESS, structuredData);
 //            eb.send(ConstLib.PUBLISHER_ADDRESS, structuredData);
     	}
