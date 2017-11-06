@@ -7,6 +7,7 @@ public class ConstLib {
   public static final String DATA_SERVICE_ADDRESS = "iot4pwc.data.dataService";
   public static final String ACTUATOR_ADDRESS = "iot4pwc.data.actuator";
   public static final String APP_AUTHENTICATOR_ADDRESS = "iot4pwc.data.appAuthenticator";
+  public static final String UDOO_TOKEN_ADDRESS = "iot4pwc.udoo.token";
 
   public static final String DATA_SERVICE_WORKER_POOL = "data service pool";
   public static final String RESTFUL_DB_SERVICE_POOL = "restful service pool";
@@ -21,6 +22,7 @@ public class ConstLib {
   public static final int DATA_PARSER_NUMBER = 10;
   public static final int DATA_PUBLISHER_NUMBER = 10;
   public static final int DATA_SERVICE_NUMBER = 10;
+  public static final int DATA_POLLER_NUMBER = 1;
   public static final int RESTFUL_DB_SERVICE_NUMBER = 1;
   public static final int APP_AUTHENICATOR_NUMBER = 1;
   public static final int ACTUATOR_NUMBER = 1;
@@ -57,4 +59,6 @@ public class ConstLib {
 
   public static final String PRIVATE_KEY_PATH = "ca.key";
   public static final String CERTIFICATE_PATH = "ca.crt";
+
+  public static final int ONEDAY = 86400000;
 }

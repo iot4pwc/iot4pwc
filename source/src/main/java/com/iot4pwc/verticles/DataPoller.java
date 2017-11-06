@@ -31,7 +31,6 @@ public class DataPoller extends AbstractVerticle {
   Logger logger = LogManager.getLogger(DataPoller.class);
   Date RFIDLastTime;
   Date normalLastTime;
-  private final int oneday = 86400000;
   
   public void start() {
 	try {
@@ -59,7 +58,7 @@ public class DataPoller extends AbstractVerticle {
     	  pollData(NormalDataPoller.getInstance().getQuery(), normalLastTime);
     	  normalLastTime = new Date();
     	});
-      	vertx.setPeriodic(oneday, id -> {
+      	vertx.setPeriodic(ConstLib.ONEDAY, id -> {
       	  vertx.cancelTimer(RFIDTimer);
       	  vertx.cancelTimer(normalTimer);
       	});

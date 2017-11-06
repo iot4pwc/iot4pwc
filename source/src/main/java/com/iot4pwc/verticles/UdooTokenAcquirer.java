@@ -27,7 +27,7 @@ public class UdooTokenAcquirer extends AbstractVerticle {
   
   public void start() {
 	setToken();
-  	vertx.setPeriodic(86400000, id -> {
+  	vertx.setPeriodic(ConstLib.ONEDAY, id -> {
 	  setToken();
 	});
   }
