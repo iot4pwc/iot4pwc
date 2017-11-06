@@ -61,4 +61,6 @@ public class ConstLib {
   public static final String CERTIFICATE_PATH = "ca.crt";
 
   public static final int ONEDAY = 86400000;
+  public static final String RFID_SENSOR_TYPE = "virtual";
+  public static final String INITIAL_LAST_TIME = "201710010000";
 }

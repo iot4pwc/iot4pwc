@@ -5,9 +5,7 @@ import io.vertx.core.VertxOptions;
 import io.vertx.core.eventbus.EventBusOptions;
 import io.vertx.core.net.PemKeyCertOptions;
 import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
-
 import java.util.Properties;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
