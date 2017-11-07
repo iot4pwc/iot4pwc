@@ -12,6 +12,7 @@ import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
+import io.vertx.ext.web.codec.BodyCodec;
 
 
 public class ActuatorController extends AbstractVerticle {
@@ -46,6 +47,7 @@ public class ActuatorController extends AbstractVerticle {
 									command.getString("sensor_id") + " from application " + 
 									appId);
 							//send out request
+							sendRequest(command);
 							message.reply("Success");
 						} else {
 							actuatorLogger.info("[Unauthenticated] Action [" + actionId + "] on sensor #" + 
@@ -65,26 +67,30 @@ public class ActuatorController extends AbstractVerticle {
 
 	}
 
-	private boolean sendRequest(JsonObject command) {
+	private void sendRequest(JsonObject command) {
 		WebClient client = WebClient.create(vertx);
-
 		//http://udoo-iot-beta.cleverapps.io
-		String tokens = "";
+		String tokens = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU5ZThjNjgxN2UzMzNmMDliNjE1MDk2NCIsImlhdCI6MTUxMDA3MjYyMH0.wTREIR_sqEDW1KfHJs150VHKrRp2BTS9N03NgwDmnaE";
 		//1: on   0:off
 		String action = command.getString("action_id");
 		client
-		.get(8080, "udoo-iot-beta.cleverapps.io", "/ext/sensors/write/82ccd7c9f70f23cbe570d1644f60a7293603fe95c5c51cabc6ee0de72f0df61d/ttyMCC-2125c1d4df669959/digital/13/"+action)
+		.get(8080, ConstLib.UDOO_ACTUATE_ENDPOINT, "/ext/sensors/write/82ccd7c9f70f23cbe570d1644f60a7293603fe95c5c51cabc6ee0de72f0df61d/ttyMCC-2125c1d4df669959/digital/13/"+action)
 		.putHeader("Authorization", "JWT " + tokens)
+		.as(BodyCodec.jsonObject())
 		.send(ar -> {
 			if (ar.succeeded()) {
 				// Obtain response
-				HttpResponse<Buffer> response = ar.result();
+				HttpResponse<JsonObject> response = ar.result();
+				JsonObject res = response.bodyAsJsonObject();
 				logger.info("Received response with status code" + response.statusCode());
+				if(res.getString("status").equals("ok")){
+					actuatorLogger.info("Action executed successfully " + res.toString());
+				}else{
+					actuatorLogger.info("Action excecution failed " + res.toString());
+				}
 			} else {
 				logger.error("Something went wrong " + ar.cause().getMessage());
 			}
 		});
-
-		return false;
 	}
 }
