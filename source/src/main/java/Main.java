@@ -39,6 +39,8 @@ public class Main {
 
       DeploymentOptions deploymentOptions = new DeploymentOptions().setInstances(ConstLib.DUMMY_SENSOR_NUMBER);
       vertx.deployVerticle("com.iot4pwc.verticles.DummySensor", deploymentOptions);
+      deploymentOptions = new DeploymentOptions().setInstances(1);
+      vertx.deployVerticle("com.iot4pwc.verticles.DataPoller", deploymentOptions);
       deploymentOptions = new DeploymentOptions().setInstances(ConstLib.DATA_PARSER_NUMBER);
       vertx.deployVerticle("com.iot4pwc.verticles.DataParser", deploymentOptions);
       deploymentOptions = new DeploymentOptions().setInstances(ConstLib.DATA_PUBLISHER_NUMBER);
@@ -73,7 +75,9 @@ public class Main {
 
           switch (option) {
             case ConstLib.SERVICE_PLATFORM_OPTION: {
-              DeploymentOptions deploymentOptions = new DeploymentOptions().setInstances(ConstLib.DATA_PARSER_NUMBER);
+              DeploymentOptions deploymentOptions = new DeploymentOptions().setInstances(1);
+              vertx.deployVerticle("com.iot4pwc.verticles.DataPoller", deploymentOptions);
+              deploymentOptions = new DeploymentOptions().setInstances(ConstLib.DATA_PARSER_NUMBER);
               vertx.deployVerticle("com.iot4pwc.verticles.DataParser", deploymentOptions);
               deploymentOptions = new DeploymentOptions().setInstances(ConstLib.DATA_PUBLISHER_NUMBER);
               vertx.deployVerticle("com.iot4pwc.verticles.DataPublisher", deploymentOptions);

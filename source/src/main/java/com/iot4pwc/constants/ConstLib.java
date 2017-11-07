@@ -7,7 +7,8 @@ public class ConstLib {
   public static final String DATA_SERVICE_ADDRESS = "iot4pwc.data.dataService";
   public static final String ACTUATOR_ADDRESS = "iot4pwc.data.actuator";
   public static final String APP_AUTHENTICATOR_ADDRESS = "iot4pwc.data.appAuthenticator";
-
+  public static final String UDOO_TOKEN_ADDRESS = "iot4pwc.udoo.token";
+  
   public static final String DATA_SERVICE_WORKER_POOL = "data service pool";
   public static final String RESTFUL_DB_SERVICE_POOL = "restful service pool";
   public static final String DATA_PUBLISHER_WORKER_POOL = "data publisher pool";
@@ -48,13 +49,13 @@ public class ConstLib {
   public static final String PAYLOAD_FIELD_APP_ID = "app_id";
   public static final String PAYLOAD_FIELD_ACTION_ID = "action_id";
   
-  public static final String UDOO_ENDPOINT = "cmu.udoo.cloud";
+  public static final String UDOO_ENDPOINT = "http://cmu.udoo.cloud";
   public static final String UDOO_USERNAME = "cmu4pwc";
   public static final String UDOO_PWD = "CMU4pwc.";
 
   public static final Level LOGGING_LEVEL = Level.INFO;
-  public static final String LOGGING_CONFIG = "log4j2.xml";
+  public static final String LOGGING_CONFIG = "src/main/resources/log4j2.xml";
 
-  public static final String PRIVATE_KEY_PATH = "ca.key";
-  public static final String CERTIFICATE_PATH = "ca.crt";
+  public static final String PRIVATE_KEY_PATH = "src/main/resources/ca.key";
+  public static final String CERTIFICATE_PATH = "src/main/resources/ca.crt";
 }
