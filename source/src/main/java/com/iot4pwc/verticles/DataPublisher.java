@@ -34,8 +34,8 @@ public class DataPublisher extends AbstractVerticle {
       future.complete();
     }, res ->
       eb.consumer(ConstLib.PUBLISHER_ADDRESS, message -> {
-        String structuredData = (String)message.body();
-        JsonObject structuredDataJSON = new JsonObject(structuredData);
+        JsonObject structuredDataJSON = (JsonObject)message.body();
+        String structuredData = structuredDataJSON.toString();
         Set<String> sensorTopics = getTopicSet(structuredDataJSON);
 
         List<PublishRequestHandler> publishRequests = new LinkedList<>();
@@ -66,18 +66,18 @@ public class DataPublisher extends AbstractVerticle {
     List<JsonObject> records = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select(query);
 
     for (JsonObject record: records) {
-      int sensorId = Integer.parseInt(record.getString(SensorTopic.sensor_id));
+      int sensorNumId = record.getInteger(SensorTopic.sensor_num_id);
       String topic = record.getString(SensorTopic.topic);
-      Set<String> topicSet = sensorTopicMap.getOrDefault(sensorId, new HashSet<>());
+      Set<String> topicSet = sensorTopicMap.getOrDefault(sensorNumId, new HashSet<>());
       topicSet.add(topic);
-      sensorTopicMap.put(sensorId, topicSet);
+      sensorTopicMap.put(sensorNumId, topicSet);
     }
     return sensorTopicMap;
   }
 
-  private void getOneSensorMapping(int sensorId, Map<Integer, Set<String>> existingMapping) {
+  private void getOneSensorMapping(int sensorNumId, Map<Integer, Set<String>> existingMapping) {
     try {
-      String query = String.format("SELECT * FROM sensor_topic_map WHERE sensor_id = %d", sensorId);
+      String query = String.format("SELECT * FROM sensor_topic_map WHERE sensor_num_id = %d", sensorNumId);
       List<JsonObject> records = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select(query);
       Set<String> sensorTopics = new HashSet<>();
 
@@ -85,20 +85,20 @@ public class DataPublisher extends AbstractVerticle {
         sensorTopics.add(record.getString(SensorTopic.topic));
       }
 
-      existingMapping.put(sensorId, sensorTopics);
+      existingMapping.put(sensorNumId, sensorTopics);
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
   private Set<String> getTopicSet(JsonObject jsonPayload) {
-    int sensorID = jsonPayload.getInteger(SensorTopic.sensor_id);
+    int sensorNumID = jsonPayload.getInteger(SensorTopic.sensor_num_id);
     Set<String> sensorTopics;
 
-    if (!sensorTopicMapping.containsKey(sensorID)) {
-      getOneSensorMapping(sensorID, sensorTopicMapping);
+    if (!sensorTopicMapping.containsKey(sensorNumID)) {
+      getOneSensorMapping(sensorNumID, sensorTopicMapping);
     }
-    sensorTopics = sensorTopicMapping.getOrDefault(sensorID, new HashSet<>());
+    sensorTopics = sensorTopicMapping.getOrDefault(sensorNumID, new HashSet<>());
 
     return sensorTopics;
   } 

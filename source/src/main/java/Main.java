@@ -5,9 +5,7 @@ import io.vertx.core.VertxOptions;
 import io.vertx.core.eventbus.EventBusOptions;
 import io.vertx.core.net.PemKeyCertOptions;
 import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
-
 import java.util.Properties;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -39,7 +37,7 @@ public class Main {
 
       DeploymentOptions deploymentOptions = new DeploymentOptions().setInstances(ConstLib.DUMMY_SENSOR_NUMBER);
       vertx.deployVerticle("com.iot4pwc.verticles.DummySensor", deploymentOptions);
-      deploymentOptions = new DeploymentOptions().setInstances(1);
+      deploymentOptions = new DeploymentOptions().setInstances(ConstLib.DATA_POLLER_NUMBER);
       vertx.deployVerticle("com.iot4pwc.verticles.DataPoller", deploymentOptions);
       deploymentOptions = new DeploymentOptions().setInstances(ConstLib.DATA_PARSER_NUMBER);
       vertx.deployVerticle("com.iot4pwc.verticles.DataParser", deploymentOptions);
@@ -75,7 +73,7 @@ public class Main {
 
           switch (option) {
             case ConstLib.SERVICE_PLATFORM_OPTION: {
-              DeploymentOptions deploymentOptions = new DeploymentOptions().setInstances(1);
+              DeploymentOptions deploymentOptions = new DeploymentOptions().setInstances(ConstLib.DATA_POLLER_NUMBER);
               vertx.deployVerticle("com.iot4pwc.verticles.DataPoller", deploymentOptions);
               deploymentOptions = new DeploymentOptions().setInstances(ConstLib.DATA_PARSER_NUMBER);
               vertx.deployVerticle("com.iot4pwc.verticles.DataParser", deploymentOptions);
