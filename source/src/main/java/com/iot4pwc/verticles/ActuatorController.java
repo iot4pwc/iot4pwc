@@ -74,7 +74,7 @@ public class ActuatorController extends AbstractVerticle {
 		//1: on   0:off
 		String action = command.getString("action_id");
 		client
-		.get(8080, ConstLib.UDOO_ACTUATE_ENDPOINT, "/ext/sensors/write/82ccd7c9f70f23cbe570d1644f60a7293603fe95c5c51cabc6ee0de72f0df61d/ttyMCC-2125c1d4df669959/digital/13/"+action)
+		.getAbs(ConstLib.UDOO_ACTUATE_ENDPOINT+"/ext/sensors/write/82ccd7c9f70f23cbe570d1644f60a7293603fe95c5c51cabc6ee0de72f0df61d/ttyMCC-2125c1d4df669959/digital/13/"+action)
 		.putHeader("Authorization", "JWT " + tokens)
 		.as(BodyCodec.jsonObject())
 		.send(ar -> {

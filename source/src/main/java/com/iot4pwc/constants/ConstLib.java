@@ -53,7 +53,7 @@ public class ConstLib {
   public static final String UDOO_ENDPOINT = "http://cmu.udoo.cloud";
   public static final String UDOO_USERNAME = "cmu4pwc";
   public static final String UDOO_PWD = "CMU4pwc.";
-  public static final String UDOO_ACTUATE_ENDPOINT = "udoo-iot-beta.cleverapps.io";
+  public static final String UDOO_ACTUATE_ENDPOINT = "http://udoo-iot-beta.cleverapps.io";
 
   public static final Level LOGGING_LEVEL = Level.INFO;
   public static final String LOGGING_CONFIG = "src/main/resources/log4j2.xml";
