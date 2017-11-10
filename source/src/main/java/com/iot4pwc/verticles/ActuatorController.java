@@ -1,6 +1,9 @@
 package com.iot4pwc.verticles;
 
 import com.iot4pwc.components.helpers.DBHelper;
+
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -72,13 +75,19 @@ public class ActuatorController extends AbstractVerticle {
 	}
 
 	private void sendRequest(JsonObject command) {
+		//fetch the info related to the sensor
+		String query = String.format("SELECT * FROM sensor WHERE sensor_num_id = %s", command.getString("sensor_id"));
+    JsonObject info = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select(query).get(0);
+    String gateway_id = info.getString("gateway_id");
+    String device_id = info.getString("device_id");
+    String sensor_type = info.getString("sensor_type");
+    String sensor_id = info.getString("sensor_id");
+    
 		WebClient client = WebClient.create(vertx);
-		//http://udoo-iot-beta.cleverapps.io
-		//String tokens = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU5ZThjNjgxN2UzMzNmMDliNjE1MDk2NCIsImlhdCI6MTUxMDA3MjYyMH0.wTREIR_sqEDW1KfHJs150VHKrRp2BTS9N03NgwDmnaE";
-		//1: on   0:off
 		String action = command.getString("action_id");
+		String url = ConstLib.UDOO_ACTUATE_ENDPOINT+ gateway_id + "/" + device_id + "/" + sensor_type + "/" + sensor_id +"/" + action;
 		client
-		.getAbs(ConstLib.UDOO_ACTUATE_ENDPOINT+"/ext/sensors/write/82ccd7c9f70f23cbe570d1644f60a7293603fe95c5c51cabc6ee0de72f0df61d/ttyMCC-2125c1d4df669959/digital/13/"+action)
+		.getAbs(url)
 		.putHeader("Authorization", "JWT " + token)
 		.as(BodyCodec.jsonObject())
 		.send(ar -> {
@@ -86,7 +95,7 @@ public class ActuatorController extends AbstractVerticle {
 				// Obtain response
 				HttpResponse<JsonObject> response = ar.result();
 				logger.info("Received response with status code" + response.statusCode());
-				if(ar.result().body().getString("status").equals("ok")){
+				if(ar.result().body().containsKey("status") && ar.result().body().getString("status").equals("ok")){
 					actuatorLogger.info("Action executed successfully " + ar.result().body().toString());
 				}else{
 					actuatorLogger.info("Action excecution failed " + ar.result().body().toString());
