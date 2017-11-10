@@ -19,6 +19,7 @@ public class ActuatorController extends AbstractVerticle {
 	Logger logger = LogManager.getLogger(ActuatorController.class);
 	Logger actuatorLogger = LogManager.getLogger("com.iot4pwc.actuator.controller");
 	private DBHelper dbHelper;
+	private String token;
 	@Override
 	public void start() {
 		EventBus eb = vertx.eventBus();
@@ -27,6 +28,9 @@ public class ActuatorController extends AbstractVerticle {
 			dbHelper = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM);
 			future.complete();
 		}, response -> {
+			eb.consumer(ConstLib.UDOO_TOKEN_ADDRESS, message -> {
+				token = (String)message.body();
+			});
 			//message in certain json format: {app_id:app_id, sensor_id:sensor_id, action_id:action_id}
 			eb.consumer(ConstLib.ACTUATOR_ADDRESS, message -> {
 				logger.info("got message [" + message.body() + "]");
@@ -70,23 +74,22 @@ public class ActuatorController extends AbstractVerticle {
 	private void sendRequest(JsonObject command) {
 		WebClient client = WebClient.create(vertx);
 		//http://udoo-iot-beta.cleverapps.io
-		String tokens = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU5ZThjNjgxN2UzMzNmMDliNjE1MDk2NCIsImlhdCI6MTUxMDA3MjYyMH0.wTREIR_sqEDW1KfHJs150VHKrRp2BTS9N03NgwDmnaE";
+		//String tokens = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU5ZThjNjgxN2UzMzNmMDliNjE1MDk2NCIsImlhdCI6MTUxMDA3MjYyMH0.wTREIR_sqEDW1KfHJs150VHKrRp2BTS9N03NgwDmnaE";
 		//1: on   0:off
 		String action = command.getString("action_id");
 		client
 		.getAbs(ConstLib.UDOO_ACTUATE_ENDPOINT+"/ext/sensors/write/82ccd7c9f70f23cbe570d1644f60a7293603fe95c5c51cabc6ee0de72f0df61d/ttyMCC-2125c1d4df669959/digital/13/"+action)
-		.putHeader("Authorization", "JWT " + tokens)
+		.putHeader("Authorization", "JWT " + token)
 		.as(BodyCodec.jsonObject())
 		.send(ar -> {
 			if (ar.succeeded()) {
 				// Obtain response
 				HttpResponse<JsonObject> response = ar.result();
-				JsonObject res = response.bodyAsJsonObject();
 				logger.info("Received response with status code" + response.statusCode());
-				if(res.getString("status").equals("ok")){
-					actuatorLogger.info("Action executed successfully " + res.toString());
+				if(ar.result().body().getString("status").equals("ok")){
+					actuatorLogger.info("Action executed successfully " + ar.result().body().toString());
 				}else{
-					actuatorLogger.info("Action excecution failed " + res.toString());
+					actuatorLogger.info("Action excecution failed " + ar.result().body().toString());
 				}
 			} else {
 				logger.error("Something went wrong " + ar.cause().getMessage());
