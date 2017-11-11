@@ -1,4 +1,4 @@
-DROP DATABASE gamified_office;
+DROP DATABASE IF EXISTS gamified_office;
 CREATE DATABASE gamified_office;
 
 USE gamified_office;
