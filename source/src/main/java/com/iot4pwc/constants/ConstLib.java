@@ -49,6 +49,7 @@ public class ConstLib {
 
   public static final String PAYLOAD_FIELD_APP_ID = "app_id";
   public static final String PAYLOAD_FIELD_ACTION_ID = "action_id";
+  public static final String PAYLOAD_FIELD_ACTUATOR_ID = "actuator_id";
   
   public static final String UDOO_ENDPOINT = "http://cmu.udoo.cloud";
   public static final String UDOO_USERNAME = "cmu4pwc";

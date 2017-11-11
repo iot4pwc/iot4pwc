@@ -42,8 +42,10 @@ public class ActuatorController extends AbstractVerticle {
 
 				String actionId = command.getString("action_id");
 				String appId = command.getString("app_id");
+                                String actId = command.getString("sensor_id");
 				authentication.put(ConstLib.PAYLOAD_FIELD_APP_ID, appId);
 				authentication.put(ConstLib.PAYLOAD_FIELD_ACTION_ID, actionId);
+                                authentication.put(ConstLib.PAYLOAD_FIELD_ACTUATOR_ID, actId);
 
 				eb.send(ConstLib.APP_AUTHENTICATOR_ADDRESS, authentication.toString(), auth -> {
 					logger.info("message send to authenticator");
@@ -51,14 +53,14 @@ public class ActuatorController extends AbstractVerticle {
 						logger.info("got message from authenticator " + auth.result().body());
 						if ((boolean) auth.result().body()) {
 							actuatorLogger.info("[Authenticated] Action [" + actionId + "] on sensor #" + 
-									command.getString("sensor_id") + " from application " + 
+									actId + " from application " + 
 									appId);
 							//send out request
 							sendRequest(command);
 							message.reply("Success");
 						} else {
 							actuatorLogger.info("[Unauthenticated] Action [" + actionId + "] on sensor #" + 
-									command.getString("sensor_id") + " from application " + 
+									actId + " from application " + 
 									appId);
 							message.reply("Failed");
 						}
