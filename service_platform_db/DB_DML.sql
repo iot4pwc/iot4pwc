@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS application;
 
 
 CREATE TABLE sensor (
-  sensor_num_id INT(10) AUTO_INCREMENT,
+  sensor_pk_id VARCHAR(30),
   sensor_id VARCHAR(20),
   sensor_type VARCHAR(20),
   sensor_desc VARCHAR(80),
@@ -35,21 +35,21 @@ CREATE TABLE sensor (
   installed_on DATE,
   expiration_date DATE,
   install_loc VARCHAR(40),
-  CONSTRAINT sensor_pk PRIMARY KEY(sensor_num_id)
+  CONSTRAINT sensor_pk PRIMARY KEY(sensor_pk_id)
 );
 
 
 CREATE TABLE sensor_topic_map(
-  sensor_num_id INT(10),
+  sensor_pk_id VARCHAR(30),
   topic VARCHAR(40),
-  CONSTRAINT sensor_topic_map_pk PRIMARY KEY(sensor_num_id, topic),
-  CONSTRAINT sensor_topic_map_fk FOREIGN KEY (sensor_num_id) REFERENCES sensor(sensor_num_id)
+  CONSTRAINT sensor_topic_map_pk PRIMARY KEY(sensor_pk_id, topic),
+  CONSTRAINT sensor_topic_map_fk FOREIGN KEY (sensor_pk_id) REFERENCES sensor(sensor_pk_id)
 );
 
 
 CREATE TABLE sensor_history (
   record_id INT(10) AUTO_INCREMENT,
-  sensor_num_id INT(10),
+  sensor_pk_id VARCHAR(30),
   recorded_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   value_key VARCHAR(200),
   value_content VARCHAR(200),
@@ -67,7 +67,7 @@ CREATE TABLE application (
 
 
 CREATE TABLE actuator (
-  act_num_id INT(10) AUTO_INCREMENT,
+  act_pk_id VARCHAR(30),
   act_id VARCHAR(30),
   act_type VARCHAR(20),
   act_desc VARCHAR(80),
@@ -77,17 +77,17 @@ CREATE TABLE actuator (
   installed_on DATE,
   expiration_date DATE,
   install_loc VARCHAR(40),
-  CONSTRAINT actuator_pk PRIMARY KEY(act_num_id)
+  CONSTRAINT actuator_pk PRIMARY KEY(act_pk_id)
 );
 
 
 CREATE TABLE actuator_action_map (
   record_id INT(10) AUTO_INCREMENT,
-  act_num_id INT(10),
+  act_pk_id VARCHAR(30),
   action_code VARCHAR(20),
   action_desc VARCHAR(80),
   CONSTRAINT actuator_action_map_pk PRIMARY KEY(record_id),
-  CONSTRAINT actuator_action_map_fk FOREIGN KEY (act_num_id) REFERENCES actuator(act_num_id)
+  CONSTRAINT actuator_action_map_fk FOREIGN KEY (act_pk_id) REFERENCES actuator(act_pk_id)
 );
 
 

@@ -19,7 +19,7 @@ import io.vertx.core.json.JsonObject;
  */
 public class DataPublisher extends AbstractVerticle {
   private MqttHelper mqttHelper;
-  private static Map<Integer, Set<String>> sensorTopicMapping = new HashMap<>();
+  private static Map<String, Set<String>> sensorTopicMapping = new HashMap<>();
 
   public void start() {
     EventBus eb = vertx.eventBus();
@@ -59,25 +59,25 @@ public class DataPublisher extends AbstractVerticle {
     mqttHelper.closeConnection();
   }
 
-  private Map<Integer, Set<String>> getSensorTopicMapping() {
-    Map<Integer, Set<String>> sensorTopicMap = new HashMap<>();
+  private Map<String, Set<String>> getSensorTopicMapping() {
+    Map<String, Set<String>> sensorTopicMap = new HashMap<>();
     String query = "SELECT * FROM sensor_topic_map";
 
     List<JsonObject> records = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select(query);
 
     for (JsonObject record: records) {
-      int sensorNumId = record.getInteger(SensorTopic.sensor_num_id);
+      String sensorPkId = record.getString(SensorTopic.sensor_pk_id);
       String topic = record.getString(SensorTopic.topic);
-      Set<String> topicSet = sensorTopicMap.getOrDefault(sensorNumId, new HashSet<>());
+      Set<String> topicSet = sensorTopicMap.getOrDefault(sensorPkId, new HashSet<>());
       topicSet.add(topic);
-      sensorTopicMap.put(sensorNumId, topicSet);
+      sensorTopicMap.put(sensorPkId, topicSet);
     }
     return sensorTopicMap;
   }
 
-  private void getOneSensorMapping(int sensorNumId, Map<Integer, Set<String>> existingMapping) {
+  private void getOneSensorMapping(String sensorPkId, Map<String, Set<String>> existingMapping) {
     try {
-      String query = String.format("SELECT * FROM sensor_topic_map WHERE sensor_num_id = %d", sensorNumId);
+      String query = "SELECT * FROM sensor_topic_map WHERE sensor_pk_id = " + sensorPkId;
       List<JsonObject> records = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select(query);
       Set<String> sensorTopics = new HashSet<>();
 
@@ -85,20 +85,20 @@ public class DataPublisher extends AbstractVerticle {
         sensorTopics.add(record.getString(SensorTopic.topic));
       }
 
-      existingMapping.put(sensorNumId, sensorTopics);
+      existingMapping.put(sensorPkId, sensorTopics);
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
   private Set<String> getTopicSet(JsonObject jsonPayload) {
-    int sensorNumID = jsonPayload.getInteger(SensorTopic.sensor_num_id);
+	String sensorPkID = jsonPayload.getString(SensorTopic.sensor_pk_id);
     Set<String> sensorTopics;
 
-    if (!sensorTopicMapping.containsKey(sensorNumID)) {
-      getOneSensorMapping(sensorNumID, sensorTopicMapping);
+    if (!sensorTopicMapping.containsKey(sensorPkID)) {
+      getOneSensorMapping(sensorPkID, sensorTopicMapping);
     }
-    sensorTopics = sensorTopicMapping.getOrDefault(sensorNumID, new HashSet<>());
+    sensorTopics = sensorTopicMapping.getOrDefault(sensorPkID, new HashSet<>());
 
     return sensorTopics;
   } 

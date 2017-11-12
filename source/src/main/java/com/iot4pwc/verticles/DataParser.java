@@ -27,7 +27,7 @@ public class DataParser extends AbstractVerticle {
       JsonArray value_type = (JsonArray)data.getValue("value_type");
       JsonArray history = (JsonArray)data.getValue("history");
       String lastTime = data.getString("lastTime");
-      
+      String sensor_pk_id = data.getString("sensor_pk_id");
       /**
        * one sensor may contain many types of value
        * we map them to different pairs of key and content
@@ -44,13 +44,6 @@ public class DataParser extends AbstractVerticle {
         JsonObject structuredDataBase = new JsonObject();
     	  JsonObject jo = history.getJsonObject(i);
     	  String timestamp = jo.getString("timestamp");
-        String sensor_id = data.getString("sensor_id");
-        String gateway_id = data.getString("gateway_id");
-        String device_id = data.getString("device_id");
-        String query = "select sensor_num_id from sensor where sensor_id='"+sensor_id+
-        		       "' and gateway_id='"+gateway_id+"' and device_id='"+device_id+"';";
-        List<JsonObject> result = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select(query);
-        String sensor_id_pk = result.get(0).getString("sensor_num_id");
 
         /**
          * sample timestamp: 201711011537
@@ -63,14 +56,14 @@ public class DataParser extends AbstractVerticle {
 		      } catch (ParseException e) {
 				    logger.error(e);
 		      }
-	        structuredDataBase.put("sensor_num_id", Integer.parseInt(sensor_id_pk));
+	        structuredDataBase.put("sensor_pk_id", sensor_pk_id);
 	        for (String type: types) {
 	          JsonObject structuredData = structuredDataBase;
 	          int value = jo.getInteger(type);
-	          structuredDataBase.put("value_key", type);
-	          structuredDataBase.put("value_content", String.valueOf(value));
-		        eb.send(ConstLib.DATA_SERVICE_ADDRESS, structuredData);
-		        eb.send(ConstLib.PUBLISHER_ADDRESS, structuredData);
+	          structuredData.put("value_key", type);
+	          structuredData.put("value_content", String.valueOf(value));
+		      eb.send(ConstLib.DATA_SERVICE_ADDRESS, structuredData);
+		      eb.send(ConstLib.PUBLISHER_ADDRESS, structuredData);
 	        }
 	      } 
       }
