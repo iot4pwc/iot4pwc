@@ -51,13 +51,14 @@ public class ConstLib {
   public static final String PAYLOAD_FIELD_ACTION_ID = "action_id";
   public static final String PAYLOAD_FIELD_ACTUATOR_ID = "actuator_id";
   
-  public static final String UDOO_ENDPOINT = "http://cmu.udoo.cloud";
+  public static final String UDOO_ENDPOINT = "https://cmu.udoo.cloud:443";
   public static final String UDOO_USERNAME = "cmu4pwc";
   public static final String UDOO_PWD = "CMU4pwc.";
   public static final String UDOO_ACTUATE_ENDPOINT = "http://udoo-iot-beta.cleverapps.io/ext/sensors/write/";
+  public static final String UDOO_CLOUD_CERT = "udoo.cer";
 
   public static final Level LOGGING_LEVEL = Level.INFO;
-  public static final String LOGGING_CONFIG = "src/main/resources/log4j2.xml";
+  public static final String LOGGING_CONFIG = "log4j2.xml";
 
   public static final String PRIVATE_KEY_PATH = "ca.key";
   public static final String CERTIFICATE_PATH = "ca.crt";
