@@ -8,8 +8,9 @@ import java.util.List;
 
 public class SensorHistory extends Queriable {
   public static final String tableName = "sensor_history";
-  public static final String sensor_id = "sensor_id";
+  public static final String sensor_num_id = "sensor_num_id";
   public static final String recorded_time = "recorded_time";
+  public static final String value_key = "value_key";
   public static final String value_content = "value_content";
   public static final String record_id = "record_id";
   private static SensorHistory tableInstance;
@@ -31,7 +32,7 @@ public class SensorHistory extends Queriable {
     try {
       for (String attributeName: attributeNames) {
         switch (attributeName) {
-          case sensor_id: {
+          case sensor_num_id: {
             pstmt.setInt(counter++, recordObject.getInteger(attributeName));
             break;
           }
@@ -42,6 +43,10 @@ public class SensorHistory extends Queriable {
             );
             break;
           }
+          case value_key: {
+              pstmt.setString(counter++, recordObject.getString(attributeName));
+              break;
+            }
           case value_content: {
             pstmt.setString(counter++, recordObject.getString(attributeName));
             break;

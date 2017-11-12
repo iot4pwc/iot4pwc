@@ -1,5 +1,6 @@
 DROP DATABASE service_platform;
 CREATE DATABASE service_platform;
+
 USE service_platform;
 
 DROP DATABASE information_broadcaster;
@@ -13,6 +14,7 @@ GRANT ALL PRIVILEGES ON information_broadcaster.* TO 'iot4pwc'@'%';
 
 SET GLOBAL max_connections = 5000;
 
+
 DROP TABLE IF EXISTS sensor_topic_map;
 DROP TABLE IF EXISTS sensor_history;
 DROP TABLE IF EXISTS sensor;
@@ -20,6 +22,7 @@ DROP TABLE IF EXISTS app_action_map;
 DROP TABLE IF EXISTS actuator_action_map;
 DROP TABLE IF EXISTS actuator;
 DROP TABLE IF EXISTS application;
+
 
 CREATE TABLE sensor (
   sensor_num_id INT(10) AUTO_INCREMENT,
@@ -35,12 +38,14 @@ CREATE TABLE sensor (
   CONSTRAINT sensor_pk PRIMARY KEY(sensor_num_id)
 );
 
+
 CREATE TABLE sensor_topic_map(
   sensor_num_id INT(10),
   topic VARCHAR(40),
   CONSTRAINT sensor_topic_map_pk PRIMARY KEY(sensor_num_id, topic),
   CONSTRAINT sensor_topic_map_fk FOREIGN KEY (sensor_num_id) REFERENCES sensor(sensor_num_id)
 );
+
 
 CREATE TABLE sensor_history (
   record_id INT(10) AUTO_INCREMENT,
@@ -51,6 +56,7 @@ CREATE TABLE sensor_history (
   CONSTRAINT sensor_history_pk PRIMARY KEY(record_id)
 );
 
+
 CREATE TABLE application (
   app_id INT(10) AUTO_INCREMENT,
   app_name VARCHAR(40),
@@ -59,28 +65,31 @@ CREATE TABLE application (
   CONSTRAINT application_pk PRIMARY KEY(app_id)
 );
 
+
 CREATE TABLE actuator (
-  act_id INT(10) AUTO_INCREMENT,
+  act_num_id INT(10) AUTO_INCREMENT,
+  act_id VARCHAR(30),
   act_type VARCHAR(20),
   act_desc VARCHAR(80),
   model_no VARCHAR(40),
   device_id VARCHAR(50),
   gateway_id VARCHAR(80),
-  pin VARCHAR(20),
   installed_on DATE,
   expiration_date DATE,
   install_loc VARCHAR(40),
-  CONSTRAINT actuator_pk PRIMARY KEY(act_id)
+  CONSTRAINT actuator_pk PRIMARY KEY(act_num_id)
 );
+
 
 CREATE TABLE actuator_action_map (
   record_id INT(10) AUTO_INCREMENT,
-  act_id INT(10),
+  act_num_id INT(10),
   action_code VARCHAR(20),
   action_desc VARCHAR(80),
   CONSTRAINT actuator_action_map_pk PRIMARY KEY(record_id),
-  CONSTRAINT actuator_action_map_fk FOREIGN KEY (act_id) REFERENCES actuator(act_id)
+  CONSTRAINT actuator_action_map_fk FOREIGN KEY (act_num_id) REFERENCES actuator(act_num_id)
 );
+
 
 CREATE TABLE app_action_map (
   app_id INT(10),
@@ -90,7 +99,9 @@ CREATE TABLE app_action_map (
   CONSTRAINT app_action_map_fk_2 FOREIGN KEY (app_id) REFERENCES application(app_id)
 );
 
---- Information Broadcaster
+
+
+
 
 USE information_broadcaster;
 
@@ -101,6 +112,7 @@ DROP TABLE IF EXISTS uuid_room;
 DROP TABLE IF EXISTS room_details;
 DROP TABLE IF EXISTS room_info;
 
+
 CREATE TABLE room_info (
   room_id int(10) auto_increment,
   room_name varchar(255),
@@ -108,6 +120,7 @@ CREATE TABLE room_info (
   room_location varchar(255),
   CONSTRAINT room_info_pk PRIMARY KEY(room_id)
 );
+
 
 CREATE TABLE room_details (
   room_id int(10),
@@ -117,6 +130,7 @@ CREATE TABLE room_details (
   CONSTRAINT room_details_pk PRIMARY KEY (room_id, info_key)
 );
 
+
 CREATE TABLE uuid_room (
   record_id int(10) NOT NULL auto_increment,
   uuid varchar(255),
@@ -125,6 +139,7 @@ CREATE TABLE uuid_room (
   CONSTRAINT uuid_room_fk FOREIGN KEY (room_id) REFERENCES room_info (room_id)
 );
 
+
 CREATE TABLE room_occupancy (
   user_email varchar(255),
   room_id int(10),
@@ -132,6 +147,7 @@ CREATE TABLE room_occupancy (
   CONSTRAINT room_occupancy_pk PRIMARY KEY(user_email),
   CONSTRAINT room_occupancy_fk FOREIGN KEY (room_id) REFERENCES room_info (room_id)
 );
+
 
 CREATE TABLE user_detail (
   user_detail_id int(10) AUTO_INCREMENT,
@@ -142,6 +158,7 @@ CREATE TABLE user_detail (
   CONSTRAINT user_detail_pk PRIMARY KEY(user_detail_id),
   CONSTRAINT user_detail_fk FOREIGN KEY (user_email) REFERENCES room_occupancy (user_email) ON DELETE CASCADE
 );
+
 
 CREATE TABLE room_fileshare (
   fileshare_id int(10) auto_increment,
