@@ -62,8 +62,8 @@ public class DataParser extends AbstractVerticle {
 	          int value = jo.getInteger(type);
 	          structuredData.put("value_key", type);
 	          structuredData.put("value_content", String.valueOf(value));
-		      eb.send(ConstLib.DATA_SERVICE_ADDRESS, structuredData);
-		      eb.send(ConstLib.PUBLISHER_ADDRESS, structuredData);
+		        eb.send(ConstLib.DATA_SERVICE_ADDRESS, structuredData);
+		        eb.send(ConstLib.PUBLISHER_ADDRESS, structuredData);
 	        }
 	      } 
       }

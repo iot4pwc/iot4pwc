@@ -10,11 +10,13 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.WorkerExecutor;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 /**
  * This is a data service that persists the data to the database
  */
 public class DataService extends AbstractVerticle {
+  Logger logger = LogManager.getLogger(DataService.class);
   public void start() {
     EventBus eb = vertx.eventBus();
 
@@ -29,7 +31,7 @@ public class DataService extends AbstractVerticle {
         DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).insert(structuredDataJSON, SensorHistory.getInstance());
         future.complete();
       }, res -> {
-        // TODO: add response
+        logger.info("Stored data into sensor_history:" + structuredDataJSON.toString());
       });
     });
   }
