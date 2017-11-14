@@ -4,7 +4,6 @@ package com.iot4pwc.verticles;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,7 +14,9 @@ import com.iot4pwc.constants.ConstLib;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.net.PemTrustOptions;
 import io.vertx.ext.web.client.WebClient;
+import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.codec.BodyCodec;
 import org.apache.logging.log4j.LogManager;
@@ -44,7 +45,13 @@ public class DataPoller extends AbstractVerticle {
       // first, retrieve token
       vertx.deployVerticle(new UdooTokenAcquirer(), delay -> future.complete("UdooTokenAcquirer Deployment Complete"));
     }, response -> {
-      client = WebClient.create(vertx);
+        client = WebClient.create(vertx,
+        	    new WebClientOptions()
+        	        .setTrustAll(true)
+        	        .setSsl(true)
+        	        .setPemTrustOptions(new PemTrustOptions().addCertPath(ConstLib.UDOO_CLOUD_CERT))
+        	        .setFollowRedirects(true)
+        	);
       EventBus eb = vertx.eventBus();
 
       eb.consumer(ConstLib.UDOO_TOKEN_ADDRESS, message -> {

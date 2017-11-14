@@ -10,7 +10,9 @@ import io.vertx.core.Vertx;
 import io.vertx.core.MultiMap;
 import io.vertx.core.Future;
 import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.net.PemTrustOptions;
 import io.vertx.ext.web.client.WebClient;
+import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.ext.web.codec.BodyCodec;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,7 +34,14 @@ public class UdooTokenAcquirer extends AbstractVerticle {
   }
 
   private void setToken() {
-	  WebClient client = WebClient.create(vertx);
+//	  WebClient client = WebClient.create(vertx);
+    WebClient client = WebClient.create(vertx,
+    new WebClientOptions()
+        .setTrustAll(true)
+        .setSsl(true)
+        .setPemTrustOptions(new PemTrustOptions().addCertPath(ConstLib.UDOO_CLOUD_CERT))
+        .setFollowRedirects(true)
+);
 	  MultiMap form = MultiMap.caseInsensitiveMultiMap();
 //	    form.set("username", System.getenv("UDOO_USERNAME"));
 //	    form.set("password", System.getenv("UDOO_PASSWORD"));
