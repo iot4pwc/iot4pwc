@@ -42,10 +42,10 @@ public class ActuatorController extends AbstractVerticle {
 
 				String actionId = command.getString("action_id");
 				String appId = command.getString("app_id");
-                                String actId = command.getString("sensor_id");
+                String actId = command.getString("sensor_id");
 				authentication.put(ConstLib.PAYLOAD_FIELD_APP_ID, appId);
 				authentication.put(ConstLib.PAYLOAD_FIELD_ACTION_ID, actionId);
-                                authentication.put(ConstLib.PAYLOAD_FIELD_ACTUATOR_ID, actId);
+                authentication.put(ConstLib.PAYLOAD_FIELD_ACTUATOR_ID, actId);
 
 				eb.send(ConstLib.APP_AUTHENTICATOR_ADDRESS, authentication.toString(), auth -> {
 					logger.info("message send to authenticator");
@@ -78,12 +78,12 @@ public class ActuatorController extends AbstractVerticle {
 
 	private void sendRequest(JsonObject command) {
 		//fetch the info related to the sensor
-		String query = String.format("SELECT * FROM sensor WHERE sensor_num_id = %s", command.getString("sensor_id"));
+		String query = String.format("SELECT * FROM actuator WHERE act_pk_id = '%s'", command.getString("sensor_id"));
     JsonObject info = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select(query).get(0);
     String gateway_id = info.getString("gateway_id");
     String device_id = info.getString("device_id");
-    String sensor_type = info.getString("sensor_type");
-    String sensor_id = info.getString("sensor_id");
+    String sensor_type = info.getString("act_type");
+    String sensor_id = info.getString("act_id");
     
 		WebClient client = WebClient.create(vertx);
 		String action = command.getString("action_id");

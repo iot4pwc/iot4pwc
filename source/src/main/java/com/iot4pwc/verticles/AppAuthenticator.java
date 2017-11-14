@@ -57,7 +57,7 @@ public class AppAuthenticator extends AbstractVerticle {
      * May be changed when authenticator has to scale.
      */
     String query = "SELECT COUNT(*) AS CNT FROM app_action_map JOIN actuator_action_map USING(record_id) " +
-      "WHERE app_id = " + appId + " AND act_num_id = " + actuatorId + " AND action_code = " + actionId;
+      "WHERE app_id = " + appId + " AND act_pk_id = '" + actuatorId + "' AND action_code = " + actionId;
 
     List<JsonObject> records = dbHelper.select(query);
     if (records != null) {
