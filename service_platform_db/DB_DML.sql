@@ -153,7 +153,7 @@ CREATE TABLE user_detail (
   user_detail_id int(10) AUTO_INCREMENT,
   user_email varchar(255),
   info_key varchar(50),
-  info_value varchar(1000),
+  info_value MEDIUMTEXT,
   info_type varchar(50),
   CONSTRAINT user_detail_pk PRIMARY KEY(user_detail_id),
   CONSTRAINT user_detail_fk FOREIGN KEY (user_email) REFERENCES room_occupancy (user_email) ON DELETE CASCADE
