@@ -15,5 +15,4 @@ export DB_USER_PW
 mysql -u root -p < DB_DML.sql -f
 mysql -u root -p < DB_Dummy_Data.sql -f
 
-mv ../conf/my.cnf /etc/mysql/my.cnf
-
+sudo mv ../conf/my.cnf /etc/mysql/my.cnf
