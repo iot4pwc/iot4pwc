@@ -77,7 +77,7 @@ public class DataPublisher extends AbstractVerticle {
 
   private void getOneSensorMapping(String sensorPkId, Map<String, Set<String>> existingMapping) {
     try {
-      String query = "SELECT * FROM sensor_topic_map WHERE sensor_pk_id = " + sensorPkId;
+      String query = "SELECT * FROM sensor_topic_map WHERE sensor_pk_id = '" + sensorPkId + "'";
       List<JsonObject> records = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select(query);
       Set<String> sensorTopics = new HashSet<>();
 
