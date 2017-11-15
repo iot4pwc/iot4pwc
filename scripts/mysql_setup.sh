@@ -11,5 +11,5 @@ DB_USER_PW="Heinz123!"
 export DB_USER_PW
 # you will need to set the passwd for root, remember that pwd
 
-mysql -u iot4pwc -p < DB_DML.sql -f
-mysql -u iot4pwc -p < DB_Dummy_Dat.sql -f
+mysql -u root -p < DB_DML.sql -f
+mysql -u root -p < DB_Dummy_Dat.sql -f
