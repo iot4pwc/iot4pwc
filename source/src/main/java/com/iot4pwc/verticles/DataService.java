@@ -31,7 +31,7 @@ public class DataService extends AbstractVerticle {
         DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).insert(structuredDataJSON, SensorHistory.getInstance());
         future.complete();
       }, res -> {
-        logger.info("Stored data into sensor_history:" + structuredDataJSON.toString());
+        // logger.info("Stored data into sensor_history:" + structuredDataJSON.toString());
       });
     });
   }
