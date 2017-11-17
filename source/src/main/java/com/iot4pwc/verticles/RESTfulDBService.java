@@ -163,7 +163,7 @@ public class RESTfulDBService extends AbstractVerticle {
         logger.info("Action request [" + body.getString("action_id") + "] on #" + body.getString("sensor_id") + " failed due to " + ar.result().body());
         routingContext.response()
           .putHeader("content-type", "application/json; charset=utf-8")
-          .setStatusCode(200)
+          .setStatusCode(400)
           .end("Action request failed");
         return;
       } else {

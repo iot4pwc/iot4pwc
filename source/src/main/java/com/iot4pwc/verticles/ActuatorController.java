@@ -62,7 +62,7 @@ public class ActuatorController extends AbstractVerticle {
 							actuatorLogger.info("[Unauthenticated] Action [" + actionId + "] on sensor #" + 
 									actId + " from application " + 
 									appId);
-							message.reply("Failed");
+							message.reply("Authentication Failed");
 						}
 					} else {
 						actuatorLogger.info("[Failure] Action [" + actionId + "] on sensor #" + 
