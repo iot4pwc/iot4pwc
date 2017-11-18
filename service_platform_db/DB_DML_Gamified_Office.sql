@@ -34,6 +34,7 @@ CREATE TABLE app_user(
   alias varchar(80),
   reg_date DATETIME,
   age int(3),
+  profile_pic MEDIUMTEXT,
   share_flag varchar(1), 
   compete_flag varchar(1), 
   CONSTRAINT app_user_pk PRIMARY KEY (email)
