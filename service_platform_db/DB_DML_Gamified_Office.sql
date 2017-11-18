@@ -39,6 +39,16 @@ CREATE TABLE app_user(
   CONSTRAINT app_user_pk PRIMARY KEY (email)
 );
 
+CREATE TABLE user_component_sensor (
+  `id` int(10) AUTO_INCREMENT,
+  email VARCHAR(255) not null,
+  component_code varchar(20) not null,
+  sensor_value varchar(255) not null,
+  CONSTRAINT user_component_sensor_pk PRIMARY KEY (`id`),
+  CONSTRAINT user_component_sensor_fk FOREIGN KEY (email) REFERENCES app_user (email) 
+);
+
+
 CREATE TABLE participant(
   participant_id int(10) AUTO_INCREMENT,
   challenge_id int(10),
@@ -57,7 +67,7 @@ CREATE TABLE participant_component_score(
   part_comp_id int(10) AUTO_INCREMENT,
   component_id int(10),
   email varchar(255),
-  total_score int(5),quit
+  total_score int(5),
   today_score int(5),
   yesterday_score int(5),
   last_week_score int(5),
