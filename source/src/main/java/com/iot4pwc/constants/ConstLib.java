@@ -66,4 +66,5 @@ public class ConstLib {
   public static final int ONEDAY = 86400000;
   public static final String RFID_SENSOR_TYPE = "virtual";
   public static final String INITIAL_LAST_TIME = "201710010000";
+  public static final String RFID_SENSOR_PK_ID = "59f11b9e3a8fd80d33e14e7c";
 }

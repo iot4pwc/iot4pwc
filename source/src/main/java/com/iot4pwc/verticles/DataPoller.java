@@ -19,8 +19,6 @@ import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.codec.BodyCodec;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * This is a poller that polls data from the UDOO platform. 
@@ -32,7 +30,7 @@ public class DataPoller extends AbstractVerticle {
   Logger logger = LogManager.getLogger(DataPoller.class);
   Date RFIDLastTime;
   Date normalLastTime;
-  String sensor_pk_id;
+  // String sensor_pk_id;
   
   public void start() {
 	  try {
@@ -84,14 +82,14 @@ public class DataPoller extends AbstractVerticle {
 	  for (JsonObject jo: result) {
       String gateway_id = jo.getString("gateway_id");
       String device_id = jo.getString("device_id");
-	  String sensor_type = jo.getString("sensor_type");
-	  String sensor_id = jo.getString("sensor_id");
-	  getSensorPkIdValue(gateway_id, device_id, sensor_type, sensor_id);
-      getSensorHistoryValue(gateway_id, device_id, sensor_type, sensor_id, lastTime);
+	    String sensor_type = jo.getString("sensor_type");
+	    String sensor_id = jo.getString("sensor_id");
+      String sensor_pk_id = jo.getString("sensor_pk_id");
+      getSensorHistoryValue(gateway_id, device_id, sensor_type, sensor_id, lastTime, sensor_pk_id);
     }
   }
 
-  public void getSensorHistoryValue(String gatewayId, String deviceId, String sensorType, String sensorId, Date lastTime) {
+  public void getSensorHistoryValue(String gatewayId, String deviceId, String sensorType, String sensorId, Date lastTime, String sensor_pk_id) {
     // This call return the historical sensor value connected to A9 core,(Udoo bricks).
     // It requires the <gatewayId>, deviceId, sensorType, sensor id.
 	  client.getAbs(ConstLib.UDOO_ENDPOINT + "/ext/sensors/history/realtime/" + gatewayId +"/" + deviceId +"/" + sensorType +"/" +sensorId)
@@ -106,26 +104,9 @@ public class DataPoller extends AbstractVerticle {
 	            EventBus eb = vertx.eventBus();
 	            eb.send(ConstLib.PARSER_ADDRESS, body);
 	          } else {
-	            logger.error("Something went wrong " + ar.cause().getMessage());
+	            logger.error("Something went wrong " + "in getSensorHistoryValue " + ar.cause().getMessage() + ". gatewayId: " +gatewayId + ", deviceId: " + deviceId + ", sensorType: " + sensorType + ", sensorId: " + sensorId);
 	          }
           });
   }
-  
-  public void getSensorPkIdValue(String gatewayId, String deviceId, String sensorType, String sensorId) {
-	    // This call return the historical sensor value connected to A9 core,(Udoo bricks).
-	    // It requires the <gatewayId>, deviceId, sensorType, sensor id.
-		  client.getAbs(ConstLib.UDOO_ENDPOINT + "/ext/sensors/" + gatewayId +"/" + deviceId +"/" + sensorType +"/" +sensorId)
-		        .putHeader("Authorization", "JWT " + token)
-		        .as(BodyCodec.jsonObject())
-		        .send(ar -> {
-		          if (ar.succeeded()) {
-		            HttpResponse<JsonObject> response = ar.result();
-		            JsonObject body = response.body();
-		            sensor_pk_id = body.getString("_id");
-		          } else {
-		            logger.error("Something went wrong " + ar.cause().getMessage());
-		          }
-	          });
-	  }
 
 }
