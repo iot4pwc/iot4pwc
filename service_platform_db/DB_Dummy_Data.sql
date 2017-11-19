@@ -13,8 +13,6 @@ INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no,
 
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59ea1a973a8fd80d33ea7263','0x1E1','motion','null','NVT1276','neo-1039b9d4e3167ab8','6820dec6396ab126aecb82f5ce74c03e9b3be74e67fabbf90dc51095a2cb685f','2016-7-04','2020-8-15','udooneo-422-QuietStudyRoom');
 
-INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59ea1a973a8fd80d33ea7267','connection','virtual','null','NVT1276','neo-1039b9d4e3167ab8','6820dec6396ab126aecb82f5ce74c03e9b3be74e67fabbf90dc51095a2cb685f','2016-7-04','2020-8-15','udooneo-422-QuietStudyRoom');
-
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59ea22263a8fd80d33f79174','1-0029','i2c','null','NVT1276','neo-1039b9d4e3167ab8','6820dec6396ab126aecb82f5ce74c03e9b3be74e67fabbf90dc51095a2cb685f','2016-7-04','2020-8-15','udooneo-422-QuietStudyRoom');
 
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59ea22263a8fd80d33f7916b','1-0060','i2c','null','NVT1276','neo-1039b9d4e3167ab8','6820dec6396ab126aecb82f5ce74c03e9b3be74e67fabbf90dc51095a2cb685f','2016-7-04','2020-8-15','udooneo-422-QuietStudyRoom');
@@ -24,8 +22,6 @@ INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no,
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('5a00f1c93a8fd80d33d7e579','tablePresence','virtual','null','NVT1276','neo-1039b9d4e3167ab8','6820dec6396ab126aecb82f5ce74c03e9b3be74e67fabbf90dc51095a2cb685f','2016-7-04','2020-8-15','udooneo-422-QuietStudyRoom');
 
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59ece0263a8fd80d33934568','0x20','motion','null','NVT1276','neo-936c1d4df669959','8c019da5416a0130731fbe7495a08839419178fd6bbef00d8e04b5e434a2f0f3','2016-7-04','2020-8-15','udooneo-PERSONAL-gionji');
-
-INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59ece0263a8fd80d3393456d','connection','virtual','null','NVT1276','neo-936c1d4df669959','8c019da5416a0130731fbe7495a08839419178fd6bbef00d8e04b5e434a2f0f3','2016-7-04','2020-8-15','udooneo-PERSONAL-gionji');
 
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59ece0263a8fd80d33934562','0x01','os-info','null','NVT1276','neo-936c1d4df669959','8c019da5416a0130731fbe7495a08839419178fd6bbef00d8e04b5e434a2f0f3','2016-7-04','2020-8-15','udooneo-PERSONAL-gionji');
 
@@ -49,8 +45,6 @@ INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no,
 
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59f37df93a8fd80d337fa4d6','0x1E1','motion','null','NVT1276','neo-1d33c9d4e3172182','8c019da5416a0130731fbe7495a08839419178fd6bbef00d8e04b5e434a2f0f3','2016-7-04','2020-8-15','udooneo-PERSONAL-gionji');
 
-INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59f37df93a8fd80d337fa4d4','connection','virtual','null','NVT1276','neo-1d33c9d4e3172182','8c019da5416a0130731fbe7495a08839419178fd6bbef00d8e04b5e434a2f0f3','2016-7-04','2020-8-15','udooneo-PERSONAL-gionji');
-
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59f9f28d3a8fd80d33a00287','0','analog','null','NVT1276','ttyMCC-1f0ab9d4e3167ab8','1f09daf9564d1faa459a83dd10f2cf17ba8521bb1a68113a2286effcff9004f0','2016-7-04','2020-8-15','udooneo-421-BoardRoom');
 
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59f9f2aa3a8fd80d33a00381','2','digital','null','NVT1276','ttyMCC-1f0ab9d4e3167ab8','1f09daf9564d1faa459a83dd10f2cf17ba8521bb1a68113a2286effcff9004f0','2016-7-04','2020-8-15','udooneo-421-BoardRoom');
@@ -67,13 +61,9 @@ INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no,
 
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59ee59eb3a8fd80d3368a6b2','1-0060','i2c','null','NVT1276','neo-1f0ab9d4e3167ab8','1f09daf9564d1faa459a83dd10f2cf17ba8521bb1a68113a2286effcff9004f0','2016-7-04','2020-8-15','udooneo-421-BoardRoom');
 
-INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59ee59eb3a8fd80d3368a6b4','connection','virtual','null','NVT1276','neo-1f0ab9d4e3167ab8','1f09daf9564d1faa459a83dd10f2cf17ba8521bb1a68113a2286effcff9004f0','2016-7-04','2020-8-15','udooneo-421-BoardRoom');
-
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('5a0b33ea3a8fd80d332ae3e4','2','digital','null','NVT1276','ttyMCC-231ab9d4e3167ab8','33a84bf0ab9724cf90d20f464496d60aea877f3c4db8ccf465cf52f8e4d10f90','2016-7-04','2020-8-15','udooneo-LoungeRoom');
 
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59ee62493a8fd80d3375f5d9','1-0060','i2c','null','NVT1276','neo-231ab9d4e3167ab8','33a84bf0ab9724cf90d20f464496d60aea877f3c4db8ccf465cf52f8e4d10f90','2016-7-04','2020-8-15','udooneo-LoungeRoom');
-
-INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59ee62493a8fd80d3375f5db','connection','virtual','null','NVT1276','neo-231ab9d4e3167ab8','33a84bf0ab9724cf90d20f464496d60aea877f3c4db8ccf465cf52f8e4d10f90','2016-7-04','2020-8-15','udooneo-LoungeRoom');
 
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59ee62493a8fd80d3375f5dd','1-0029','i2c','null','NVT1276','neo-231ab9d4e3167ab8','33a84bf0ab9724cf90d20f464496d60aea877f3c4db8ccf465cf52f8e4d10f90','2016-7-04','2020-8-15','udooneo-LoungeRoom');
 
@@ -104,8 +94,6 @@ INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no,
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59ee699c3a8fd80d3381f58a','0x1E1','motion','null','NVT1276','neo-2125c1d4df669959','82ccd7c9f70f23cbe570d1644f60a7293603fe95c5c51cabc6ee0de72f0df61d','2016-7-04','2020-8-15','udooneo-EntranceOpenDesks');
 
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59ee699c3a8fd80d3381f58c','0x01','os-info','null','NVT1276','neo-2125c1d4df669959','82ccd7c9f70f23cbe570d1644f60a7293603fe95c5c51cabc6ee0de72f0df61d','2016-7-04','2020-8-15','udooneo-EntranceOpenDesks');
-
-INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59ee699c3a8fd80d3381f58f','connection','virtual','null','NVT1276','neo-2125c1d4df669959','82ccd7c9f70f23cbe570d1644f60a7293603fe95c5c51cabc6ee0de72f0df61d','2016-7-04','2020-8-15','udooneo-EntranceOpenDesks');
 
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59ee699c3a8fd80d3381f591','0x20','motion','null','NVT1276','neo-2125c1d4df669959','82ccd7c9f70f23cbe570d1644f60a7293603fe95c5c51cabc6ee0de72f0df61d','2016-7-04','2020-8-15','udooneo-EntranceOpenDesks');
 
@@ -177,8 +165,6 @@ INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no,
 
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59ee6f0a3a8fd80d338ac370','1-0060','i2c','null','NVT1276','neo-934c1d4df669959','ba62587fbba3992a58fe6fe4bb3c16da34b5f26df11b3eec7b491ec054af2a85','2016-7-04','2020-8-15','udooneo-OpenSpace');
 
-INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59ee6f0a3a8fd80d338ac372','connection','virtual','null','NVT1276','neo-934c1d4df669959','ba62587fbba3992a58fe6fe4bb3c16da34b5f26df11b3eec7b491ec054af2a85','2016-7-04','2020-8-15','udooneo-OpenSpace');
-
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59ee6f0a3a8fd80d338ac374','0x1E0','motion','null','NVT1276','neo-934c1d4df669959','ba62587fbba3992a58fe6fe4bb3c16da34b5f26df11b3eec7b491ec054af2a85','2016-7-04','2020-8-15','udooneo-OpenSpace');
 
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59ee6f0a3a8fd80d338ac376','0x1E1','motion','null','NVT1276','neo-934c1d4df669959','ba62587fbba3992a58fe6fe4bb3c16da34b5f26df11b3eec7b491ec054af2a85','2016-7-04','2020-8-15','udooneo-OpenSpace');
@@ -195,15 +181,11 @@ INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no,
 
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59ee76ec3a8fd80d339766c1','0x1E0','motion','null','NVT1276','neo-2925b9d4e3167ab8','d360e87fe12dde5aeafaabc6ec6eb8d48cc241eb9636b3fae51729b12e73e405','2016-7-04','2020-8-15','udooneo-425-Office');
 
-INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59ee76ec3a8fd80d339766c4','connection','virtual','null','NVT1276','neo-2925b9d4e3167ab8','d360e87fe12dde5aeafaabc6ec6eb8d48cc241eb9636b3fae51729b12e73e405','2016-7-04','2020-8-15','udooneo-425-Office');
-
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59efd0bf3a8fd80d33724ffb','0','analog','null','NVT1276','ttyMCC-1c0ac1d4e3167ab8','5a1f46555bb55435f60a88ad1a1960c57826bb616b3cedef6998d69da2b8dc53','2016-7-04','2020-8-15','udooneo-entranceDesk');
 
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59efd0f33a8fd80d3372a7dd','2','digital','null','NVT1276','ttyMCC-1c0ac1d4e3167ab8','5a1f46555bb55435f60a88ad1a1960c57826bb616b3cedef6998d69da2b8dc53','2016-7-04','2020-8-15','udooneo-entranceDesk');
 
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59efd0233a8fd80d337163b0','0x01','os-info','null','NVT1276','neo-1c0ac1d4e3167ab8','5a1f46555bb55435f60a88ad1a1960c57826bb616b3cedef6998d69da2b8dc53','2016-7-04','2020-8-15','udooneo-entranceDesk');
-
-INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59efd0233a8fd80d337163b3','connection','virtual','null','NVT1276','neo-1c0ac1d4e3167ab8','5a1f46555bb55435f60a88ad1a1960c57826bb616b3cedef6998d69da2b8dc53','2016-7-04','2020-8-15','udooneo-entranceDesk');
 
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59efd0233a8fd80d337163b4','0x1E0','motion','null','NVT1276','neo-1c0ac1d4e3167ab8','5a1f46555bb55435f60a88ad1a1960c57826bb616b3cedef6998d69da2b8dc53','2016-7-04','2020-8-15','udooneo-entranceDesk');
 
@@ -232,8 +214,6 @@ INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no,
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59f374113a8fd80d337f6eaa','0x20','motion','null','NVT1276','neo-161eb9d4e3167ab8','aa684c32171235abc466b7adab2cf8b47e23ed7dbf2a428165aa2cb99c830f41','2016-7-04','2020-8-15','udooneo-426-ConferenceRoom');
 
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59f374113a8fd80d337f6eb0','0x1E0','motion','null','NVT1276','neo-161eb9d4e3167ab8','aa684c32171235abc466b7adab2cf8b47e23ed7dbf2a428165aa2cb99c830f41','2016-7-04','2020-8-15','udooneo-426-ConferenceRoom');
-
-INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59f374113a8fd80d337f6eb2','connection','virtual','null','NVT1276','neo-161eb9d4e3167ab8','aa684c32171235abc466b7adab2cf8b47e23ed7dbf2a428165aa2cb99c830f41','2016-7-04','2020-8-15','udooneo-426-ConferenceRoom');
 
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59f374113a8fd80d337f6eac','1-0060','i2c','null','NVT1276','neo-161eb9d4e3167ab8','aa684c32171235abc466b7adab2cf8b47e23ed7dbf2a428165aa2cb99c830f41','2016-7-04','2020-8-15','udooneo-426-ConferenceRoom');
 
@@ -290,6 +270,6 @@ VALUES (1, 'cool@infobro.com', 'Name', 'Cool Guy'),
        (2, 'cool@infobro.com', 'Company', 'UDOOOOOO'),
        (3, 'awesome@infobro.com', 'Name', 'Awesome girl'),
        (4, 'host@infobro.com', 'Name', 'The wonderful host');
-	   
+          
 INSERT INTO room_fileshare(fileshare_id, room_id, file_header, file_link, file_type)
 VALUES (1, 1, 'Presentation', 'drive.google.com/ppt', 'Official Presentation');
