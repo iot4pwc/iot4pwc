@@ -67,10 +67,12 @@ public class DBHelper {
     StringBuilder valueSection = new StringBuilder();
 
     for (Map.Entry<String, Object> entry : recordObject) {
-      String attributeName = entry.getKey();
-      attributeNames.add(attributeName);
-      attrSection.append(attributeName + ",");
-      valueSection.append("?,");
+      if (!entry.getKey().equals("timestamp")) {
+        String attributeName = entry.getKey();
+        attributeNames.add(attributeName);
+        attrSection.append(attributeName + ",");
+        valueSection.append("?,");
+      }
     }
 
     attrSection.deleteCharAt(attrSection.length() - 1);
@@ -82,8 +84,18 @@ public class DBHelper {
       attrSection.toString(),
       valueSection.toString()
     );
-
+    if (recordObject.containsKey("timestamp")) {
+    	query = String.format(
+    		      "INSERT INTO %s (%s,recorded_time) VALUES (%s,?)",
+    		      table.getTableName(),
+    		      attrSection.toString(),
+    		      valueSection.toString()
+    		    );
+    }
     PreparedStatement preparedStatement = connection.prepareStatement(query);
+    if (recordObject.containsKey("timestamp")) {
+    	preparedStatement.setTimestamp(recordObject.size(), new Timestamp(recordObject.getLong("timestamp")));
+    }
     table.configureInsertPstmt(preparedStatement, recordObject, attributeNames);
     return preparedStatement;
   }

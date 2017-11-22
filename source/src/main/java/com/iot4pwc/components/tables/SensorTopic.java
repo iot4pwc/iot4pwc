@@ -7,7 +7,7 @@ import java.util.List;
 
 public class SensorTopic extends Queriable {
   public static final String tableName = "sensor_topic_map";
-  public static final String sensor_id = "sensor_id";
+  public static final String sensor_pk_id = "sensor_pk_id";
   public static final String topic = "topic";
 
   private static SensorTopic tableInstance;

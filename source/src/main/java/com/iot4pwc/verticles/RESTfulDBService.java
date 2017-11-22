@@ -80,8 +80,8 @@ public class RESTfulDBService extends AbstractVerticle {
     } else if (end == null) {
       query = "select * from sensor_history " +
         "where recorded_time >= STR_TO_DATE('" + start + "', '%Y-%m-%d %H:%i:%S') " +
-        "and sensor_id in " +
-        "(select distinct sensor_id from sensor_topic_map " +
+        "and sensor_pk_id in " +
+        "(select distinct sensor_pk_id from sensor_topic_map " +
         "where topic = '" + topic + "') order by recorded_time desc " +
         "limit " + limit + ";";
       logger.info("QUERY " + query);
@@ -90,8 +90,8 @@ public class RESTfulDBService extends AbstractVerticle {
       query = "select * from sensor_history " +
         "where recorded_time between STR_TO_DATE('" + start + "', '%Y-%m-%d %H:%i:%S') " +
         "and STR_TO_DATE('" + end + "', '%Y-%m-%d %H:%i:%S') " +
-        "and sensor_id in " +
-        "(select distinct sensor_id from sensor_topic_map " +
+        "and sensor_pk_id in " +
+        "(select distinct sensor_pk_id from sensor_topic_map " +
         "where topic = '" + topic + "') " +
         "order by recorded_time desc " +
         "limit " + limit + ";";
@@ -163,7 +163,7 @@ public class RESTfulDBService extends AbstractVerticle {
         logger.info("Action request [" + body.getString("action_id") + "] on #" + body.getString("sensor_id") + " failed due to " + ar.result().body());
         routingContext.response()
           .putHeader("content-type", "application/json; charset=utf-8")
-          .setStatusCode(200)
+          .setStatusCode(400)
           .end("Action request failed");
         return;
       } else {

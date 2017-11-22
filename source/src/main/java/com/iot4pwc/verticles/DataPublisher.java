@@ -14,42 +14,37 @@ import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
 
 /**
- * This is a publisher that subscribes to an event published by DataParser and
- * pass the data to the MQTT under certain topic.
+ * This is a publisher that subscribes to an event published by DataParser and pass the
+ * data to the MQTT under certain topic.
  */
 public class DataPublisher extends AbstractVerticle {
-
   private MqttHelper mqttHelper;
-  private static Map<Integer, Set<String>> sensorTopicMapping = new HashMap<>();
-  private DBHelper dbHelper;
+  private static Map<String, Set<String>> sensorTopicMapping = new HashMap<>();
 
   public void start() {
     EventBus eb = vertx.eventBus();
 
-    vertx.executeBlocking(future -> {
-      dbHelper = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM);
+    WorkerExecutor executor = vertx.createSharedWorkerExecutor(
+      ConstLib.DATA_PUBLISHER_WORKER_POOL,
+      ConstLib.DATA_PUBLISHER_WORKER_POOL_SIZE
+    );
+    executor.executeBlocking (future -> {
+      mqttHelper = new MqttHelper(ConstLib.MQTT_TLS_ENABLED);
+      sensorTopicMapping = getSensorTopicMapping();
       future.complete();
-    }, response -> {
-      WorkerExecutor executor = vertx.createSharedWorkerExecutor(
-              ConstLib.DATA_PUBLISHER_WORKER_POOL,
-              ConstLib.DATA_PUBLISHER_WORKER_POOL_SIZE
-      );
-      executor.executeBlocking(future -> {
-        mqttHelper = new MqttHelper(ConstLib.MQTT_TLS_ENABLED);
-        sensorTopicMapping = getSensorTopicMapping();
-        future.complete();
-      }, res -> eb.consumer(ConstLib.PUBLISHER_ADDRESS, message -> {
-        String structuredData = (String) message.body();
-        JsonObject structuredDataJSON = new JsonObject(structuredData);
+    }, res ->
+      eb.consumer(ConstLib.PUBLISHER_ADDRESS, message -> {
+        JsonObject structuredDataJSON = (JsonObject)message.body();
+        String structuredData = structuredDataJSON.toString();
         Set<String> sensorTopics = getTopicSet(structuredDataJSON);
 
         List<PublishRequestHandler> publishRequests = new LinkedList<>();
         if (sensorTopics != null && mqttHelper != null) {
           for (String topic : sensorTopics) {
             MosquittoPublishRequest request = new MosquittoPublishRequest(
-                    topic,
-                    structuredData,
-                    ConstLib.MQTT_QUALITY_OF_SERVICE
+              topic,
+              structuredData,
+              ConstLib.MQTT_QUALITY_OF_SERVICE
             );
 
             publishRequests.add(request);
@@ -57,56 +52,54 @@ public class DataPublisher extends AbstractVerticle {
           mqttHelper.publish(publishRequests);
         }
       })
-      );
-    });
-
+    );
   }
 
   public void stop() {
     mqttHelper.closeConnection();
   }
 
-  private Map<Integer, Set<String>> getSensorTopicMapping() {
-    Map<Integer, Set<String>> sensorTopicMap = new HashMap<>();
+  private Map<String, Set<String>> getSensorTopicMapping() {
+    Map<String, Set<String>> sensorTopicMap = new HashMap<>();
     String query = "SELECT * FROM sensor_topic_map";
 
-    List<JsonObject> records = dbHelper.select(query);
+    List<JsonObject> records = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select(query);
 
-    for (JsonObject record : records) {
-      int sensorId = Integer.parseInt(record.getString(SensorTopic.sensor_id));
+    for (JsonObject record: records) {
+      String sensorPkId = record.getString(SensorTopic.sensor_pk_id);
       String topic = record.getString(SensorTopic.topic);
-      Set<String> topicSet = sensorTopicMap.getOrDefault(sensorId, new HashSet<>());
+      Set<String> topicSet = sensorTopicMap.getOrDefault(sensorPkId, new HashSet<>());
       topicSet.add(topic);
-      sensorTopicMap.put(sensorId, topicSet);
+      sensorTopicMap.put(sensorPkId, topicSet);
     }
     return sensorTopicMap;
   }
 
-  private void getOneSensorMapping(int sensorId, Map<Integer, Set<String>> existingMapping) {
+  private void getOneSensorMapping(String sensorPkId, Map<String, Set<String>> existingMapping) {
     try {
-      String query = String.format("SELECT * FROM sensor_topic_map WHERE sensor_id = %d", sensorId);
-      List<JsonObject> records = dbHelper.select(query);
+      String query = "SELECT * FROM sensor_topic_map WHERE sensor_pk_id = '" + sensorPkId + "'";
+      List<JsonObject> records = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select(query);
       Set<String> sensorTopics = new HashSet<>();
 
-      for (JsonObject record : records) {
+      for (JsonObject record: records) {
         sensorTopics.add(record.getString(SensorTopic.topic));
       }
 
-      existingMapping.put(sensorId, sensorTopics);
+      existingMapping.put(sensorPkId, sensorTopics);
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
   private Set<String> getTopicSet(JsonObject jsonPayload) {
-    int sensorID = jsonPayload.getInteger(SensorTopic.sensor_id);
+	String sensorPkID = jsonPayload.getString(SensorTopic.sensor_pk_id);
     Set<String> sensorTopics;
 
-    if (!sensorTopicMapping.containsKey(sensorID)) {
-      getOneSensorMapping(sensorID, sensorTopicMapping);
+    if (!sensorTopicMapping.containsKey(sensorPkID)) {
+      getOneSensorMapping(sensorPkID, sensorTopicMapping);
     }
-    sensorTopics = sensorTopicMapping.getOrDefault(sensorID, new HashSet<>());
+    sensorTopics = sensorTopicMapping.getOrDefault(sensorPkID, new HashSet<>());
 
     return sensorTopics;
-  }
+  } 
 }
