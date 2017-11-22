@@ -50,7 +50,7 @@ public class DataParser extends AbstractVerticle {
          * since we get the whole history of values
          * we only keep records that happen after last time
          */
-	      if (lastTime.compareTo(timestamp) <= 0 && !sensor_pk_id.equals(ConstLib.RFID_SENSOR_PK_ID) || lastTime.compareTo(timestamp) < 0 && sensor_pk_id.equals(ConstLib.RFID_SENSOR_PK_ID)) {          
+	      if (lastTime.compareTo(timestamp) <= 0 && !sensor_pk_id.equals(ConstLib.RFID_SENSOR_PK_ID) && !sensor_pk_id.equals(ConstLib.SITTING_SENSOR_PK_ID) || lastTime.compareTo(timestamp) < 0 && (sensor_pk_id.equals(ConstLib.RFID_SENSOR_PK_ID) || sensor_pk_id.equals(ConstLib.SITTING_SENSOR_PK_ID))) {          
 	        try {
 		        structuredDataBase.put("timestamp", new SimpleDateFormat("yyyyMMddHHmm").parse(timestamp).getTime());
 		      } catch (ParseException e) {
