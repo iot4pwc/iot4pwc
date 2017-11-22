@@ -4,10 +4,7 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
 import com.iot4pwc.constants.ConstLib;
-
-import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Date;
 import java.util.Random;
 
 /**
@@ -23,9 +20,10 @@ public class DummySensor extends AbstractVerticle {
     random = new Random();
 
     EventBus eb = vertx.eventBus();
-    timerID = vertx.setPeriodic(10, id -> {
-      String payload = generateData();
-//      eb.send(ConstLib.PARSER_ADDRESS, payload);
+    timerID = vertx.setPeriodic(ConstLib.DUMMY_DATA_INTERVAL, id -> {
+      JsonObject payload = generateData();
+//      eb.send(ConstLib.PUBLISHER_ADDRESS, payload);
+//      eb.send(ConstLib.DATA_SERVICE_ADDRESS, payload);
     });
   }
 
@@ -33,12 +31,12 @@ public class DummySensor extends AbstractVerticle {
     vertx.cancelTimer(timerID);
   }
 
-  private String generateData() {
-    Map<String, Object> payloads = new HashMap<>();
-    payloads.put("sensor_id", BASE_ID + random.nextInt(6));
+  private JsonObject generateData() {
+    JsonObject payloads = new JsonObject();
+    payloads.put("timestamp", new Date().getTime());
+    payloads.put("sensor_pk_id", "" + BASE_ID + random.nextInt(6));
+    payloads.put("value_key", "Dummy Sensor, dumm dumm!");
     payloads.put("value_content", Integer.toString(BASE_PAYLOAD + random.nextInt(50)));
-    payloads.put("recorded_time", Instant.now().toEpochMilli());
-    JsonObject jsonObject = new JsonObject(payloads);
-    return jsonObject.encode();
+    return payloads;
   }
 }
