@@ -36,9 +36,9 @@ public class DataPoller extends AbstractVerticle {
   
   public void start() {
     try {
-      RFIDLastTime = new SimpleDateFormat("yyyyMMddHHmm").parse(ConstLib.INITIAL_LAST_TIME);
-	  normalLastTime = new SimpleDateFormat("yyyyMMddHHmm").parse(ConstLib.INITIAL_LAST_TIME);
-      sittingLastTime = new SimpleDateFormat("yyyyMMddHHmmss").parse(ConstLib.INITIAL_LAST_TIME+"00");
+      RFIDLastTime = new SimpleDateFormat("yyyyMMddHHmmss").parse(ConstLib.INITIAL_LAST_TIME);
+	  normalLastTime = new SimpleDateFormat("yyyyMMddHHmmss").parse(ConstLib.INITIAL_LAST_TIME);
+      sittingLastTime = new SimpleDateFormat("yyyyMMddHHmmss").parse(ConstLib.INITIAL_LAST_TIME);
 	  } catch (ParseException e) {
         logger.error(e);
 	  }
@@ -122,7 +122,7 @@ public class DataPoller extends AbstractVerticle {
 	          if (ar.succeeded()) {
 	            HttpResponse<JsonObject> response = ar.result();
 	            JsonObject body = response.body();
-	            body.put("lastTime", new SimpleDateFormat("yyyyMMddHHmm").format(lastTime));
+	            body.put("lastTime", new SimpleDateFormat("yyyyMMddHHmmss").format(lastTime));
 	            body.put("sensor_pk_id", sensor_pk_id);
               body.put("topic", topic);
 	            EventBus eb = vertx.eventBus();
@@ -144,7 +144,7 @@ public class DataPoller extends AbstractVerticle {
 		    if (ar.succeeded()) {
 		      HttpResponse<JsonObject> response = ar.result();
 		      JsonObject body = response.body();
-		      body.put("lastTime", new SimpleDateFormat("yyyyMMddHHmmss").format(lastTime));
+		      body.put("lastTime", new SimpleDateFormat("yyyyMMddHHmm").format(lastTime)+"00");
 		      body.put("sensor_pk_id", sensor_pk_id);
           body.put("topic", topic);
 		      EventBus eb = vertx.eventBus();
