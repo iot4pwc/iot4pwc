@@ -28,6 +28,8 @@ public class DataParser extends AbstractVerticle {
       JsonArray history = (JsonArray)data.getValue("history");
       String lastTime = data.getString("lastTime");
       String sensor_pk_id = data.getString("sensor_pk_id");
+      String topic = data.getString("topic");
+
       /**
        * one sensor may contain many types of value
        * we map them to different pairs of key and content
@@ -50,12 +52,21 @@ public class DataParser extends AbstractVerticle {
          * since we get the whole history of values
          * we only keep records that happen after last time
          */
-	      if (lastTime.compareTo(timestamp) <= 0 && !sensor_pk_id.equals(ConstLib.RFID_SENSOR_PK_ID) && !sensor_pk_id.equals(ConstLib.SITTING_SENSOR_PK_ID) || lastTime.compareTo(timestamp) < 0 && (sensor_pk_id.equals(ConstLib.RFID_SENSOR_PK_ID) || sensor_pk_id.equals(ConstLib.SITTING_SENSOR_PK_ID))) {          
-	        try {
-		        structuredDataBase.put("timestamp", new SimpleDateFormat("yyyyMMddHHmm").parse(timestamp).getTime());
-		      } catch (ParseException e) {
-				    logger.error(e);
-		      }
+        if (lastTime.compareTo(timestamp) < 0 && (topic.equals(ConstLib.RFID_SENSOR_TOPIC) || topic.equals(ConstLib.SITTING_SENSOR_TOPIC)) || lastTime.compareTo(timestamp) <= 0 && !topic.equals(ConstLib.RFID_SENSOR_TOPIC) && !topic.equals(ConstLib.SITTING_SENSOR_TOPIC)) {    
+	        if (topic.equals(ConstLib.SITTING_SENSOR_TOPIC)) {
+            try {
+              structuredDataBase.put("timestamp", new SimpleDateFormat("yyyyMMddHHmmss").parse(timestamp).getTime());
+            } catch (ParseException e) {
+              logger.error(e);
+            }            
+          } else {
+            try {
+              structuredDataBase.put("timestamp", new SimpleDateFormat("yyyyMMddHHmm").parse(timestamp).getTime());
+            } catch (ParseException e) {
+              logger.error(e);
+            }           
+          }
+
 	        structuredDataBase.put("sensor_pk_id", sensor_pk_id);
 	        for (String type: types) {
 	          JsonObject structuredData = structuredDataBase;

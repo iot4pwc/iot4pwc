@@ -38,7 +38,7 @@ public class DataPoller extends AbstractVerticle {
     try {
       RFIDLastTime = new SimpleDateFormat("yyyyMMddHHmm").parse(ConstLib.INITIAL_LAST_TIME);
 	  normalLastTime = new SimpleDateFormat("yyyyMMddHHmm").parse(ConstLib.INITIAL_LAST_TIME);
-      sittingLastTime = new SimpleDateFormat("yyyyMMddHHmm").parse(ConstLib.INITIAL_LAST_TIME);
+      sittingLastTime = new SimpleDateFormat("yyyyMMddHHmmss").parse(ConstLib.INITIAL_LAST_TIME+"00");
 	  } catch (ParseException e) {
         logger.error(e);
 	  }
@@ -61,14 +61,14 @@ public class DataPoller extends AbstractVerticle {
     	  
         pollData(RFIDDataPoller.getInstance().getQuery(), RFIDLastTime);
         // poll rfid data on an interval of 1 minute
-    	long RFIDTimer = vertx.setPeriodic(RFIDDataPoller.getInstance().getFrequency(), id -> {
+    	  long RFIDTimer = vertx.setPeriodic(RFIDDataPoller.getInstance().getFrequency(), id -> {
     	  pollData(RFIDDataPoller.getInstance().getQuery(), RFIDLastTime);
     	  RFIDLastTime = new Date();
     	});
     	  
-    	pollData(NormalDataPoller.getInstance().getQuery(), normalLastTime);
+    	  pollData(NormalDataPoller.getInstance().getQuery(), normalLastTime);
         // poll other data on an interval of 30 seconds
-    	long normalTimer = vertx.setPeriodic(NormalDataPoller.getInstance().getFrequency(), id -> {
+    	  long normalTimer = vertx.setPeriodic(NormalDataPoller.getInstance().getFrequency(), id -> {
     	  pollData(NormalDataPoller.getInstance().getQuery(), normalLastTime);
     	  normalLastTime = new Date();
     	});
@@ -93,22 +93,26 @@ public class DataPoller extends AbstractVerticle {
 
   public void pollData(String query, Date lastTime) {
     List<JsonObject> result = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select(query);
-	for (JsonObject jo: result) {
+	  for (JsonObject jo: result) {
       String gateway_id = jo.getString("gateway_id");
       String device_id = jo.getString("device_id");
-	  String sensor_type = jo.getString("sensor_type");
-	  String sensor_id = jo.getString("sensor_id");
+	    String sensor_type = jo.getString("sensor_type");
+	    String sensor_id = jo.getString("sensor_id");
       String sensor_pk_id = jo.getString("sensor_pk_id");
-      if (sensor_pk_id.equals(ConstLib.SITTING_SENSOR_PK_ID)) {
-    	getSensorMinuteHistoryValue(gateway_id, device_id, sensor_type, sensor_id, lastTime, sensor_pk_id);
+      String topic = jo.getString("topic");
+      if (topic == null) {
+        getSensorHistoryValue(gateway_id, device_id, sensor_type, sensor_id, lastTime, sensor_pk_id, "normal");
       } else {
-        getSensorHistoryValue(gateway_id, device_id, sensor_type, sensor_id, lastTime, sensor_pk_id);	  
+        if (topic.equals(ConstLib.SITTING_SENSOR_TOPIC)) {
+          getSensorMinuteHistoryValue(gateway_id, device_id, sensor_type, sensor_id, lastTime, sensor_pk_id, topic);
+        } else {
+          getSensorHistoryValue(gateway_id, device_id, sensor_type, sensor_id, lastTime, sensor_pk_id, topic);    
+        }       
       }
-
     }
   }
 
-  public void getSensorHistoryValue(String gatewayId, String deviceId, String sensorType, String sensorId, Date lastTime, String sensor_pk_id) {
+  public void getSensorHistoryValue(String gatewayId, String deviceId, String sensorType, String sensorId, Date lastTime, String sensor_pk_id, String topic) {
     // This call return the historical sensor value connected to A9 core,(Udoo bricks).
     // It requires the <gatewayId>, deviceId, sensorType, sensor id.
 	  client.getAbs(ConstLib.UDOO_ENDPOINT + "/ext/sensors/history/realtime/" + gatewayId +"/" + deviceId +"/" + sensorType +"/" +sensorId)
@@ -120,6 +124,7 @@ public class DataPoller extends AbstractVerticle {
 	            JsonObject body = response.body();
 	            body.put("lastTime", new SimpleDateFormat("yyyyMMddHHmm").format(lastTime));
 	            body.put("sensor_pk_id", sensor_pk_id);
+              body.put("topic", topic);
 	            EventBus eb = vertx.eventBus();
 	            eb.send(ConstLib.PARSER_ADDRESS, body);
 	          } else {
@@ -129,7 +134,7 @@ public class DataPoller extends AbstractVerticle {
   }
 
   
-  public void getSensorMinuteHistoryValue(String gatewayId, String deviceId, String sensorType, String sensorId, Date lastTime, String sensor_pk_id) {
+  public void getSensorMinuteHistoryValue(String gatewayId, String deviceId, String sensorType, String sensorId, Date lastTime, String sensor_pk_id, String topic) {
     // This call return the historical sensor value connected to A9 core,(Udoo bricks).
     // It requires the <gatewayId>, deviceId, sensorType, sensor id.
 	client.getAbs(ConstLib.UDOO_ENDPOINT + "/ext/sensors/history/minute/" + gatewayId +"/" + deviceId +"/" + sensorType +"/" +sensorId)
@@ -141,6 +146,7 @@ public class DataPoller extends AbstractVerticle {
 		      JsonObject body = response.body();
 		      body.put("lastTime", new SimpleDateFormat("yyyyMMddHHmmss").format(lastTime));
 		      body.put("sensor_pk_id", sensor_pk_id);
+          body.put("topic", topic);
 		      EventBus eb = vertx.eventBus();
 		      eb.send(ConstLib.PARSER_ADDRESS, body);
 		    } else {

@@ -70,4 +70,6 @@ public class ConstLib {
   public static final String INITIAL_LAST_TIME = "201710010000";
   public static final String RFID_SENSOR_PK_ID = "59f11b9e3a8fd80d33e14e7c";
   public static final String SITTING_SENSOR_PK_ID = "59efd0f33a8fd80d3372a7dd";
+  public static final String SITTING_SENSOR_TOPIC = "/gamified_office/sitting";
+  public static final String RFID_SENSOR_TOPIC = "/gamified_office/rfid";
 }
