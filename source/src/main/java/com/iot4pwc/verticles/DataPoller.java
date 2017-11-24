@@ -144,7 +144,7 @@ public class DataPoller extends AbstractVerticle {
 		    if (ar.succeeded()) {
 		      HttpResponse<JsonObject> response = ar.result();
 		      JsonObject body = response.body();
-		      body.put("lastTime", new SimpleDateFormat("yyyyMMddHHmm").format(lastTime)+"00");
+		      body.put("lastTime", new SimpleDateFormat("yyyyMMddHHmmss").format(new Date(lastTime.getTime()-60000)));
 		      body.put("sensor_pk_id", sensor_pk_id);
           body.put("topic", topic);
 		      EventBus eb = vertx.eventBus();

@@ -52,6 +52,7 @@ public class DataParser extends AbstractVerticle {
          * since we get the whole history of values
          * we only keep records that happen after last time
          */
+
         if (lastTime.compareTo(timestamp) < 0) {
         // if (lastTime.compareTo(timestamp) < 0 && (topic.equals(ConstLib.RFID_SENSOR_TOPIC) || topic.equals(ConstLib.SITTING_SENSOR_TOPIC)) || lastTime.compareTo(timestamp) <= 0 && !topic.equals(ConstLib.RFID_SENSOR_TOPIC) && !topic.equals(ConstLib.SITTING_SENSOR_TOPIC)) {    
 	        if (timestamp.length() == 12) {
