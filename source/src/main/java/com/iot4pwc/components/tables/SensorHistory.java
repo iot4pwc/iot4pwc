@@ -1,6 +1,7 @@
 package com.iot4pwc.components.tables;
 
 import io.vertx.core.json.JsonObject;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;

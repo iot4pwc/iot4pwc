@@ -1,9 +1,12 @@
 package com.iot4pwc.verticles;
 
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.iot4pwc.constants.ConstLib;
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.DeploymentOptions;
+import io.vertx.core.Vertx;
 import io.vertx.core.MultiMap;
 import io.vertx.core.Future;
 import io.vertx.core.eventbus.EventBus;
@@ -11,6 +14,8 @@ import io.vertx.core.net.PemTrustOptions;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.ext.web.codec.BodyCodec;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * This is a token acquirer that retrives token from the UDOO platform.
