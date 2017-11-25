@@ -7,6 +7,7 @@ USE gamified_office;
 
 DROP TABLE IF EXISTS participant_component_score;
 DROP TABLE IF EXISTS participant;
+DROP TABLE IF EXISTS user_component_sensor;
 DROP TABLE IF EXISTS app_user;
 DROP TABLE IF EXISTS challenge_component;
 DROP TABLE IF EXISTS challenge;
@@ -22,7 +23,7 @@ CREATE TABLE challenge_component(
   component_id int(10) AUTO_INCREMENT,
   challenge_id int(10),
   component_code varchar(20), 
-  component_weight int(2), 
+  component_weight decimal(3,2), 
   component_desc varchar(100),
   CONSTRAINT challenge_component_pk PRIMARY KEY (component_id),
   CONSTRAINT challenge_component_fk FOREIGN KEY (challenge_id) REFERENCES challenge (challenge_id)
@@ -54,11 +55,11 @@ CREATE TABLE participant(
   participant_id int(10) AUTO_INCREMENT,
   challenge_id int(10),
   email varchar(255),
-  total_score int(5),
-  today_score int(5),
-  yesterday_score int(5),
-  last_week_score int(5),
-  last_month_score int(5),
+  total_score decimal(10,2),
+  today_score decimal(10,2),
+  yesterday_score decimal(10,2),
+  last_week_score decimal(10,2),
+  last_month_score decimal(10,2),
   CONSTRAINT participant_pk PRIMARY KEY (participant_id),
   CONSTRAINT participant_fk_1 FOREIGN KEY (challenge_id) REFERENCES challenge (challenge_id),
   CONSTRAINT participant_fk_2 FOREIGN KEY (email) REFERENCES app_user (email) 
@@ -68,11 +69,11 @@ CREATE TABLE participant_component_score(
   part_comp_id int(10) AUTO_INCREMENT,
   component_id int(10),
   email varchar(255),
-  total_score int(5),
-  today_score int(5),
-  yesterday_score int(5),
-  last_week_score int(5),
-  last_month_score int(5),
+  total_score decimal(10,2),
+  today_score decimal(10,2),
+  yesterday_score decimal(10,2),
+  last_week_score decimal(10,2),
+  last_month_score decimal(10,2),
   CONSTRAINT participant_component_score_pk PRIMARY KEY (part_comp_id),
   CONSTRAINT participant_component_score_fk_1 FOREIGN KEY (component_id) REFERENCES challenge_component (component_id),
   CONSTRAINT participant_component_score_fk_2 FOREIGN KEY (email) REFERENCES app_user (email) 
