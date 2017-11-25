@@ -1,8 +1,5 @@
 package com.iot4pwc.verticles;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.iot4pwc.components.helpers.DBHelper;
 import com.iot4pwc.components.tables.SensorHistory;
 import com.iot4pwc.constants.ConstLib;
