@@ -5,7 +5,6 @@ import com.iot4pwc.constants.ConstLib;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.vertx.core.json.JsonObject;
-
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;

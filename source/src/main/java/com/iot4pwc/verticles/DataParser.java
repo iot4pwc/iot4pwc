@@ -11,7 +11,7 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import com.iot4pwc.components.helpers.DBHelper;
+
 /**
  * This is a parser that will subscribe to an event published by DataPoller/DataListener.
  * It will also publish formatted data to DataService for DB persistence and DataPublisher

@@ -1,5 +1,4 @@
 package com.iot4pwc.components.helpers;
-import com.iot4pwc.constants.ConstLib;
 
 public class NormalDataPoller extends DataPollerHelper {
 	// light sensor data detection is considered normal for now

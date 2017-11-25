@@ -1,16 +1,10 @@
 package com.iot4pwc.verticles;
 
 import com.iot4pwc.components.helpers.DBHelper;
-
-import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import com.iot4pwc.constants.ConstLib;
-
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.HttpResponse;
