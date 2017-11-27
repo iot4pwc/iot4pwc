@@ -61,6 +61,7 @@ Note that the distributed version of the service platform is powered by Hazelcas
 * [Maven](https://maven.apache.org/) - Dependency Management
 * [Mosquitto](https://mosquitto.org/) - Used as a MQTT
 * [Paho](https://www.eclipse.org/paho/) - Used to read from and write to the MQTT
+* [Hikari](https://github.com/brettwooldridge/HikariCP/) - Support for connection pool for MySQL
 * MySQL
 
 ## Authors
