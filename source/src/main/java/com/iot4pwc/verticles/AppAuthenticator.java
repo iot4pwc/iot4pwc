@@ -20,6 +20,11 @@ public class AppAuthenticator extends AbstractVerticle {
   Logger logger = LogManager.getLogger(AppAuthenticator.class);
   private DBHelper dbHelper;
   
+  /**
+   * Start the verticle to authenticate any application's request to control actuator.
+   * Instantiate the DbHelper, and start listening to the event bus for messages.
+   * Once the RESTfulDBService sends an authentication request, it checks and sends a boolean reply.
+   */
   @Override
   public void start() {
     EventBus bus = vertx.eventBus();
@@ -41,10 +46,18 @@ public class AppAuthenticator extends AbstractVerticle {
 
   }
 
+  /**
+   * Perform any operations on the stop of the verticle.
+   */
   @Override
   public void stop() {
   }
   
+  /**
+   * Method to verify if the app action is authorized or not.
+   * @param data A JSON object containing the following fields: application id, action id of the action requested, and the actuator id.
+   * @return A boolean value. True, if the action is authenticated; false, otherwise.
+   */
   private Boolean verifyAuthenticity(String data) {
     JsonObject dataObj = new JsonObject(data);
     String appId = dataObj.getString(ConstLib.PAYLOAD_FIELD_APP_ID);
@@ -53,8 +66,6 @@ public class AppAuthenticator extends AbstractVerticle {
 
     /**
      * Query the database to get if appId (the application) is authorized to control actionId (actuator's action).
-     * Creating a dbHelper every time and closing the connection because it might be wasteful to have a live connection and not use it.
-     * May be changed when authenticator has to scale.
      */
     String query = "SELECT COUNT(*) AS CNT FROM app_action_map JOIN actuator_action_map USING(record_id) " +
       "WHERE app_id = " + appId + " AND act_pk_id = '" + actuatorId + "' AND action_code = " + actionId;
