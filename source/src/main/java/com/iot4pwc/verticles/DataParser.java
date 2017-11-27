@@ -72,7 +72,7 @@ public class DataParser extends AbstractVerticle {
 	        structuredDataBase.put("sensor_pk_id", sensor_pk_id);
 	        for (String type: types) {
 	          JsonObject structuredData = structuredDataBase;
-	          int value = jo.getInteger(type);
+	          String value = String.valueOf(jo.getValue(type));
 	          structuredData.put("value_key", type);
 	          structuredData.put("value_content", String.valueOf(value));
 		        eb.send(ConstLib.DATA_SERVICE_ADDRESS, structuredData);
