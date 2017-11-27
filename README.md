@@ -28,14 +28,19 @@ mvn package
 
 Deploy the fat .jar file locally:
 
+Note that you need to run scripts before you deploy the service. All scripts for service platform can be found in the scripts directory. On the instance that will start the service platform
+```
+source setup.sh
+```
+
 On the instance the runs mysql
 ```
 source mysql_setup.sh
 ```
 
-Note that you need to run scripts before you deploy the service. On the instance that will start the service platform
+On the instance the runs mosquitto
 ```
-source setup.sh
+source mosquitto_server.sh
 ```
 
 Then on the instance that runs service platform
