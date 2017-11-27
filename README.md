@@ -28,6 +28,17 @@ mvn package
 
 Deploy the fat .jar file locally:
 
+On the instance the runs mysql
+```
+source mysql_setup.sh
+```
+
+Note that you need to run scripts before you deploy the service. On the instance that will start the service platform
+```
+source setup.sh
+```
+
+Then on the instance that runs service platform
 ```
 java -jar servicePlatform-[VERSION_NUMBER]-SNAPSHOT-fat.jar
 ```
@@ -43,7 +54,6 @@ java -jar servicePlatform-[VERSION_NUMBER]-SNAPSHOT-fat.jar -sp
 * [Maven](https://maven.apache.org/) - Dependency Management
 * [Mosquitto](https://mosquitto.org/) - Used as a MQTT
 * [Paho](https://www.eclipse.org/paho/) - Used to read from and write to the MQTT
-* [DCloud HBuilder](https://dcloud.io/index.html) - Used for transpiling web code to Android
 * MySQL
 
 ## Authors
