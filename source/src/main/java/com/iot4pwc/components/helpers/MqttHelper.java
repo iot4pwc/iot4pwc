@@ -16,22 +16,41 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
+/**
+ * A helper class that provide method for easier bulk mosquitto operations, refer to Paho (https://www.eclipse.org/paho/) to learn more
+ * Author: Xianru Wu
+ */
 public class MqttHelper {
   MqttClient client;
   boolean isTLSEnabled;
   static int clientSuffix = 0;
 
+  /**
+   * Initialize the MQTTHelperm, either with TLS or not
+   * @params
+   * isTLSEnabled: boolean, whether the MQTT uses TLS auth
+   */  
   public MqttHelper(boolean isTLSEnabled) {
     this.isTLSEnabled = isTLSEnabled;
     client = getAliveClient();
   }
 
+  /**
+   * Publish messages
+   * @params
+   * publishRequests: List<PublishRequestHandler>, a list of publish requests.
+   */ 
   public void publish(List<PublishRequestHandler> publishRequests) {
     for (PublishRequestHandler request: publishRequests) {
       request.handlePublish(this);
     }
   }
 
+  /**
+   * Subscribe the client to several topics
+   * @params
+   * topics: Set<String>, topics to subscribe to
+   */   
   public void subscribe(Set<String> topics) {
     for (String topic : topics) {
       try {
@@ -43,6 +62,10 @@ public class MqttHelper {
     }
   }
 
+
+  /**
+   * Close the client connection
+   */    
   public void closeConnection() {
     try {
       client.disconnect();
@@ -51,7 +74,9 @@ public class MqttHelper {
     }
   }
 
-  // need a mechanism to create clientID
+  /**
+   * Get an MQTT client
+   */   
   private MqttClient getMqttClient() {
     MqttClient client = null;
     try {
@@ -67,6 +92,9 @@ public class MqttHelper {
     }
   }
 
+  /**
+   * Get an MQTT client with TLS
+   */    
   private MqttClient getMqttTLSClient() {
     MqttClient client = null;
     try {
@@ -83,6 +111,9 @@ public class MqttHelper {
     }
   }
 
+  /**
+   * Get an MQTT client based on isTLSEnabled
+   */  
   public MqttClient getAliveClient() {
     if (client == null || !client.isConnected()) {
       client = this.isTLSEnabled ? getMqttTLSClient() : getMqttClient();
@@ -90,6 +121,12 @@ public class MqttHelper {
     return client;
   }
 
+
+  /**
+   * Get socket factory that supports TLS for Moquitto TLS to work
+   * @params
+   * caCrtFile: String, the crt file name
+   */     
   private SSLSocketFactory getSocketFactory(final String caCrtFile) throws Exception {
     Security.addProvider(new BouncyCastleProvider());
 
