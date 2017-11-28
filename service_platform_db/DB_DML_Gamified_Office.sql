@@ -13,6 +13,7 @@ DROP TABLE IF EXISTS challenge;
 
 CREATE TABLE challenge(
   challenge_id int(10) AUTO_INCREMENT,
+  challenge_name varchar(50),
   start_date DATETIME,
   end_date DATETIME,
   CONSTRAINT challenge_pk PRIMARY KEY (challenge_id)
