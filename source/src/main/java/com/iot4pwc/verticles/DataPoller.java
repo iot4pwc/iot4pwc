@@ -1,6 +1,5 @@
 package com.iot4pwc.verticles;
 
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,28 +21,35 @@ import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.codec.BodyCodec;
 
 /**
- * This is a poller that polls data from the UDOO platform. 
+ * This is a poller that polls data from the UDOO platform with an interval. 
  */
 
 public class DataPoller extends AbstractVerticle {
+  Logger logger = LogManager.getLogger(DataPoller.class);
   private WebClient client;
   private String token;
-  Logger logger = LogManager.getLogger(DataPoller.class);
-  Date RFIDLastTime;
-  Date normalLastTime;
-  Date sittingLastTime;
-  // String sensor_pk_id;
-  
+  private Date RFIDLastTime;
+  private Date normalLastTime;
+  private Date sittingLastTime;
+
+  /**
+   * Start the vercitle to retrieve data from Udoo platform.
+   * Deploy the UdooTokenAcquirer verticle and start listening to the event bus for messages.
+   * Once received token, poll data with intervals.
+   */
   public void start() {
     try {
       RFIDLastTime = new SimpleDateFormat("yyyyMMddHHmmss").parse(ConstLib.INITIAL_LAST_TIME);
-	  normalLastTime = new SimpleDateFormat("yyyyMMddHHmmss").parse(ConstLib.INITIAL_LAST_TIME);
+	    normalLastTime = new SimpleDateFormat("yyyyMMddHHmmss").parse(ConstLib.INITIAL_LAST_TIME);
       sittingLastTime = new SimpleDateFormat("yyyyMMddHHmmss").parse(ConstLib.INITIAL_LAST_TIME);
 	  } catch (ParseException e) {
-        logger.error(e);
+      logger.error("Error happend when parsing date " + e);
 	  }
+
     vertx.executeBlocking(future -> {
-      // first, retrieve token
+      /**
+       * First, deploy UdooTokenAcquirer verticle
+       */
       vertx.deployVerticle(new UdooTokenAcquirer(), delay -> future.complete("UdooTokenAcquirer Deployment Complete"));
     }, response -> {
       client = WebClient.create(vertx,
@@ -55,6 +61,9 @@ public class DataPoller extends AbstractVerticle {
         	   );
       EventBus eb = vertx.eventBus();
 
+      /**
+       * Receive token and poll data with the token
+       */
       eb.consumer(ConstLib.UDOO_TOKEN_ADDRESS, message -> {
         token = (String)message.body();
         logger.info("Received a udoo token: [" + message.body() + "] at time " + new Date());
@@ -62,16 +71,16 @@ public class DataPoller extends AbstractVerticle {
         pollData(RFIDDataPoller.getInstance().getQuery(), RFIDLastTime);
         // poll rfid data on an interval of 1 minute
     	  long RFIDTimer = vertx.setPeriodic(RFIDDataPoller.getInstance().getFrequency(), id -> {
-    	  pollData(RFIDDataPoller.getInstance().getQuery(), RFIDLastTime);
-    	  RFIDLastTime = new Date();
-    	});
+    	    pollData(RFIDDataPoller.getInstance().getQuery(), RFIDLastTime);
+    	    RFIDLastTime = new Date();
+    	  });
     	  
     	  pollData(NormalDataPoller.getInstance().getQuery(), normalLastTime);
         // poll other data on an interval of 30 seconds
     	  long normalTimer = vertx.setPeriodic(NormalDataPoller.getInstance().getFrequency(), id -> {
-    	  pollData(NormalDataPoller.getInstance().getQuery(), normalLastTime);
-    	  normalLastTime = new Date();
-    	});
+    	    pollData(NormalDataPoller.getInstance().getQuery(), normalLastTime);
+    	    normalLastTime = new Date();
+    	  });
     	  
         pollData(SittingDataPoller.getInstance().getQuery(), sittingLastTime);
         // poll sitting data on an interval of 1 minute
@@ -80,7 +89,9 @@ public class DataPoller extends AbstractVerticle {
       	  sittingLastTime = new Date();
       	});
       	  
-        // will receive new token after one day, so cancel timer of this period
+        /**
+         * will receive new token after one day, so cancel timer of this period
+         */
       	vertx.setPeriodic(ConstLib.ONEDAY, id -> {
       	  vertx.cancelTimer(RFIDTimer);
       	  vertx.cancelTimer(normalTimer);
@@ -91,6 +102,12 @@ public class DataPoller extends AbstractVerticle {
 
   }
 
+  /**
+   * For each record in database, poll data with relavant information
+   * @params
+   * query: String, the query String
+   * lastTime: Date, the time indicating the last time retrieving data
+   */  
   public void pollData(String query, Date lastTime) {
     List<JsonObject> result = DBHelper.getInstance(ConstLib.SERVICE_PLATFORM).select(query);
 	  for (JsonObject jo: result) {
@@ -112,9 +129,18 @@ public class DataPoller extends AbstractVerticle {
     }
   }
 
+  /**
+   * Get sensor realtime history values for one sensor and send to data parser
+   * @params
+   * gatewayId: String, the gateway_id for the sensor
+   * deviceId: String, the device_id for the sensor
+   * sensorType: String, the sensor_type for the sensor
+   * sensorId: String, the sensor_id for the sensor
+   * lastTime: Date, the time indicating the last time retrieving data
+   * sensor_pk_id: String, the sensor_pk_id for the sensor
+   * topic: String, the topic for the sensor
+   */ 
   public void getSensorHistoryValue(String gatewayId, String deviceId, String sensorType, String sensorId, Date lastTime, String sensor_pk_id, String topic) {
-    // This call return the historical sensor value connected to A9 core,(Udoo bricks).
-    // It requires the <gatewayId>, deviceId, sensorType, sensor id.
 	  client.getAbs(ConstLib.UDOO_ENDPOINT + "/ext/sensors/history/realtime/" + gatewayId +"/" + deviceId +"/" + sensorType +"/" +sensorId)
 	        .putHeader("Authorization", "JWT " + token)
 	        .as(BodyCodec.jsonObject())
@@ -133,10 +159,18 @@ public class DataPoller extends AbstractVerticle {
           });
   }
 
-  
+  /**
+   * Get sensor history values in minute format for one sensor and send to data parser
+   * @params
+   * gatewayId: String, the gateway_id for the sensor
+   * deviceId: String, the device_id for the sensor
+   * sensorType: String, the sensor_type for the sensor
+   * sensorId: String, the sensor_id for the sensor
+   * lastTime: Date, the time indicating the last time retrieving data
+   * sensor_pk_id: String, the sensor_pk_id for the sensor
+   * topic: String, the topic for the sensor
+   */ 
   public void getSensorMinuteHistoryValue(String gatewayId, String deviceId, String sensorType, String sensorId, Date lastTime, String sensor_pk_id, String topic) {
-    // This call return the historical sensor value connected to A9 core,(Udoo bricks).
-    // It requires the <gatewayId>, deviceId, sensorType, sensor id.
 	client.getAbs(ConstLib.UDOO_ENDPOINT + "/ext/sensors/history/minute/" + gatewayId +"/" + deviceId +"/" + sensorType +"/" +sensorId)
 		  .putHeader("Authorization", "JWT " + token)
 		  .as(BodyCodec.jsonObject())

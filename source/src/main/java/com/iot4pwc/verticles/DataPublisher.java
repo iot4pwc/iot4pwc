@@ -11,15 +11,24 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.WorkerExecutor;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * This is a publisher that subscribes to an event published by DataParser and pass the
  * data to the MQTT under certain topic.
  */
+
 public class DataPublisher extends AbstractVerticle {
+  Logger logger = LogManager.getLogger(DataPublisher.class);
   private MqttHelper mqttHelper;
   private static Map<String, Set<String>> sensorTopicMapping = new HashMap<>();
-
+  
+  /**
+   * Start the verticle to receive messages and publish to MQTT.
+   * Instantiate MqttHelper first and listen to the event bus for messages.
+   * Once receiving data, send a request and publish to MQTT with topic
+   */
   public void start() {
     EventBus eb = vertx.eventBus();
 
@@ -54,10 +63,18 @@ public class DataPublisher extends AbstractVerticle {
     );
   }
 
+  /**
+   * Close connection with MQTT
+   */
   public void stop() {
     mqttHelper.closeConnection();
   }
 
+  /**
+   * Get all mappings of sensor_pk_ids and topic
+   * @return
+   * A HashMap, with keys of sensor_pk_id and values of topics
+   */
   private Map<String, Set<String>> getSensorTopicMapping() {
     Map<String, Set<String>> sensorTopicMap = new HashMap<>();
     String query = "SELECT * FROM sensor_topic_map";
@@ -74,6 +91,12 @@ public class DataPublisher extends AbstractVerticle {
     return sensorTopicMap;
   }
 
+  /**
+   * Get topics given specific sensor and put into hashmap
+   * @params
+   * sensorPkId: String, the sensor_pk_id String
+   * existingMapping: Map<String, Set<String>>, mapping of existingMapping
+   */
   private void getOneSensorMapping(String sensorPkId, Map<String, Set<String>> existingMapping) {
     try {
       String query = "SELECT * FROM sensor_topic_map WHERE sensor_pk_id = '" + sensorPkId + "'";
@@ -86,10 +109,17 @@ public class DataPublisher extends AbstractVerticle {
 
       existingMapping.put(sensorPkId, sensorTopics);
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.error(e);
     }
   }
 
+  /**
+   * Get set of topics given sensor_pk_id
+   * @param
+   * jsonPayload: JsonObject, the json object of data received
+   * @return
+   * A set of String, with keys of the given sensor_pk_id and topic
+   */
   private Set<String> getTopicSet(JsonObject jsonPayload) {
 	String sensorPkID = jsonPayload.getString(SensorTopic.sensor_pk_id);
     Set<String> sensorTopics;

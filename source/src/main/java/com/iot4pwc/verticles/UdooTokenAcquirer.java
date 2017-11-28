@@ -20,16 +20,21 @@ import io.vertx.ext.web.codec.BodyCodec;
 public class UdooTokenAcquirer extends AbstractVerticle {
   Logger logger = LogManager.getLogger(UdooTokenAcquirer.class);
   
+  /**
+   * Start the verticle to acquire token from Udoo platform.
+   * Reset the token everyday
+   */
   public void start() {
 	  setToken();
-    // update token everyday
   	vertx.setPeriodic(ConstLib.ONEDAY, id -> {
 	    setToken();
 	  });
   }
 
+  /**
+   * Send post request to Udoo platform, set token String and send to evernt bus
+   */
   private void setToken() {
-//	  WebClient client = WebClient.create(vertx);
     WebClient client = WebClient.create(vertx,
     new WebClientOptions()
         .setTrustAll(true)

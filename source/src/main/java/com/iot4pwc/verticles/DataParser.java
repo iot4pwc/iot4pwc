@@ -13,12 +13,18 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 /**
- * This is a parser that will subscribe to an event published by DataPoller/DataListener.
+ * This is a parser that will subscribe to an event published by DataPoller.
  * It will also publish formatted data to DataService for DB persistence and DataPublisher
  * for MQTT publishing.
  */
 public class DataParser extends AbstractVerticle {
+
   Logger logger = LogManager.getLogger(DataParser.class);
+
+  /**
+   * Start the verticle to listen to the event bus for messages.
+   * Retrieve each specific value and send to data service and data publisher.
+   */
   public void start() {
     EventBus eb = vertx.eventBus();
 
@@ -31,8 +37,8 @@ public class DataParser extends AbstractVerticle {
       String topic = data.getString("topic");
 
       /**
-       * one sensor may contain many types of value
-       * we map them to different pairs of key and content
+       * One sensor may contain many types of value
+       * Map them to different pairs of key and content
        */
       List<String> types = new ArrayList<String>();
       for (int i=0; i<value_type.size(); i++) {
@@ -40,7 +46,7 @@ public class DataParser extends AbstractVerticle {
       }
       
       /**
-       * parse data to map database columns
+       * Parse data to map database columns
        */
       for (int i=0; i<history.size(); i++) {
         JsonObject structuredDataBase = new JsonObject();
@@ -48,13 +54,12 @@ public class DataParser extends AbstractVerticle {
     	  String timestamp = jo.getString("timestamp");
 
         /**
-         * sample timestamp: 201711011537
+         * sample timestamp: 20171101153736(yyyyMMddHHmmss) or 201711011537(yyyyMMddHHmm)
          * since we get the whole history of values
          * we only keep records that happen after last time
          */
 
         if (lastTime.compareTo(timestamp) < 0) {
-        // if (lastTime.compareTo(timestamp) < 0 && (topic.equals(ConstLib.RFID_SENSOR_TOPIC) || topic.equals(ConstLib.SITTING_SENSOR_TOPIC)) || lastTime.compareTo(timestamp) <= 0 && !topic.equals(ConstLib.RFID_SENSOR_TOPIC) && !topic.equals(ConstLib.SITTING_SENSOR_TOPIC)) {    
 	        if (timestamp.length() == 12) {
             try {
               structuredDataBase.put("timestamp", new SimpleDateFormat("yyyyMMddHHmm").parse(timestamp).getTime());
@@ -75,6 +80,9 @@ public class DataParser extends AbstractVerticle {
 	          String value = String.valueOf(jo.getValue(type));
 	          structuredData.put("value_key", type);
 	          structuredData.put("value_content", String.valueOf(value));
+            /**
+             * send each record to data service and data publisher
+             */
 		        eb.send(ConstLib.DATA_SERVICE_ADDRESS, structuredData);
 		        eb.send(ConstLib.PUBLISHER_ADDRESS, structuredData);
 	        }
