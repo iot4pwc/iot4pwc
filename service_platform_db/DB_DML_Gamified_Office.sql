@@ -76,31 +76,31 @@ CREATE OR REPLACE VIEW participant_view AS
 	p.participant_id,
 	p.challenge_id,
 	p.email,
-	(SELECT sum(pc.score*comp.component_weight) 
+	IFNULL((SELECT sum(pc.score*comp.component_weight) 
 	  FROM participant_component_score pc 
 	  JOIN challenge_component comp USING (component_id)
 	  WHERE pc.score_date BETWEEN c.start_date AND c.end_date
-	    AND pc.participant_id = p.participant_id) "total_score",
-	(SELECT sum(pc.score*comp.component_weight)  
+	    AND pc.participant_id = p.participant_id), 0.0) "total_score",
+	IFNULL((SELECT sum(pc.score*comp.component_weight)  
 	  FROM participant_component_score pc 
 	  JOIN challenge_component comp USING (component_id)
 	  WHERE pc.score_date = CURRENT_DATE
-	    AND pc.participant_id = p.participant_id) "today_score",
-	(SELECT sum(pc.score*comp.component_weight) 
+	    AND pc.participant_id = p.participant_id), 0.0) "today_score",
+	IFNULL((SELECT sum(pc.score*comp.component_weight) 
 	  FROM participant_component_score pc 
 	  JOIN challenge_component comp USING (component_id)
 	  WHERE pc.score_date = DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY)
-	    AND pc.participant_id = p.participant_id) "yesterday_score",
-	(SELECT sum(pc.score*comp.component_weight) 
+	    AND pc.participant_id = p.participant_id), 0.0) "yesterday_score",
+	IFNULL((SELECT sum(pc.score*comp.component_weight) 
 	  FROM participant_component_score pc 
 	  JOIN challenge_component comp USING (component_id)
 	  WHERE pc.score_date BETWEEN DATE_SUB(CURRENT_DATE, INTERVAL 7 DAY) AND CURRENT_DATE
-	    AND pc.participant_id = p.participant_id) "last_week_score",
-	(SELECT sum(pc.score*comp.component_weight) 
+	    AND pc.participant_id = p.participant_id), 0.0) "last_week_score",
+	IFNULL((SELECT sum(pc.score*comp.component_weight) 
 	  FROM participant_component_score pc 
 	  JOIN challenge_component comp USING (component_id)
 	  WHERE pc.score_date BETWEEN DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY) AND CURRENT_DATE
-	    AND pc.participant_id = p.participant_id) "last_month_score"
+	    AND pc.participant_id = p.participant_id), 0.0) "last_month_score"
   FROM participant p
   JOIN challenge c USING(challenge_id);
   
@@ -110,31 +110,31 @@ CREATE OR REPLACE VIEW participant_component_view AS
 	p.challenge_id,
 	p.email,
 	cc.component_code,
-	(SELECT sum(pc.score) 
+	IFNULL((SELECT sum(pc.score) 
 	  FROM participant_component_score pc 
 	  WHERE pc.score_date BETWEEN c.start_date AND c.end_date
 	    AND pc.participant_id = p.participant_id
-		AND pc.component_id = cc.component_id) "total_score",
-	(SELECT sum(pc.score) 
+		AND pc.component_id = cc.component_id), 0.0) "total_score",
+	IFNULL((SELECT sum(pc.score) 
 	  FROM participant_component_score pc 
 	  WHERE pc.score_date = CURRENT_DATE
 	    AND pc.participant_id = p.participant_id
-		AND pc.component_id = cc.component_id) "today_score",
-	(SELECT sum(pc.score) 
+		AND pc.component_id = cc.component_id), 0.0) "today_score",
+	IFNULL((SELECT sum(pc.score) 
 	  FROM participant_component_score pc 
 	  WHERE pc.score_date = DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY)
 	    AND pc.participant_id = p.participant_id
-		AND pc.component_id = cc.component_id) "yesterday_score",
-	(SELECT sum(pc.score) 
+		AND pc.component_id = cc.component_id), 0.0) "yesterday_score",
+	IFNULL((SELECT sum(pc.score) 
 	  FROM participant_component_score pc 
 	  WHERE pc.score_date BETWEEN DATE_SUB(CURRENT_DATE, INTERVAL 7 DAY) AND CURRENT_DATE
 	    AND pc.participant_id = p.participant_id
-		AND pc.component_id = cc.component_id) "last_week_score",
-	(SELECT sum(pc.score) 
+		AND pc.component_id = cc.component_id), 0.0) "last_week_score",
+	IFNULL((SELECT sum(pc.score) 
 	  FROM participant_component_score pc 
 	  WHERE pc.score_date BETWEEN DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY) AND CURRENT_DATE
 	    AND pc.participant_id = p.participant_id
-		AND pc.component_id = cc.component_id) "last_month_score"
+		AND pc.component_id = cc.component_id), 0.0) "last_month_score"
   FROM participant p
   JOIN challenge c USING(challenge_id)
   JOIN challenge_component cc USING (challenge_id);
