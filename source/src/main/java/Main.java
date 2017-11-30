@@ -27,7 +27,7 @@ public class Main {
   props.setProperty("java.util.logging.config.file", ConstLib.LOGGING_CONFIG);
   props.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.Log4j2LogDelegateFactory");
   // Modify logging configuration here
-  Configurator.setLevel("com.iot4pwc.verticles", ConstLib.LOGGING_LEVEL);
+  // Configurator.setLevel("com.iot4pwc.verticles", ConstLib.LOGGING_LEVEL);
   Configurator.setLevel("com.iot4pwc.actuator.controller", ConstLib.LOGGING_LEVEL);
   Configurator.setRootLevel(ConstLib.LOGGING_LEVEL);
   Logger logger = LogManager.getLogger(Main.class);
