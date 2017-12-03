@@ -79,3 +79,12 @@ CREATE TABLE participant_component_score(
   CONSTRAINT participant_component_score_fk_1 FOREIGN KEY (component_id) REFERENCES challenge_component (component_id),
   CONSTRAINT participant_component_score_fk_2 FOREIGN KEY (email) REFERENCES app_user (email) 
 );
+
+CREATE TABLE sitting_status(
+  email varchar(255),
+  duration TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  start_time int(5),
+  status varchar(10),
+  CONSTRAINT sitting_status_pk PRIMARY KEY (email),
+  CONSTRAINT sitting_status_fk_1 FOREIGN KEY (email) REFERENCES app_user (email) 
+);
