@@ -14,7 +14,7 @@ There are three components to this project:
 System requirements
 
 ```
-Tested on Amazon EC2 t2.micro instance
+Tested on Ubuntu 16.04LTS
 ```
 
 ### Installing the Service Platform
@@ -22,6 +22,7 @@ Tested on Amazon EC2 t2.micro instance
 Get the most recent stable build and build the project:
 ```
 git checkout master
+git pull
 cd src
 mvn package
 ```
@@ -38,7 +39,7 @@ On the instance the runs mysql:
 source mysql_setup.sh
 ```
 
-On the instance the runs mosquitto:
+On the instance the runs mosquitto (typically the same as the service platform):
 ```
 source mosquitto_server.sh
 ```
