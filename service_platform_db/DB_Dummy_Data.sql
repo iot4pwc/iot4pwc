@@ -195,6 +195,14 @@ INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no,
 
 INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('59f374113a8fd80d337f6eac','1-0060','i2c','null','NVT1276','neo-161eb9d4e3167ab8','aa684c32171235abc466b7adab2cf8b47e23ed7dbf2a428165aa2cb99c830f41','2016-7-04','2020-8-15','udooneo-426-ConferenceRoom');
 
+INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('5a258be86e64eafb5d8fd9b5','4','digital','sitpresence01','NVT1276','ttyMCC-2125c1d4df669959','82ccd7c9f70f23cbe570d1644f60a7293603fe95c5c51cabc6ee0de72f0df61d','2016-7-04','2020-8-15','udooneo-EntranceOpenDesks');
+
+INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('5a258c0b6e64eafb5d8fdef4','5','digital','sitpresence02','NVT1276','ttyMCC-2125c1d4df669959','82ccd7c9f70f23cbe570d1644f60a7293603fe95c5c51cabc6ee0de72f0df61d','2016-7-04','2020-8-15','udooneo-EntranceOpenDesks');
+
+INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('5a258c206e64eafb5d8fe2ba','6','digital','sitpresence03','NVT1276','ttyMCC-2125c1d4df669959','82ccd7c9f70f23cbe570d1644f60a7293603fe95c5c51cabc6ee0de72f0df61d','2016-7-04','2020-8-15','udooneo-EntranceOpenDesks');
+
+INSERT INTO sensor (sensor_pk_id, sensor_id, sensor_type, sensor_desc, model_no, device_id, gateway_id, installed_on, expiration_date, install_loc) VALUES ('5a258c336e64eafb5d8fe533','7','digital','sitpresence04','NVT1276','ttyMCC-2125c1d4df669959','82ccd7c9f70f23cbe570d1644f60a7293603fe95c5c51cabc6ee0de72f0df61d','2016-7-04','2020-8-15','udooneo-EntranceOpenDesks');
+
 INSERT INTO sensor_topic_map (sensor_pk_id, topic)
 VALUES ('59f11b9e3a8fd80d33e14e7c', '/gamified_office/rfid');
 
@@ -209,6 +217,18 @@ VALUES ('59efd0f33a8fd80d3372a7dd', '/gamified_office/sitting');
 
 INSERT INTO sensor_topic_map (sensor_pk_id, topic)
 VALUES ('5a148488effa8d83d45ce6f6', '/gamified_office/sitting');
+
+INSERT INTO sensor_topic_map (sensor_pk_id, topic)
+VALUES ('5a258be86e64eafb5d8fd9b5', '/gamified_office/sitting');
+
+INSERT INTO sensor_topic_map (sensor_pk_id, topic)
+VALUES ('5a258c0b6e64eafb5d8fdef4', '/gamified_office/sitting');
+
+INSERT INTO sensor_topic_map (sensor_pk_id, topic)
+VALUES ('5a258c206e64eafb5d8fe2ba', '/gamified_office/sitting');
+
+INSERT INTO sensor_topic_map (sensor_pk_id, topic)
+VALUES ('5a258c336e64eafb5d8fe533', '/gamified_office/sitting');
 
 INSERT INTO actuator (act_pk_id, act_id, act_type, act_desc, gateway_id, device_id, model_no, installed_on, expiration_date, install_loc)
 VALUES ('59f8b56b3a8fd80d3397d6e2', '13', 'digital', 'light actuator', '82ccd7c9f70f23cbe570d1644f60a7293603fe95c5c51cabc6ee0de72f0df61d', 'ttyMCC-2125c1d4df669959', 'model1', '2016-7-04', '2020-8-15', 'Gates Conference Room');
