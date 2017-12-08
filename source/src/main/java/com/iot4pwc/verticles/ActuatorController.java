@@ -11,6 +11,11 @@ import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.codec.BodyCodec;
 
+/**
+ * A hanler for actuation command on specific sensor
+ * 
+ * Author: Shuang Li
+ */
 
 public class ActuatorController extends AbstractVerticle {
 	Logger logger = LogManager.getLogger(ActuatorController.class);
@@ -41,6 +46,7 @@ public class ActuatorController extends AbstractVerticle {
 				authentication.put(ConstLib.PAYLOAD_FIELD_ACTION_ID, actionId);
                 authentication.put(ConstLib.PAYLOAD_FIELD_ACTUATOR_ID, actId);
 
+       //send information to AppAuthenticator for access verification
 				eb.send(ConstLib.APP_AUTHENTICATOR_ADDRESS, authentication.toString(), auth -> {
 					logger.info("message send to authenticator");
 					if (auth.succeeded()) {
@@ -70,6 +76,10 @@ public class ActuatorController extends AbstractVerticle {
 
 	}
 
+	/**
+	 * Send out verified actuation request to UDOO platform to complete actuation control
+	 * @param JsonObject command : {app_id:app_id, sensor_id:sensor_id, action_id:action_id}
+	 * */
 	private void sendRequest(JsonObject command) {
 		//fetch the info related to the sensor
 		String query = String.format("SELECT * FROM actuator WHERE act_pk_id = '%s'", command.getString("sensor_id"));
